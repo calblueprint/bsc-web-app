@@ -19,7 +19,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
             email,
             password
           )
-          console.log(userCredentials)
+          // console.log(userCredentials)
 
           if (!userCredentials) {
             throw {error: userCredentials } 
@@ -46,7 +46,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) { 
         try {
           const result = await queryFulfilled
-          console.log('Query Fulfilled: ', result)
+          // console.log('Query Fulfilled: ', result)
           if (!result.data) {
             console.log('User and House object are empty')
             return
@@ -66,7 +66,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       async queryFn() {
         try {
           const result = await signOut(auth)
-          console.log('logout result: ' + result)
+          // console.log('logout result: ' + result)
           return { data: 'Logged Out' }
         } catch (error) {
           return { error }
@@ -117,7 +117,7 @@ const establishUserContext = async (userId: string) => {
     if (!userId) {
       return { error: 'Wrong credentials' }
     }
-    console.log('Establishing Context with: ', userId)
+    // console.log('Establishing Context with: ', userId)
     const userID = userId
     const docRef = doc(firestore, 'users', userID)
     const docSnap = await getDoc(docRef)

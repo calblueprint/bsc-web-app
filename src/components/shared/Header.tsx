@@ -166,11 +166,7 @@ const Header = (props: HeaderProps) => {
                         <Grid item>
                             <Typography>{`Welcome ${userName}`}</Typography>
                         </Grid>
-                        <Grid item>
-                            <IconButton color='inherit' sx={{ p: 0.5 }}>
-                                <Avatar src='/3551739.jpg' alt='My Avatar' />
-                            </IconButton>
-                        </Grid>
+
                         <Grid item>
                             <Tooltip title='Alerts • No alerts'>
                                 <IconButton color='inherit'>

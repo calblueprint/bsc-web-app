@@ -15,15 +15,18 @@ import { useTheme } from '@mui/material/styles'
 import Copyright from '@/components/shared/Copyright'
 import NavBar from '@/components/shared/NavBar'
 import Header from '@/components/shared/Header'
-// import { NavP } from '../interfaces/interfaces'
-// import { Head } from 'next/document'
-// import HeaderTabs from './HeaderTabs'
+
 type Props = {
     children: ReactNode
 }
 //** NavBar width constant */
 const drawerWidth = 230 //256
 
+/**
+ *
+ * @param param0
+ * @returns
+ */
 export default function PrivateLayout({ children }: Props) {
     /** Materials UI styles */
     const theme = useTheme()

@@ -13,7 +13,7 @@ const useAuth = () => {
 
     useEffect(() => {
         if (authUser) {
-            console.log('[useAuth]: authUser', authUser)
+            // console.log('[useAuth]: authUser', authUser)
         }
     }, [authUser])
 

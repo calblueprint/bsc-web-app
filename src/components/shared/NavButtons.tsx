@@ -15,9 +15,6 @@ import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded'
 import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
 import SettingsIcon from '@mui/icons-material/Settings'
 
-//** Custom Hooks */
-// import useGoToRoute from '../../hooks/useGoToRoute'
-
 //** Hooks */
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -36,8 +33,6 @@ import {
 import { memberCategories, managerCategories, supervisorCategories } from './constants'
 
 //** Interfaces */
-import { NavP } from '../../interfaces/interfaces'
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { useRouter } from 'next/router'
 
 const item = {
@@ -83,12 +78,6 @@ interface MemberCategoryChild {
     path: string
     active: number
     icon: React.ReactElement
-}
-
-type NavFuncProps = {
-    member: ActionCreatorWithPayload<any, 'users/setMemberNavState'>
-    manager: ActionCreatorWithPayload<any, 'users/setManagerNavState'>
-    supervisor: ActionCreatorWithPayload<any, 'users/setSupervisorNavState'>
 }
 
 /**
@@ -152,6 +141,7 @@ const NavButtons = () => {
         categories.forEach((category) => {
             category.children.forEach((btn) => {
                 if (btn.id === id) {
+                    console.log('[NavButtons]: currentRole: ', currentRole)
                     dispatch(
                         chooseSetNavFunction[currentRole as keyof typeof chooseSetNavFunction]({
                             ...chooseNavState[currentRole as keyof typeof chooseNavState],
@@ -162,7 +152,7 @@ const NavButtons = () => {
                         })
                     )
                     setActiveButton(btn.active)
-                    router.push(btn.path)
+                    // router.push(btn.path)
                 }
             })
         })
@@ -189,7 +179,8 @@ const NavButtons = () => {
             setActiveButton(state.active)
             router.push(state.path)
         }
-    }, [chooseCategory, chooseNavState, currentRole, router])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRole])
 
     // useEffect(() => {
     //     console.log('Mounting NavButtons')

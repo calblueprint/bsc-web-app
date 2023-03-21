@@ -19,17 +19,17 @@ export const AuthState = ({ children }: Props) => {
     const [authUser, setAuthUser] = useState({})
 
     useEffect(() => {
-        console.log('*****AuthState Component ran')
+        // console.log('*****AuthState Component ran')
 
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                console.log('[AuthState]: Authorized User: ' + user)
+                // console.log('[AuthState]: Authorized User: ' + user)
                 setAuthUser(user)
                 await establishContext(user.uid)
 
                 // console.log('Error: ', error)
             } else {
-                console.log('[]AuthState]: Not authorized')
+                // console.log('[]AuthState]: Not authorized')
                 router.replace('/login')
             }
         })
@@ -38,7 +38,7 @@ export const AuthState = ({ children }: Props) => {
     }, [])
 
     useEffect(() => {
-        console.log('[AuthState]: authUser: ', authUser)
+        // console.log('[AuthState]: authUser: ', authUser)
     }, [authUser, isSuccess])
 
     let content = null

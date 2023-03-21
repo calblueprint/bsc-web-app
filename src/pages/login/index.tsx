@@ -20,7 +20,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import './Login.module.css'
 
 //** React-Redux */
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     setCredentials,
     // setUserRoles,
@@ -28,6 +28,7 @@ import {
     setCurrentUser,
     logOut,
     setCurrentHouse,
+    selectCurrentUser,
 } from '../../features/auth/authSlice'
 
 //** Api's */
@@ -67,8 +68,7 @@ export default function Login() {
     /** sets the error state of the helperText logIn message to true */
     const [error, setError] = useState(true)
 
-    const [emailValue, setEmailValue] = useState('')
-    const [passwordValue, setPasswordValue] = useState('')
+    const authUser = useSelector(selectCurrentUser)
 
     /** uses useNavigate from react-dom but verifies path */
     // const nav = useGoToRoute()
@@ -81,6 +81,13 @@ export default function Login() {
 
     /** LogIn Api */
     const [login, { isLoading }] = useLoginMutation()
+
+    useEffect(() => {
+        if (authUser) {
+            router.push('/account')
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authUser])
 
     //TODO: Delete after testing ******************************
     // useEffect(() => {

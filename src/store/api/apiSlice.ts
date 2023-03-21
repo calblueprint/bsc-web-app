@@ -33,8 +33,8 @@ const customBaseQuery: BaseQueryFn<
     // params: object
   }) => {
     // console.log('method: ', method)
-    console.log('url: ', url)
-    console.log('body to Save: ', body)
+    // console.log('url: ', url)
+    // console.log('body to Save: ', body)
     // console.log('params: ', params)
 
     const pathArray = url.split('/').filter((p: string) => p.length > 0)
@@ -67,7 +67,7 @@ const customBaseQuery: BaseQueryFn<
           //** Check weather the request is a collection or a document */
           if (isCollection) {
             //** If the query is a collection, get the full collection from the firebase */
-            console.log(path)
+            // console.log(path)
             const query = collection(firestore, path)
             const querySnapshot: QuerySnapshot<unknown> = await getDocs(query)
 
