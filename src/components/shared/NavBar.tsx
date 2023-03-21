@@ -13,20 +13,24 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 //** Materials UI Icons */
 import HomeIcon from '@mui/icons-material/Home'
 import LogoutIcon from '@mui/icons-material/Logout'
-import useGoToRoute from '../../hooks/useGoToRoute'
+// import useGoToRoute from '../../hooks/useGoToRoute'
 
 //** Redux API Slices */
-import { useSendLogoutMutation } from '../../features/auth/authApiSlice'
-import { useGetHouseByIdQuery } from '../../features/houses/housesApiSlice'
+import { useAuthLogOutMutation } from '../../features/auth/authApiSlice'
+import { useGetHouseQuery } from '../../features/house/houseApiSlice'
 
 //** Custom Hooks */
-import useAuth from '../../hooks/useAuth'
+// import useAuth from '../../hooks/useAuth'
 
 //** Custom Components */
 import NavButtons from './NavButtons'
 
 //** Interfaces */
-import { NavP, House } from '../../interfaces/interfaces'
+import { NavP } from '../../interfaces/interfaces'
+import { House, User } from '@/types/schema'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '@/features/auth/authSlice'
+import { useRouter } from 'next/router'
 
 const item = {
     py: '2px',
@@ -53,38 +57,46 @@ const NavBar = (props: DrawerProps) => {
     const { ...other } = props
 
     // Get current user from redux state
-    const { user } = useAuth()
+    // const { user } = useAuth()
+    const user = useSelector(selectCurrentUser) as User
 
     const {
-        data: house,
+        data: houseEntity,
         isSuccess: isHouseSuccess,
         isLoading: isHouseLoading,
         isError: isHouseError,
         error: houseError,
-    } = useGetHouseByIdQuery<{
-        data: House
-        isSuccess: Boolean
-        isLoading: Boolean
-        isError: Boolean
-        error: any
-    }>(user?.active_house_id)
+    } = useGetHouseQuery(user?.houseID)
 
     const [houseName, setHouseName] = useState('BSC')
 
-    const [sendLogout, { isLoading, isSuccess, isError, error }] = useSendLogoutMutation()
-    const nav = useGoToRoute()
+    const [sendLogout, { isLoading, isSuccess, isError, error }] = useAuthLogOutMutation()
+    const router = useRouter()
+    // const nav = useGoToRoute()
 
     useEffect(() => {
         if (isSuccess) {
             console.log('logged out')
-            nav('/')
+            // nav('/')
+            router.replace('/')
         }
         return () => {
             if (isSuccess) {
-                nav('/')
+                // nav('/')
+                router.replace('/')
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSuccess])
+
+    useEffect(() => {
+        if (houseEntity && user) {
+            const house = houseEntity.entities[user.houseID] as House
+            if (house) {
+                setHouseName(house.name)
+            }
+        }
+    }, [houseEntity, user])
 
     //TODO: Delete after testing ******************************
     // useEffect(() => {
@@ -125,9 +137,7 @@ const NavBar = (props: DrawerProps) => {
                         <ListItemIcon>
                             <HomeIcon />
                         </ListItemIcon>
-                        <ListItemText>{`${
-                            isHouseSuccess ? house.name : 'BSC'
-                        } House`}</ListItemText>
+                        <ListItemText>{`${isHouseSuccess ? houseName : 'BSC'} House`}</ListItemText>
                     </ListItem>
 
                     <NavButtons />

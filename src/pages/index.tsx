@@ -12,7 +12,8 @@ export default function Home() {
     useEffect(() => {
         // Check if the user is logged in
         console.log('Home Component')
-        // router.push('/account')
+        router.push('/account')
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return (
         <>

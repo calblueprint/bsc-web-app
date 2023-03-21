@@ -16,7 +16,7 @@ import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 //** Custom Hooks */
-import useGoToRoute from '../../hooks/useGoToRoute'
+// import useGoToRoute from '../../hooks/useGoToRoute'
 
 //** Hooks */
 import { useSelector, useDispatch } from 'react-redux'
@@ -30,13 +30,15 @@ import {
     selectManagerNavState,
     setSupervisorNavState,
     selectSupervisorNavState,
-} from '../../features/users/usersSlice'
+} from '../../features/user/usersSlice'
 
 //** Constant Variables */
 import { memberCategories, managerCategories, supervisorCategories } from './constants'
 
 //** Interfaces */
 import { NavP } from '../../interfaces/interfaces'
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
+import { useRouter } from 'next/router'
 
 const item = {
     py: '2px',
@@ -47,12 +49,28 @@ const item = {
     },
 }
 
-const icons = {
-    Dashboard: <DashboardCustomizeRoundedIcon />,
-    Schedule: <CalendarMonthRoundedIcon />,
-    Planner: <CalendarMonthRoundedIcon />,
-    Profile: <SettingsIcon />,
-    Marketplace: <StorefrontRoundedIcon />,
+// const icons = {
+//     Dashboard: <DashboardCustomizeRoundedIcon />,
+//     Schedule: <CalendarMonthRoundedIcon />,
+//     Planner: <CalendarMonthRoundedIcon />,
+//     Profile: <SettingsIcon />,
+//     Marketplace: <StorefrontRoundedIcon />,
+// }
+
+const getIcon = (iconName: string): React.ReactElement | null => {
+    switch (iconName) {
+        case 'Dashboard':
+            return <DashboardCustomizeRoundedIcon />
+        case 'Schedule':
+        case 'Planner':
+            return <CalendarMonthRoundedIcon />
+        case 'Profile':
+            return <SettingsIcon />
+        case 'Marketplace':
+            return <StorefrontRoundedIcon />
+        default:
+            return null
+    }
 }
 
 interface MemberCategory {
@@ -64,6 +82,13 @@ interface MemberCategoryChild {
     id: string
     path: string
     active: number
+    icon: React.ReactElement
+}
+
+type NavFuncProps = {
+    member: ActionCreatorWithPayload<any, 'users/setMemberNavState'>
+    manager: ActionCreatorWithPayload<any, 'users/setManagerNavState'>
+    supervisor: ActionCreatorWithPayload<any, 'users/setSupervisorNavState'>
 }
 
 /**
@@ -81,42 +106,63 @@ const NavButtons = () => {
     const [activeButton, setActiveButton] = useState(memberNavState.active)
     // const [goTo, setGoTo] = useState(memberNavState.path)
     const [categories, setCategories] = useState(memberCategories)
-    const nav = useGoToRoute()
+    // const nav = useGoToRoute()
+    const router = useRouter()
 
     const chooseCategory = {
-        Member: memberCategories,
-        Manager: managerCategories,
-        Supervisor: supervisorCategories,
+        member: memberCategories,
+        manager: managerCategories,
+        supervisor: supervisorCategories,
     }
 
     const chooseSetNavFunction = {
-        Member: setMemberNavState,
-        Manager: setManagerNavState,
-        Supervisor: setSupervisorNavState,
+        member: setMemberNavState,
+        manager: setManagerNavState,
+        supervisor: setSupervisorNavState,
     }
 
     const chooseNavState = {
-        Member: memberNavState,
-        Manager: managerNavState,
-        Supervisor: supervisorNavState,
+        member: memberNavState,
+        manager: managerNavState,
+        supervisor: supervisorNavState,
     }
 
+    // const handleClick = (id: string) => {
+    //     categories.forEach((category) => {
+    //         category.children.forEach((btn) => {
+    //             if (btn.id === id) {
+    //                 dispatch(
+    //                     chooseSetNavFunction[currentRole]({
+    //                         ...chooseNavState[currentRole],
+    //                         id: btn.id,
+    //                         active: btn.active,
+    //                         path: btn.path,
+    //                         tab: 0,
+    //                     })
+    //                 )
+    //                 // setGoTo(btn.path)
+    //                 setActiveButton(btn.active)
+    //                 // nav(btn.path)
+    //                 router.push(btn.path)
+    //             }
+    //         })
+    //     })
+    // }
     const handleClick = (id: string) => {
         categories.forEach((category) => {
             category.children.forEach((btn) => {
                 if (btn.id === id) {
                     dispatch(
-                        chooseSetNavFunction[currentRole]({
-                            ...chooseNavState[currentRole],
+                        chooseSetNavFunction[currentRole as keyof typeof chooseSetNavFunction]({
+                            ...chooseNavState[currentRole as keyof typeof chooseNavState],
                             id: btn.id,
                             active: btn.active,
                             path: btn.path,
                             tab: 0,
                         })
                     )
-                    // setGoTo(btn.path)
                     setActiveButton(btn.active)
-                    nav(btn.path)
+                    router.push(btn.path)
                 }
             })
         })
@@ -126,14 +172,24 @@ const NavButtons = () => {
     //     // Navigate to the given path TOGO
     // }, [goTo])
 
+    // useEffect(() => {
+    //     // console.log('currentRole changed to: ', currentRole)
+    //     const state = chooseNavState[currentRole]
+    //     setCategories(chooseCategory[currentRole])
+    //     // setGoTo(state.path)
+    //     setActiveButton(state.active)
+    //     // nav(state.path)
+    //     router.push(state.path)
+    // }, [currentRole])
     useEffect(() => {
-        // console.log('currentRole changed to: ', currentRole)
-        const state = chooseNavState[currentRole]
-        setCategories(chooseCategory[currentRole])
-        // setGoTo(state.path)
-        setActiveButton(state.active)
-        nav(state.path)
-    }, [currentRole])
+        if (currentRole) {
+            console.log('[NavButtons]: currentRole: ', currentRole)
+            const state = chooseNavState[currentRole as keyof typeof chooseNavState]
+            setCategories(chooseCategory[currentRole as keyof typeof chooseCategory])
+            setActiveButton(state.active)
+            router.push(state.path)
+        }
+    }, [chooseCategory, chooseNavState, currentRole, router])
 
     // useEffect(() => {
     //     console.log('Mounting NavButtons')
@@ -157,7 +213,8 @@ const NavButtons = () => {
                             sx={item}
                             onClick={() => handleClick(childId)}
                         >
-                            <ListItemIcon>{icons[childId]}</ListItemIcon>
+                            {/* <ListItemIcon>{icons[childId]}</ListItemIcon> */}
+                            <ListItemIcon>{getIcon(childId)}</ListItemIcon>
                             <ListItemText>{childId}</ListItemText>
                         </ListItemButton>
                     </ListItem>

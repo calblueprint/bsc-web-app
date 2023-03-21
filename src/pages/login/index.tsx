@@ -46,8 +46,7 @@ import * as Yup from 'yup'
 import { TextInput } from '../../components/shared/forms/CustomFormikFields'
 import Copyright from '../../components/shared/Copyright'
 import firebase, { FirebaseApp, FirebaseError } from 'firebase/app'
-import 'firebase/auth'
-import { borderRadius } from '@mui/system'
+import { useRouter } from 'next/router'
 
 //** LogIn Schema */
 const LoginSchema = Yup.object({
@@ -75,6 +74,8 @@ export default function Login() {
     // const nav = useGoToRoute()
     /** Hooks to dispatch action for redux state */
     const dispatch = useDispatch()
+
+    const router = useRouter()
     /** Sets weather to persist or not the state of the application */
     // const handleToggle = () => setPersist((prev) => !prev)
 
@@ -112,7 +113,7 @@ export default function Login() {
             formikBag.resetForm()
 
             // Navigate to privatre accout
-            // nav('/account')
+            router.push('/account')
         } catch (error) {
             setError(true)
             console.log(error)

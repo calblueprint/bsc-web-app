@@ -69,7 +69,7 @@ const userHeadCells: HeadCell<User & { [key in keyof User]: string | number }>[]
 const Counter = () => {
     const count = useSelector((state: RootState) => state.counter.value)
     const authUser = useSelector(selectCurrentUser) as User
-    const { data, isLoading } = useGetShiftsQuery(authUser.houseID)
+    const { data, isLoading } = useGetShiftsQuery(authUser?.houseID)
     const dispatch = useDispatch()
 
     React.useEffect(() => {
@@ -104,7 +104,7 @@ const ShiftTesting = () => {
         isSuccess,
         isError,
         error,
-    } = useGetShiftsQuery(authUser.houseID)
+    } = useGetShiftsQuery(authUser?.houseID)
 
     const [openCard, setOpenCard] = React.useState<boolean>(false)
     const [selectedShiftId, setSelectedShiftId] = React.useState<string | undefined>()

@@ -15,7 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 
 //** React Router imports */
-import { useNavigate, useLocation } from 'react-router-dom'
+// import { useNavigate, useLocation } from 'react-router-dom'
 
 //** Redux API Slice */
 import { setCurrentRole, selectCurrentUser } from '../../features/auth/authSlice'
@@ -26,20 +26,21 @@ import {
     selectManagerNavState,
     setSupervisorNavState,
     selectSupervisorNavState,
-} from '../../features/users/usersSlice'
+} from '../../features/user/usersSlice'
 
 //** Hooks */
 import { useDispatch, useSelector } from 'react-redux'
 
 //** Custom Hooks */
 import useAuth from '../../hooks/useAuth'
-import useGoToRoute from '../../hooks/useGoToRoute'
+// import useGoToRoute from '../../hooks/useGoToRoute'
 import useUserRolePath from '../../hooks/useUserRolePath'
 
 //** Custom Components */
 import HeaderTabs from './HeaderTabs'
+import { useRouter } from 'next/router'
 
-import { NavP } from '../../interfaces/interfaces'
+// import { NavP } from '../../interfaces/interfaces'
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'
 
@@ -65,7 +66,8 @@ const Header = (props: HeaderProps) => {
     const memberNavState = useSelector(selectMemberNavState)
     const managerNavState = useSelector(selectManagerNavState)
     const supervisorNavState = useSelector(selectSupervisorNavState)
-    const nav = useGoToRoute()
+    // const nav = useGoToRoute()
+    const router = useRouter()
     const dispatch = useDispatch()
     const [userName, setUserName] = React.useState('User')
 
@@ -74,7 +76,7 @@ const Header = (props: HeaderProps) => {
     React.useEffect(() => {
         // console.log(user)
         if (user) {
-            setUserName(user.preferredName ? user.preferredNames : user.firstName)
+            setUserName(user.preferredName ? user.preferredName : user.firstName)
         }
     }, [user])
 

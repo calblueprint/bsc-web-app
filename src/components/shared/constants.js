@@ -1,3 +1,8 @@
+import DashboardCustomizeRoundedIcon from '@mui/icons-material/DashboardCustomizeRounded'
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded'
+import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
+import SettingsIcon from '@mui/icons-material/Settings'
+
 export const memberTabs = {
     Dashboard: [{ id: 'Overview' }, { id: 'Actions' }],
     Schedule: [{ id: 'Overview' }, { id: 'Tab2' }],
@@ -155,16 +160,19 @@ export const memberCategories = [
                 id: 'Dashboard',
                 path: '/account/member/dashboard',
                 active: 0,
+                icon: <DashboardCustomizeRoundedIcon />,
             },
             {
                 id: 'Schedule',
                 path: '/account/member/schedule',
                 active: 1,
+                icon: <CalendarMonthRoundedIcon />,
             },
             {
                 id: 'Marketplace',
                 path: '/account/member/marketplace',
                 active: 2,
+                icon: <StorefrontRoundedIcon />,
             },
         ],
     },
@@ -188,11 +196,13 @@ export const managerCategories = [
                 id: 'Dashboard',
                 path: '/account/manager/dashboard',
                 active: 0,
+                icon: <DashboardCustomizeRoundedIcon />,
             },
             {
                 id: 'Planner',
                 path: '/account/manager/planner',
                 active: 1,
+                icon: <CalendarMonthRoundedIcon />,
             },
             {
                 id: 'Marketplace',
@@ -211,11 +221,13 @@ export const supervisorCategories = [
                 id: 'Dashboard',
                 path: '/account/supervisor/dashboard',
                 active: 0,
+                icon: <DashboardCustomizeRoundedIcon />,
             },
             {
                 id: 'Planner',
                 path: '/account/supervisor/planner',
                 active: 1,
+                icon: <CalendarMonthRoundedIcon />,
             },
             // {
             //     id: 'Marketplace',
@@ -236,5 +248,13 @@ export const supervisorCategories = [
     //     ],
     // },
 ]
+
+const icons = {
+    Dashboard: <DashboardCustomizeRoundedIcon />,
+    Schedule: <CalendarMonthRoundedIcon />,
+    Planner: <CalendarMonthRoundedIcon />,
+    Profile: <SettingsIcon />,
+    Marketplace: <StorefrontRoundedIcon />,
+}
 
 export const ROLES = ['Manager', 'Member', 'Supervisor']

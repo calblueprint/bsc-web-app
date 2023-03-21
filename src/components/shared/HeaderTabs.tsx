@@ -13,7 +13,7 @@ import {
     setSupervisorNavState,
     selectSupervisorNavState,
     setTabValue,
-} from '../../features/users/usersSlice'
+} from '../../features/user/usersSlice'
 
 //** Hooks */
 import { useSelector, useDispatch } from 'react-redux'
@@ -70,7 +70,7 @@ const HeaderTabs = () => {
                     onChange={(e, v) => handleChange(e, v, 0)}
                     textColor='inherit'
                 >
-                    {memberTabs[memberNavState.id].map((tab) => (
+                    {memberTabs[memberNavState.id as keyof typeof memberTabs].map((tab) => (
                         <Tab key={tab.id} label={tab.id} />
                     ))}
                 </Tabs>
@@ -81,7 +81,7 @@ const HeaderTabs = () => {
                     onChange={(e, v) => handleChange(e, v, 1)}
                     textColor='inherit'
                 >
-                    {managerTabs[managerNavState.id].map((tab) => (
+                    {managerTabs[managerNavState.id as keyof typeof managerTabs].map((tab) => (
                         <Tab key={tab.id} label={tab.id} />
                     ))}
                 </Tabs>
@@ -92,9 +92,11 @@ const HeaderTabs = () => {
                     onChange={(e, v) => handleChange(e, v, 2)}
                     textColor='inherit'
                 >
-                    {supervisorTabs[supervisorNavState.id].map((tab) => (
-                        <Tab key={tab.id} label={tab.id} />
-                    ))}
+                    {supervisorTabs[supervisorNavState.id as keyof typeof supervisorTabs].map(
+                        (tab) => (
+                            <Tab key={tab.id} label={tab.id} />
+                        )
+                    )}
                 </Tabs>
             ) : null}
         </React.Fragment>
