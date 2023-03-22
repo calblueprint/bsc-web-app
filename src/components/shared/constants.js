@@ -4,16 +4,16 @@ import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 export const memberTabs = {
-    Dashboard: [{ id: 'Overview' }, { id: 'Actions' }],
+    Dashboard: [{ id: 'Overview' }, { id: 'Actions' }, { id: 'So Cool' }],
     Schedule: [{ id: 'Overview' }, { id: 'Tab2' }],
     Marketplace: [{ id: 'Overview' }, { id: 'Tab2' }],
     Profile: [{ id: 'Overview' }, { id: 'Tab2' }],
 }
 
 export const managerTabs = {
-    Dashboard: [{ id: 'Overview' }, { id: 'Actions' }],
-    Planner: [{ id: 'Overview' }, { id: 'Tab2' }],
-    Marketplace: [{ id: 'Overview' }, { id: 'Tab2' }],
+    Schedule: [{ id: 'All Shifts' }, { id: 'Individual' }],
+    Planner: [{ id: 'Unassigned' }, { id: 'Assigned' }],
+    Members: [{ id: 'Information' }, { id: 'Availability' }],
 }
 export const supervisorTabs = {
     Dashboard: [{ id: 'Overview' }, { id: 'Actions' }],
@@ -63,7 +63,7 @@ export const managerCategories = [
         id: 'Manager',
         children: [
             {
-                id: 'Dashboard',
+                id: 'Schedule',
                 path: '/account/manager',
                 active: 0,
                 icon: <DashboardCustomizeRoundedIcon />,
@@ -75,7 +75,7 @@ export const managerCategories = [
                 icon: <CalendarMonthRoundedIcon />,
             },
             {
-                id: 'Marketplace',
+                id: 'Members',
                 path: '/account/manager',
                 active: 2,
             },
