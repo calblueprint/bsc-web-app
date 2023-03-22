@@ -48,6 +48,8 @@ import { TextInput } from '../../components/shared/forms/CustomFormikFields'
 import Copyright from '../../components/shared/Copyright'
 import firebase, { FirebaseApp, FirebaseError } from 'firebase/app'
 import { useRouter } from 'next/router'
+import Loading from '@/components/shared/Loading'
+import useAuth from '@/hooks/useAuth'
 
 //** LogIn Schema */
 const LoginSchema = Yup.object({
@@ -62,13 +64,14 @@ export default function Login() {
     // const theme = useTheme()
 
     /** Hook to persist the application state in browser */
-    // const [persist, setPersist] = usePersist(true)
     /** Holds the errro messge response from backend */
     const [errMsg, setErrMsg] = useState('')
     /** sets the error state of the helperText logIn message to true */
     const [error, setError] = useState(true)
 
     const authUser = useSelector(selectCurrentUser)
+
+    const { isMember, isManager, isSupervisor, goToRole } = useAuth()
 
     /** uses useNavigate from react-dom but verifies path */
     // const nav = useGoToRoute()
@@ -82,12 +85,22 @@ export default function Login() {
     /** LogIn Api */
     const [login, { isLoading }] = useLoginMutation()
 
+    // const goToRole = () => {
+    //     if (authUser && (isMember || isManager || isSupervisor)) {
+    //         if (isSupervisor) {
+    //             router.replace('/account/supervisor')
+    //         } else if (isManager) {
+    //             router.replace('/account/manager')
+    //         } else if (isMember) {
+    //             router.replace('/account/member')
+    //         }
+    //     }
+    // }
+
     useEffect(() => {
-        if (authUser) {
-            router.push('/account')
-        }
+        goToRole()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authUser])
+    }, [authUser, isMember, isManager, isSupervisor])
 
     //TODO: Delete after testing ******************************
     // useEffect(() => {
@@ -120,7 +133,7 @@ export default function Login() {
             formikBag.resetForm()
 
             // Navigate to privatre accout
-            router.push('/account')
+            goToRole()
         } catch (error) {
             setError(true)
             console.log(error)
@@ -142,7 +155,7 @@ export default function Login() {
     let content = null
     if (isLoading) {
         //Todo: Create a Loading page
-        content = <div>Loading...</div>
+        content = <Loading />
     } else {
         content = (
             <Container

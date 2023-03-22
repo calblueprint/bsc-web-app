@@ -68,10 +68,10 @@ const getIcon = (iconName: string): React.ReactElement | null => {
     }
 }
 
-interface MemberCategory {
-    id: string
-    children: MemberCategoryChild[]
-}
+// interface MemberCategory {
+//     id: string
+//     children: MemberCategoryChild[]
+// }
 
 interface MemberCategoryChild {
     id: string
@@ -86,57 +86,45 @@ interface MemberCategoryChild {
  * @returns
  */
 const NavButtons = () => {
+    //** These are navStates variables from redux  */
     const memberNavState = useSelector(selectMemberNavState)
     const managerNavState = useSelector(selectManagerNavState)
     const supervisorNavState = useSelector(selectSupervisorNavState)
+    const currentRole = useSelector(selectCurrentRole)
+
+    //** Action dispatcher from redux */
     const dispatch = useDispatch()
 
-    const currentRole = useSelector(selectCurrentRole)
-    const [activeButton, setActiveButton] = useState(memberNavState.active)
-    // const [goTo, setGoTo] = useState(memberNavState.path)
-    const [categories, setCategories] = useState(memberCategories)
-    // const nav = useGoToRoute()
+    //** Nextjs router */
     const router = useRouter()
 
+    //** holds the active button for the navbar */
+    const [activeButton, setActiveButton] = useState(memberNavState.active)
+    //** Holds the current active category  */
+    const [categories, setCategories] = useState(memberCategories)
+
+    //** This are the categories for the nav buttons each role has */
     const chooseCategory = {
         member: memberCategories,
         manager: managerCategories,
         supervisor: supervisorCategories,
     }
 
+    //** These are the setter function tha set the state of the navbar */
     const chooseSetNavFunction = {
         member: setMemberNavState,
         manager: setManagerNavState,
         supervisor: setSupervisorNavState,
     }
 
+    //** These are the states for each role */
     const chooseNavState = {
         member: memberNavState,
         manager: managerNavState,
         supervisor: supervisorNavState,
     }
 
-    // const handleClick = (id: string) => {
-    //     categories.forEach((category) => {
-    //         category.children.forEach((btn) => {
-    //             if (btn.id === id) {
-    //                 dispatch(
-    //                     chooseSetNavFunction[currentRole]({
-    //                         ...chooseNavState[currentRole],
-    //                         id: btn.id,
-    //                         active: btn.active,
-    //                         path: btn.path,
-    //                         tab: 0,
-    //                     })
-    //                 )
-    //                 // setGoTo(btn.path)
-    //                 setActiveButton(btn.active)
-    //                 // nav(btn.path)
-    //                 router.push(btn.path)
-    //             }
-    //         })
-    //     })
-    // }
+    //** This fuction hadles the click of the navbar buttons */
     const handleClick = (id: string) => {
         categories.forEach((category) => {
             category.children.forEach((btn) => {
@@ -158,19 +146,6 @@ const NavButtons = () => {
         })
     }
 
-    // useEffect(() => {
-    //     // Navigate to the given path TOGO
-    // }, [goTo])
-
-    // useEffect(() => {
-    //     // console.log('currentRole changed to: ', currentRole)
-    //     const state = chooseNavState[currentRole]
-    //     setCategories(chooseCategory[currentRole])
-    //     // setGoTo(state.path)
-    //     setActiveButton(state.active)
-    //     // nav(state.path)
-    //     router.push(state.path)
-    // }, [currentRole])
     useEffect(() => {
         if (currentRole) {
             console.log('[NavButtons]: currentRole: ', currentRole)
@@ -204,7 +179,6 @@ const NavButtons = () => {
                             sx={item}
                             onClick={() => handleClick(childId)}
                         >
-                            {/* <ListItemIcon>{icons[childId]}</ListItemIcon> */}
                             <ListItemIcon>{getIcon(childId)}</ListItemIcon>
                             <ListItemText>{childId}</ListItemText>
                         </ListItemButton>

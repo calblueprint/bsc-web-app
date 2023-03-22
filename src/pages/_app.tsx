@@ -154,9 +154,9 @@ theme = {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-    // useEffect(() => {
-    //     console.log('App Component')
-    // }, [])
+    useEffect(() => {
+        console.log('App Component')
+    }, [])
     return (
         <Provider store={store}>
             <ThemeProvider theme={theme}>

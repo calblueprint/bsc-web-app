@@ -17,6 +17,7 @@ import NewUserCard from '@/features/user/cards/NewUserCard'
 import EditUserCard from '@/features/user/cards/EditUserCard'
 import { User } from '../types/schema'
 import { selectCurrentUser } from '../features/auth/authSlice'
+import Loading from '@/components/shared/Loading'
 
 const shiftHeadCells: HeadCell<Shift & { [key in keyof Shift]: string | number }>[] = [
     {
@@ -78,7 +79,7 @@ const Counter = () => {
     }, [isLoading, data])
 
     if (isLoading) {
-        return <h1>Is Loading...</h1>
+        return <Loading />
     } else {
         return (
             <>
@@ -132,7 +133,7 @@ const ShiftTesting = () => {
 
     let content = null
     if (isLoading) {
-        content = <Box>is Loading...</Box>
+        content = <Loading />
     } else if (isError) {
         content = <React.Fragment>is Error...</React.Fragment>
     } else if (isSuccess) {
@@ -187,7 +188,7 @@ const UserTesting = () => {
 
     let content = null
     if (isLoading) {
-        content = <Box>is Loading...</Box>
+        content = <Loading />
     } else if (isError) {
         content = <React.Fragment>is Error...</React.Fragment>
     } else if (isSuccess) {

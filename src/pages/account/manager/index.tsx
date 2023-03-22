@@ -4,6 +4,7 @@ import ReduxTesting from '@/pages/ReduxTesting'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentRole, setCurrentRole } from '@/features/auth/authSlice'
 import { selectManagerNavState } from '@/features/user/usersSlice'
+import Loading from '@/components/shared/Loading'
 
 const ManagerAccount = () => {
     const dispatch = useDispatch()
@@ -33,7 +34,7 @@ const ManagerAccount = () => {
 
     return (
         <React.Fragment>
-            {currentRole ? <PrivateLayout>{content}</PrivateLayout> : <h1>Loading...</h1>}
+            {currentRole ? <PrivateLayout>{content}</PrivateLayout> : <Loading />}
         </React.Fragment>
     )
 }

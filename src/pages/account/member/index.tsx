@@ -1,3 +1,4 @@
+import Loading from '@/components/shared/Loading'
 import { selectCurrentRole, setCurrentRole } from '@/features/auth/authSlice'
 import { selectMemberNavState } from '@/features/user/usersSlice'
 // import ReduxTesting from '@/pages/ReduxTesting'
@@ -32,7 +33,7 @@ const MemberAccount = () => {
 
     return (
         <React.Fragment>
-            {currentRole ? <PrivateLayout>{content}</PrivateLayout> : <h1>Loading...</h1>}
+            {currentRole ? <PrivateLayout>{content}</PrivateLayout> : <Loading />}
         </React.Fragment>
     )
 }

@@ -73,17 +73,16 @@ const NavBar = (props: DrawerProps) => {
     const [sendLogout, { isLoading, isSuccess, isError, error }] = useAuthLogOutMutation()
     const router = useRouter()
     // const nav = useGoToRoute()
+    const handleLogout = () => {
+        sendLogout({})
+    }
 
     useEffect(() => {
-        if (isSuccess) {
-            console.log('logged out')
-            // nav('/')
-            router.replace('/')
-        }
         return () => {
             if (isSuccess) {
                 // nav('/')
-                router.replace('/')
+                console.log('logged out successfully')
+                router.replace('/login')
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,7 +91,9 @@ const NavBar = (props: DrawerProps) => {
     useEffect(() => {
         if (houseEntity && user) {
             const house = houseEntity.entities[user.houseID] as House
+            // console.log(house)
             if (house) {
+                // console.log(house.name)
                 setHouseName(house.name)
             }
         }
@@ -106,13 +107,10 @@ const NavBar = (props: DrawerProps) => {
     //     }
     // }, [])
     //TODO: Delete after testing ********************************
-    // if (isHouseSuccess) {
-    //     console.log(house)
-    // }
 
     let content: ReactNode
     if (isLoading) {
-        content = <h2>Logg ing Out...</h2>
+        content = <h2>Logging Out...</h2>
     } else if (isError) {
         if (!error) {
             content = <h2>Error: ??</h2>
@@ -143,7 +141,7 @@ const NavBar = (props: DrawerProps) => {
                     <NavButtons />
 
                     <Box sx={{ bgcolor: '#101F33' }}>
-                        <ListItem disablePadding onClick={() => sendLogout(null)}>
+                        <ListItem disablePadding onClick={handleLogout}>
                             <ListItemButton sx={{ ...item, ...itemCategory }}>
                                 <ListItemIcon>
                                     <LogoutIcon />
@@ -160,3 +158,5 @@ const NavBar = (props: DrawerProps) => {
     return content
 }
 export default NavBar
+
+//{() => sendLogout(null)}>

@@ -21,156 +21,26 @@ export const supervisorTabs = {
     Marketplace: [{ id: 'Overview' }, { id: 'Tab2' }],
 }
 
-export const MemberContent = [
-    {
-        id: 'Dashboard',
-        path: '/account/member',
-        active: 0,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/member/overview',
-            },
-            {
-                id: 'Actions',
-                path: '/account/member/actions',
-            },
-        ],
-    },
-    {
-        id: 'Schedule',
-        path: '/account/member/schedule',
-        active: 1,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/member/schedule/overview',
-            },
-        ],
-    },
-    {
-        id: 'Marketplace',
-        path: '/account/member/marketplace',
-        active: 2,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/member/marketplace/overview',
-            },
-        ],
-    },
-    {
-        id: 'Profile',
-        path: '/account/member/profile',
-        active: 3,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/member/profile/overview',
-            },
-        ],
-    },
-]
-
-export const ManagerContent = [
-    {
-        id: 'Dashboard',
-        path: '/account/manager',
-        active: 0,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/manager/overview',
-            },
-            {
-                id: 'Actions',
-                path: '/account/manager/actions',
-            },
-        ],
-    },
-    {
-        id: 'Planner',
-        path: '/account/manager/planner',
-        active: 1,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/manager/palnner/overview',
-            },
-        ],
-    },
-    {
-        id: 'Marketplace',
-        path: '/account/manager/marketplace',
-        active: 2,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/manager/marketplace/overview',
-            },
-        ],
-    },
-]
-
-export const SupervisorContent = [
-    {
-        id: 'Dashboard',
-        path: '/account/supervisor',
-        active: 0,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/supervisor/overview',
-            },
-            {
-                id: 'Actions',
-                path: '/account/supervisor/actions',
-            },
-        ],
-    },
-    {
-        id: 'Planner',
-        path: '/account/supervisor/planner',
-        active: 1,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/supervisor/planner/overview',
-            },
-        ],
-    },
-    {
-        id: 'Marketplace',
-        path: '/account/supervisor/marketplace',
-        active: 2,
-        tabs: [
-            {
-                id: 'Overview',
-                path: '/account/supervisor/marketplace/overview',
-            },
-        ],
-    },
-]
-
+//** Navbar Buttons for the members */
 export const memberCategories = [
     {
         id: 'Member',
         children: [
             {
                 id: 'Dashboard',
-                path: '/account/member/dashboard',
+                path: '/account/member',
                 active: 0,
                 icon: <DashboardCustomizeRoundedIcon />,
             },
             {
                 id: 'Schedule',
-                path: '/account/member/schedule',
+                path: '/account/member',
                 active: 1,
                 icon: <CalendarMonthRoundedIcon />,
             },
             {
                 id: 'Marketplace',
-                path: '/account/member/marketplace',
+                path: '/account/member',
                 active: 2,
                 icon: <StorefrontRoundedIcon />,
             },
@@ -181,7 +51,7 @@ export const memberCategories = [
         children: [
             {
                 id: 'Profile',
-                path: '/account/member/profile',
+                path: '/account/member',
                 active: 3,
             },
         ],
@@ -194,19 +64,19 @@ export const managerCategories = [
         children: [
             {
                 id: 'Dashboard',
-                path: '/account/manager/dashboard',
+                path: '/account/manager',
                 active: 0,
                 icon: <DashboardCustomizeRoundedIcon />,
             },
             {
                 id: 'Planner',
-                path: '/account/manager/planner',
+                path: '/account/manager',
                 active: 1,
                 icon: <CalendarMonthRoundedIcon />,
             },
             {
                 id: 'Marketplace',
-                path: '/account/manager/marketplace',
+                path: '/account/manager',
                 active: 2,
             },
         ],
@@ -219,19 +89,19 @@ export const supervisorCategories = [
         children: [
             {
                 id: 'Dashboard',
-                path: '/account/supervisor/dashboard',
+                path: '/account/supervisor',
                 active: 0,
                 icon: <DashboardCustomizeRoundedIcon />,
             },
             {
                 id: 'Planner',
-                path: '/account/supervisor/planner',
+                path: '/account/supervisor',
                 active: 1,
                 icon: <CalendarMonthRoundedIcon />,
             },
             // {
             //     id: 'Marketplace',
-            //     path: '/account/supervisor/marketplace',
+            //     path: '/account/supervisor',
             //     active: 2,
             // },
         ],
@@ -241,7 +111,7 @@ export const supervisorCategories = [
     //     children: [
     //         {
     //             id: 'Profile',
-    //             path: '/account/supervisor/profile',
+    //             path: '/account/supervisor',
 
     //             active: 3,
     //         },
