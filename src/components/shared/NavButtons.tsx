@@ -129,7 +129,7 @@ const NavButtons = () => {
         categories.forEach((category) => {
             category.children.forEach((btn) => {
                 if (btn.id === id) {
-                    console.log('[NavButtons]: currentRole: ', currentRole)
+                    // console.log('[NavButtons]: currentRole: ', currentRole)
                     dispatch(
                         chooseSetNavFunction[currentRole as keyof typeof chooseSetNavFunction]({
                             ...chooseNavState[currentRole as keyof typeof chooseNavState],
@@ -148,7 +148,7 @@ const NavButtons = () => {
 
     useEffect(() => {
         if (currentRole) {
-            console.log('[NavButtons]: currentRole: ', currentRole)
+            // console.log('[NavButtons]: currentRole: ', currentRole)
             const state = chooseNavState[currentRole as keyof typeof chooseNavState]
             setCategories(chooseCategory[currentRole as keyof typeof chooseCategory])
             setActiveButton(state.active)

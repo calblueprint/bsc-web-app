@@ -14,6 +14,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import HomeIcon from '@mui/icons-material/Home'
 import LogoutIcon from '@mui/icons-material/Logout'
 // import useGoToRoute from '../../hooks/useGoToRoute'
+import PersonIcon from '@mui/icons-material/Person'
 
 //** Redux API Slices */
 import { useAuthLogOutMutation } from '../../features/auth/authApiSlice'
@@ -28,9 +29,17 @@ import NavButtons from './NavButtons'
 //** Interfaces */
 import { NavP } from '../../interfaces/interfaces'
 import { House, User } from '@/types/schema'
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '@/features/auth/authSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCurrentUser, setCurrentRole } from '@/features/auth/authSlice'
 import { useRouter } from 'next/router'
+import { Avatar } from '@mui/material'
+
+import Button from '@mui/material/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
+import useUserRolePath from '@/hooks/useUserRolePath'
+import useAuth from '@/hooks/useAuth'
 
 const item = {
     py: '2px',
@@ -56,9 +65,13 @@ const NavBar = (props: DrawerProps) => {
     // Destructuring component properties
     const { ...other } = props
 
-    // Get current user from redux state
-    // const { user } = useAuth()
-    const user = useSelector(selectCurrentUser) as User
+    // Get current authUser from redux state
+    // const { authUser } = useAuth()
+    const authUser = useSelector(selectCurrentUser) as User
+    const dispatch = useDispatch()
+
+    const { isManagerPath, isMemberPath, isSupervisorPath } = useUserRolePath()
+    const { isManager, isMember, isSupervisor } = useAuth()
 
     const {
         data: houseEntity,
@@ -66,13 +79,31 @@ const NavBar = (props: DrawerProps) => {
         isLoading: isHouseLoading,
         isError: isHouseError,
         error: houseError,
-    } = useGetHouseQuery(user?.houseID)
+    } = useGetHouseQuery(authUser?.houseID)
 
     const [houseName, setHouseName] = useState('BSC')
 
     const [sendLogout, { isLoading, isSuccess, isError, error }] = useAuthLogOutMutation()
     const router = useRouter()
     // const nav = useGoToRoute()
+    //***************** */
+    const handleMemberClick = () => {
+        if (isMember) {
+            dispatch(setCurrentRole('member'))
+        }
+    }
+    const handleManagerClick = () => {
+        if (isManager) {
+            dispatch(setCurrentRole('manager'))
+        }
+    }
+    const handleSupervisorClick = () => {
+        if (isSupervisor) {
+            dispatch(setCurrentRole('supervisor'))
+        }
+    }
+    //****************** */
+
     const handleLogout = () => {
         sendLogout({})
     }
@@ -89,15 +120,15 @@ const NavBar = (props: DrawerProps) => {
     }, [isSuccess])
 
     useEffect(() => {
-        if (houseEntity && user) {
-            const house = houseEntity.entities[user.houseID] as House
+        if (houseEntity && authUser) {
+            const house = houseEntity.entities[authUser.houseID] as House
             // console.log(house)
             if (house) {
                 // console.log(house.name)
                 setHouseName(house.name)
             }
         }
-    }, [houseEntity, user])
+    }, [houseEntity, authUser])
 
     //TODO: Delete after testing ******************************
     // useEffect(() => {
@@ -123,20 +154,86 @@ const NavBar = (props: DrawerProps) => {
                 <List disablePadding>
                     <ListItem
                         sx={{
-                            ...item,
                             ...itemCategory,
-                            fontSize: 22,
+                            py: 2,
+                            px: 3,
+                            fontSize: 30,
                             color: '#fff',
                         }}
                     >
                         BSC
                     </ListItem>
-                    <ListItem sx={{ ...item, ...itemCategory }}>
+                    <ListItem
+                        sx={{ ...itemCategory, py: 1.5, px: 3, color: 'rgba(255, 255, 255, 0.7)' }}
+                    >
                         <ListItemIcon>
                             <HomeIcon />
                         </ListItemIcon>
                         <ListItemText>{`${isHouseSuccess ? houseName : 'BSC'} House`}</ListItemText>
                     </ListItem>
+                    <ListItem
+                        sx={{ ...itemCategory, py: 1.5, px: 3, color: 'rgba(255, 255, 255, 0.7)' }}
+                    >
+                        <ListItemIcon>
+                            <Avatar />
+                        </ListItemIcon>
+                        <ListItemText>{`Welcome ${
+                            authUser.preferredName ? authUser.preferredName : 'Member'
+                        }`}</ListItemText>
+                    </ListItem>
+                    <Box sx={{ bgcolor: '#101F33' }}>
+                        <ListItem disablePadding>
+                            <PopupState variant='popover' popupId='demo-popup-menu'>
+                                {(popupState) => (
+                                    <React.Fragment>
+                                        <ListItemButton
+                                            sx={{ ...item, ...itemCategory }}
+                                            {...bindTrigger(popupState)}
+                                        >
+                                            <ListItemIcon>
+                                                <PersonIcon />
+                                            </ListItemIcon>
+                                            <ListItemText>Switch User Role</ListItemText>
+                                        </ListItemButton>
+
+                                        <Menu {...bindMenu(popupState)}>
+                                            {isMember && !isMemberPath ? (
+                                                <MenuItem
+                                                    onClick={() => {
+                                                        handleMemberClick()
+                                                        popupState.close
+                                                    }}
+                                                >
+                                                    Member
+                                                </MenuItem>
+                                            ) : null}
+                                            {isManager && !isManagerPath ? (
+                                                <MenuItem
+                                                    onClick={() => {
+                                                        handleManagerClick()
+                                                        popupState.close
+                                                    }}
+                                                >
+                                                    Manager
+                                                </MenuItem>
+                                            ) : null}
+
+                                            {isSupervisor && !isSupervisorPath ? (
+                                                <MenuItem
+                                                    onClick={() => {
+                                                        handleSupervisorClick()
+                                                        popupState.close()
+                                                    }}
+                                                >
+                                                    Supervisor
+                                                </MenuItem>
+                                            ) : null}
+                                        </Menu>
+                                    </React.Fragment>
+                                )}
+                            </PopupState>
+                        </ListItem>
+                    </Box>
 
                     <NavButtons />
 

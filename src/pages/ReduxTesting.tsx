@@ -118,7 +118,7 @@ const ShiftTesting = () => {
 
     React.useEffect(() => {
         if (isSuccess) {
-            console.log('Shifts Entity: ', dataShifts)
+            // console.log('Shifts Entity: ', dataShifts)
         }
         if (isError) {
             console.log('Error: ', error)

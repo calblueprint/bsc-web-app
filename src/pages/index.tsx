@@ -13,23 +13,24 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
     const router = useRouter()
     const authUser = useSelector(selectCurrentUser)
-    const { isMember, isManager, isSupervisor } = useAuth()
 
     useEffect(() => {
         // Check if the user is logged in
         // console.log('[Home Component] authUser: ' + authUser, isMember, isManager, isSupervisor)
         // router.push('/account')
 
-        if (authUser && (isMember || isManager || isSupervisor)) {
-            if (isSupervisor) {
+        if (authUser) {
+            const roles = authUser.roles
+            console.log('[Home Page]: roles: ', roles)
+            if (roles.includes('supervisor')) {
                 router.replace('/account/supervisor')
-            } else if (isManager) {
+            } else if (roles.includes('manager')) {
                 router.replace('/account/manager')
-            } else if (isMember) {
+            } else if (roles.includes('member')) {
                 router.replace('/account/member')
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authUser, isMember, isManager, isSupervisor])
+    }, [authUser])
     return <Loading />
 }

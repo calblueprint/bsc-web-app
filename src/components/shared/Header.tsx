@@ -80,21 +80,21 @@ const Header = (props: HeaderProps) => {
         }
     }, [user])
 
-    const handleMemberClick = () => {
-        if (isMember) {
-            dispatch(setCurrentRole('Member'))
-        }
-    }
-    const handleManagerClick = () => {
-        if (isManager) {
-            dispatch(setCurrentRole('Manager'))
-        }
-    }
-    const handleSupervisorClick = () => {
-        if (isSupervisor) {
-            dispatch(setCurrentRole('Supervisor'))
-        }
-    }
+    // const handleMemberClick = () => {
+    //     if (isMember) {
+    //         dispatch(setCurrentRole('Member'))
+    //     }
+    // }
+    // const handleManagerClick = () => {
+    //     if (isManager) {
+    //         dispatch(setCurrentRole('Manager'))
+    //     }
+    // }
+    // const handleSupervisorClick = () => {
+    //     if (isSupervisor) {
+    //         dispatch(setCurrentRole('Supervisor'))
+    //     }
+    // }
 
     //TODO: Delete after testing ******************************
     // React.useEffect(() => {
@@ -120,7 +120,7 @@ const Header = (props: HeaderProps) => {
                                 <MenuIcon />
                             </IconButton>
                         </Grid>
-                        <Grid item xs />
+                        {/* <Grid item xs />
                         {!isMemberPath ? (
                             <Grid item>
                                 <Button
@@ -173,7 +173,7 @@ const Header = (props: HeaderProps) => {
                                     <NotificationsIcon />
                                 </IconButton>
                             </Tooltip>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                 </Toolbar>
             </AppBar>
@@ -186,6 +186,16 @@ const Header = (props: HeaderProps) => {
             >
                 <Toolbar>
                     <Grid container alignItems='center' spacing={1}>
+                        {/* <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
+                            <IconButton
+                                color='inherit'
+                                aria-label='open drawer'
+                                onClick={onDrawerToggle}
+                                edge='start'
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        </Grid> */}
                         <Grid item xs>
                             <Typography color='inherit' variant='h5' component='h1'>
                                 {isMemberPath ? memberNavState.id : null}

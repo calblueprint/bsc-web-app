@@ -20,6 +20,7 @@ export const AuthState = ({ children }: Props) => {
 
     const [isAuthorized, setIsAuthorized] = useState(false)
     const [authUser, setAuthUser] = useState({})
+    const [isProcessing, setIsProcessing] = useState(true)
 
     useEffect(() => {
         // console.log('*****AuthState Component ran')
@@ -30,6 +31,7 @@ export const AuthState = ({ children }: Props) => {
                 setAuthUser(user)
                 await establishContext(user.uid)
                 setIsAuthorized(true)
+                setIsProcessing(false)
 
                 // console.log('Error: ', error)
             } else {
@@ -37,6 +39,7 @@ export const AuthState = ({ children }: Props) => {
                 // router.replace('/login')
                 setIsAuthorized(false)
                 window.history.replaceState(null, 'Log In', '/login')
+                setIsProcessing(false)
             }
         })
         return () => unsubscribe()
@@ -55,14 +58,18 @@ export const AuthState = ({ children }: Props) => {
         content = <Box>There was an Error </Box>
     } else if (isSuccess && isAuthorized) {
         content = <React.Fragment>{authUser ? children : null}</React.Fragment>
-    } else if (!isLoading && !isAuthorized) {
+    } else if (!isProcessing && !isAuthorized) {
         content = (
             <React.Fragment>
                 <Login />
             </React.Fragment>
         )
     } else {
-        content = <React.Fragment>unknown error</React.Fragment>
+        content = (
+            <React.Fragment>
+                <Loading />
+            </React.Fragment>
+        )
     }
 
     return content

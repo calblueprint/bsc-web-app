@@ -10,6 +10,7 @@ const useAuth = () => {
     const [isManager, setIsManager] = useState(false)
     const [isMember, setIsMember] = useState(false)
     const [isSupervisor, setIsSupervisor] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
 
     const goToRole = () => {
@@ -26,22 +27,23 @@ const useAuth = () => {
 
     useEffect(() => {
         if (authUser) {
-            console.log('[useAuth]: authUser', authUser)
+            // console.log('[useAuth]: authUser', authUser)
             const roles:string[] = authUser.roles
-        if (roles && roles.length > 0) {
-            console.log('[useAuth]: roles', roles)
-            setIsManager(roles.includes('manager'))
-            setIsSupervisor(roles.includes('supervisor'))
-            setIsMember(roles.includes('member'))
-        }
+            if (roles && roles.length > 0) {
+                // console.log('[useAuth]: roles', roles)
+                setIsManager(roles.includes('manager'))
+                setIsSupervisor(roles.includes('supervisor'))
+                setIsMember(roles.includes('member'))
+                setIsLoading(false)
+            }
   
 
         }
     }, [authUser])
 
-    console.log(isSupervisor, isMember, isManager)
+    // console.log(isSupervisor, isMember, isManager)
    
-    return {isManager, isSupervisor, isMember, goToRole }
+    return {isManager, isSupervisor, isMember, goToRole, isLoading }
 }
 
 export default useAuth
