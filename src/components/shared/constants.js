@@ -4,10 +4,9 @@ import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 export const memberTabs = {
-    Dashboard: [{ id: 'Overview' }, { id: 'Actions' }, { id: 'So Cool' }],
     Schedule: [{ id: 'Overview' }, { id: 'Tab2' }],
-    Marketplace: [{ id: 'Overview' }, { id: 'Tab2' }],
-    Profile: [{ id: 'Overview' }, { id: 'Tab2' }],
+    Members: [{ id: 'Overview' }, { id: 'Tab2' }],
+    Settings: [{ id: 'Overview' }, { id: 'Tab2' }],
 }
 
 export const managerTabs = {
@@ -27,19 +26,13 @@ export const memberCategories = [
         id: 'Member',
         children: [
             {
-                id: 'Dashboard',
-                path: '/account/member',
-                active: 0,
-                icon: <DashboardCustomizeRoundedIcon />,
-            },
-            {
                 id: 'Schedule',
                 path: '/account/member',
                 active: 1,
                 icon: <CalendarMonthRoundedIcon />,
             },
             {
-                id: 'Marketplace',
+                id: 'Members',
                 path: '/account/member',
                 active: 2,
                 icon: <StorefrontRoundedIcon />,
@@ -50,7 +43,7 @@ export const memberCategories = [
         id: 'Other',
         children: [
             {
-                id: 'Profile',
+                id: 'Settings',
                 path: '/account/member',
                 active: 3,
             },

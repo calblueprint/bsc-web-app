@@ -14,6 +14,9 @@ import DashboardCustomizeRoundedIcon from '@mui/icons-material/DashboardCustomiz
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded'
 import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
 import SettingsIcon from '@mui/icons-material/Settings'
+import MapIcon from '@mui/icons-material/Map'
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline'
+import BorderColorIcon from '@mui/icons-material/BorderColor'
 
 //** Hooks */
 import { useSelector, useDispatch } from 'react-redux'
@@ -57,12 +60,15 @@ const getIcon = (iconName: string): React.ReactElement | null => {
         case 'Dashboard':
             return <DashboardCustomizeRoundedIcon />
         case 'Schedule':
-        case 'Planner':
             return <CalendarMonthRoundedIcon />
-        case 'Profile':
+        case 'Planner':
+            return <BorderColorIcon />
+        case 'Settings':
             return <SettingsIcon />
         case 'Marketplace':
             return <StorefrontRoundedIcon />
+        case 'Members':
+            return <PeopleOutlineIcon />
         default:
             return null
     }
