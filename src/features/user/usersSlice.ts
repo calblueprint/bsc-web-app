@@ -4,8 +4,8 @@ import { createSlice } from '@reduxjs/toolkit'
 const usersSlice = createSlice({
     name: 'users',
     initialState: {
-        memberNavState: { id: 'Dashboard', tab: 0, path: '/account/member', active: 0 },
-        managerNavState: { id: 'Dashboard', tab: 0, path: '/account/manager', active: 0 },
+        memberNavState: { id: 'Schedule', tab: 0, path: '/account/member', active: 0 },
+        managerNavState: { id: 'Schedule', tab: 0, path: '/account/manager', active: 0 },
         supervisorNavState: {
             id: 'Dashboard',
             tab: 0,
