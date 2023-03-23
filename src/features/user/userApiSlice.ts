@@ -41,7 +41,9 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewUser: builder.mutation({
-      query: (data) => ({
+      query: (data: {
+        data: Partial<User>
+      }) => ({
         url: `users`,
         method: 'POST',
         body: {
@@ -51,14 +53,17 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'User', id: 'LIST' }],
     }),
     updateUser: builder.mutation({
-      query: (data) => ({
+      query: (data: {
+        userId: string,
+        data: Partial<User>
+      }) => ({
         url: `users/${data.userId}`,
         method: 'PATCH',
         body: {
           ...data.data,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'User', id: arg.id }],
+      invalidatesTags: (result, error, arg) => [{ type: 'User', id: arg.userId }],
     }),
     // deleteUser: builder.mutation({
     //   query: ({ id }) => ({
