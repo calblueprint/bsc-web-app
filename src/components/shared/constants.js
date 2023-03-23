@@ -4,8 +4,8 @@ import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 export const memberTabs = {
-    Schedule: [{ id: 'Overview' }, { id: 'Tab2' }],
-    Members: [{ id: 'Overview' }, { id: 'Tab2' }],
+    Schedule: [{ id: 'Individual' }, { id: 'All Shifts' }],
+    Members: [{ id: 'Information' }],
     Settings: [{ id: 'Overview' }, { id: 'Tab2' }],
 }
 

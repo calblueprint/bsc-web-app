@@ -22,7 +22,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { useSelector, useDispatch } from 'react-redux'
 
 //** React Redux */
-import { selectCurrentRole } from '../../features/auth/authSlice'
+import { selectCurrentRole } from '../../../features/auth/authSlice'
 import {
     setMemberNavState,
     selectMemberNavState,
@@ -30,10 +30,10 @@ import {
     selectManagerNavState,
     setSupervisorNavState,
     selectSupervisorNavState,
-} from '../../features/user/usersSlice'
+} from '../../../features/user/usersSlice'
 
 //** Constant Variables */
-import { memberCategories, managerCategories, supervisorCategories } from './constants'
+import { memberCategories, managerCategories, supervisorCategories } from './../constants'
 
 //** Interfaces */
 import { useRouter } from 'next/router'
