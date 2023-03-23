@@ -25,7 +25,7 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       transformResponse: (responseData: House[]) => {
         // console.log('[transformResponse] responseData: ', responseData)
         const loadedHouses = responseData.map((entity) => {
-          // console.log('[loaddedShifts] entity: ', entity)
+          console.log('[loaddedShifts] entity: ', entity)
           entity.id = entity.id
           return entity
         })

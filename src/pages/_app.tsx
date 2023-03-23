@@ -20,7 +20,12 @@ let theme = createTheme({
     typography: {
         h5: {
             fontWeight: 500,
-            fontSize: 26,
+            fontSize: 40,
+            letterSpacing: 0.5,
+        },
+        subtitle1: {
+            fontWeight: 500,
+            fontSize: 20,
             letterSpacing: 0.5,
         },
     },
@@ -89,6 +94,7 @@ theme = {
                         padding: 0,
                         minWidth: 0,
                     },
+                    fontSize: '18px',
                 },
             },
         },
@@ -125,7 +131,7 @@ theme = {
         MuiListItemText: {
             styleOverrides: {
                 primary: {
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: theme.typography.fontWeightMedium,
                 },
             },
@@ -137,7 +143,7 @@ theme = {
                     minWidth: 'auto',
                     marginRight: theme.spacing(2),
                     '& svg': {
-                        fontSize: 20,
+                        fontSize: 26,
                     },
                 },
             },

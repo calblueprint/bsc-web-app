@@ -105,13 +105,14 @@ const customBaseQuery: BaseQueryFn<
               }
             }
 
+            // console.log('[ApiSlice]: snapshot: ' + snapshot.id, pathArray[pathArray.length - 1])
             //** Add resObj to resObj array */
             resObj.push({
-              id: pathArray[pathArray.length - 1],
               ...(snapshot.data() ?? null),
+              id: snapshot.id,
             })
 
-            // console.log(resObj)
+            console.log(resObj)
             //** Return the resObj wrapped in a Response object */
             return { data: resObj }
           }

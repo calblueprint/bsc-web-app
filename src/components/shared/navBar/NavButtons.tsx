@@ -39,7 +39,7 @@ import { memberCategories, managerCategories, supervisorCategories } from './../
 import { useRouter } from 'next/router'
 
 const item = {
-    py: '2px',
+    py: 1.5,
     px: 3,
     color: 'rgba(255, 255, 255, 0.7)',
     '&:hover, &:focus': {
