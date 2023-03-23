@@ -7,7 +7,7 @@ const usersSlice = createSlice({
         memberNavState: { id: 'Schedule', tab: 0, path: '/account/member', active: 0 },
         managerNavState: { id: 'Schedule', tab: 0, path: '/account/manager', active: 0 },
         supervisorNavState: {
-            id: 'Dashboard',
+            id: 'Schedule',
             tab: 0,
             path: '/account/supervisor',
             active: 0,
