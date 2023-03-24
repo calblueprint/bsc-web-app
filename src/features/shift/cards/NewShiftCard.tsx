@@ -2,8 +2,15 @@ import ShiftForm from '../forms/ShiftForm'
 import { Button, Dialog, Typography, DialogContent, DialogTitle } from '@mui/material'
 import { useState } from 'react'
 
-function NewShiftCard({ shiftId }: { shiftId?: string }) {
-    const [open, setOpen] = useState(false)
+function NewShiftCard({
+    shiftId,
+    setOpen,
+    open,
+}: {
+    shiftId?: string
+    setOpen: (value: React.SetStateAction<boolean>) => void
+    open: boolean
+}) {
     // const [shiftValues, setShiftValues] = useState(null)
     const handleClose = () => {
         setOpen(false)
@@ -14,10 +21,6 @@ function NewShiftCard({ shiftId }: { shiftId?: string }) {
     }
     return (
         <>
-            <Button fullWidth variant='contained' onClick={handleOpen}>
-                <Typography>Add Shift</Typography>
-            </Button>
-
             <Dialog fullWidth maxWidth='md' open={open} onClose={handleClose} className='dialog'>
                 <DialogTitle variant='h4' component='h2'>
                     Create Shift

@@ -4,20 +4,22 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker'
 
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import * as Yup from 'yup'
 import { TextInput, SelectInput } from '../../../components/shared/forms/CustomFormikFields'
 import {
     selectShiftById,
     useAddNewShiftMutation,
+    useGetShiftsQuery,
     useUpdateShiftMutation,
 } from '../../shift/shiftApiSlice'
 import { useSelector } from 'react-redux'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { formatMilitaryTime } from '../../../utils/utils'
 import { RootState } from '../../../store/store'
 import { EntityId } from '@reduxjs/toolkit'
-import { Shift } from '../../../types/schema'
+import { House, Shift, User } from '../../../types/schema'
+import { selectCurrentHouse, selectCurrentUser } from '@/features/auth/authSlice'
 
 //** Yup allows us to define a schema, transform a value to match, and/or assert the shape of an existing value. */
 //** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. */
@@ -25,28 +27,30 @@ const ShiftSchema = Yup.object({
     name: Yup.string().required('Name is required').min(1, 'Name must have at least 1 characters'),
     description: Yup.string(),
     possibleDays: Yup.array().of(Yup.string()),
-    timeWindowStartTime: Yup.date().required('Start time is required'),
-    timeWindowEndTime: Yup.date().required('End time is required'),
+    startTime: Yup.date().required('Start time is required'),
+    endTime: Yup.date().required('End time is required'),
     category: Yup.string().required('Cagegory is required'),
     hours: Yup.number().required('Hours credit is required'),
     verificationBuffer: Yup.number(),
     assignedUser: Yup.string(),
+    assignedDay: Yup.string(),
 })
 
 const daysList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-const shiftCategories = ['cook dinner', 'clean bathroom', 'wash dishes', 'clean basement']
+// const shiftCategories = ['cook dinner', 'clean bathroom', 'wash dishes', 'clean basement']
 
 const emptyShift = {
     name: '',
     category: '',
     possibleDays: [],
-    timeWindowStartTime: dayjs(),
-    timeWindowEndTime: dayjs(),
+    startTime: dayjs('2023-04-17T12:00'),
+    endTime: dayjs('2023-04-17T18:30'),
     hours: 0,
     despription: '',
     verificationBuffer: 0,
     assignedUser: '',
+    assignedDay: '',
 }
 
 const ShiftForm = ({
@@ -58,6 +62,38 @@ const ShiftForm = ({
     shiftId?: string
     isNewShift: boolean
 }) => {
+    // const authUser = useSelector(selectCurrentUser) as User
+    const currentHouse = useSelector(selectCurrentHouse) as House
+
+    //** House shifts */
+    const { data: shiftsData, isSuccess: isShiftsSuccess } = useGetShiftsQuery(currentHouse.id)
+
+    //** for editing shifts */
+    const shift: Shift = useSelector(
+        (state: RootState) => selectShiftById(currentHouse.id)(state, shiftId as EntityId) as Shift
+    )
+
+    //** Holds the house shifts categories */
+    const [houseCategories, setHouseCategories] = useState<string[]>(['Uncategorized'])
+
+    //** Get the house categories */
+    useEffect(() => {
+        // console.log('currentHouse: ', currentHouse)
+        // console.log('shiftsData: ', shiftsData)
+        if (shiftsData && isShiftsSuccess) {
+            // console.log('shiftsData: ', shiftsData)
+            const categories = [...houseCategories]
+            shiftsData.ids.forEach((id) => {
+                const category = shiftsData.entities[id]?.category
+                if (category && !categories.includes(category)) {
+                    categories.push(category)
+                }
+            })
+            // console.log('Categories: ', categories)
+            setHouseCategories(categories)
+        }
+    }, [shiftsData, isShiftsSuccess, houseCategories])
+
     //* Get API helpers to create or update a shift
     const [
         addNewShift,
@@ -78,37 +114,43 @@ const ShiftForm = ({
         },
     ] = useUpdateShiftMutation()
 
-    const shift: Shift = useSelector(
-        (state: RootState) => selectShiftById('EUC')(state, shiftId as EntityId) as Shift
-    )
-
     const onSubmit = async (
         values: {
             name: string
             category: string
             hours: number
-            timeWindowStartTime: dayjs.Dayjs
-            timeWindowEndTime: dayjs.Dayjs
+            startTime: Dayjs
+            endTime: Dayjs
             possibleDays: string[]
             description: string
             verificationBuffer: number
+            assignedUser: string | undefined
+            assignedDay: string
         },
         formikBag: FormikHelpers<any>
     ) => {
         // console.log('Submiting ShiftForm: ', values)
         const {
             name,
-            category,
+            category: categoryString,
             hours,
             description,
             possibleDays,
-            timeWindowStartTime,
-            timeWindowEndTime,
+            startTime: startTimeObject,
+            endTime: endTimeObject,
             verificationBuffer,
+            assignedUser,
+            assignedDay,
         } = values
 
-        const startTime = Number(timeWindowStartTime.format('HHmm'))
-        const endTime = Number(timeWindowEndTime.format('HHmm'))
+        const startTime = Number(startTimeObject.format('HHmm'))
+        const endTime = Number(endTimeObject.format('HHmm'))
+        let category
+        if (categoryString === undefined || categoryString === 'Uncategorized') {
+            category = ''
+        } else {
+            category = categoryString
+        }
 
         // console.log(dayjs('1900', 'HHmm').format('HHmm'))
         // const num = 1900
@@ -116,7 +158,7 @@ const ShiftForm = ({
 
         // const dayString = possibleDays.join('')
         let result
-        const timeWindow = [startTime, endTime]
+        const timeWindow = { startTime, endTime }
         const timeWindowDisplay =
             formatMilitaryTime(startTime) + ' - ' + formatMilitaryTime(endTime)
         const data = { data: {}, houseId: '', shiftId: '' }
@@ -129,8 +171,10 @@ const ShiftForm = ({
             timeWindow,
             verificationBuffer,
             timeWindowDisplay,
+            assignedUser,
+            assignedDay,
         }
-        data.houseId = 'EUC'
+        data.houseId = currentHouse.id
         data.shiftId = shiftId ? shiftId : ''
         // console.log('data: ', data)
         if (isNewShift || !shiftId) {
@@ -158,12 +202,12 @@ const ShiftForm = ({
                     name: shift ? shift.name : emptyShift.name,
                     category: shift ? shift.category : emptyShift.category,
                     hours: shift ? shift.hours : emptyShift.hours,
-                    timeWindowStartTime: shift
-                        ? dayjs(shift.timeWindow[0].toString(), 'HHmm')
-                        : emptyShift.timeWindowStartTime,
-                    timeWindowEndTime: shift
-                        ? dayjs(shift.timeWindow[1].toString(), 'HHmm')
-                        : emptyShift.timeWindowEndTime,
+                    startTime: shift
+                        ? dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
+                        : emptyShift.startTime,
+                    endTime: shift
+                        ? dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
+                        : emptyShift.endTime,
                     possibleDays: shift
                         ? shift.possibleDays
                             ? shift.possibleDays
@@ -173,6 +217,8 @@ const ShiftForm = ({
                     verificationBuffer: shift
                         ? shift.verificationBuffer
                         : emptyShift.verificationBuffer,
+                    assignedUser: shift ? shift.assignedUser : emptyShift.assignedUser,
+                    assignedDay: shift ? shift.assignedDay : emptyShift.assignedDay,
                 }}
                 onSubmit={onSubmit}
             >
@@ -185,24 +231,22 @@ const ShiftForm = ({
                             label='Category'
                             labelid='category'
                             id='category'
-                            options={shiftCategories}
+                            options={houseCategories}
                             multiselect={false}
                         />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <MobileTimePicker
                                 label='Start Window Time'
                                 minutesStep={30}
-                                value={values.timeWindowStartTime}
-                                onChange={(newValue) =>
-                                    setFieldValue('timeWindowStartTime', newValue)
-                                }
+                                value={values.startTime}
+                                onChange={(newValue) => setFieldValue('startTime', newValue)}
                             />
                             <MobileTimePicker
                                 label='End Window Time'
                                 minutesStep={30}
-                                value={values.timeWindowEndTime}
+                                value={values.endTime}
                                 onChange={(newValue) => {
-                                    setFieldValue('timeWindowEndTime', newValue)
+                                    setFieldValue('endTime', newValue)
                                 }}
                             />
                         </LocalizationProvider>

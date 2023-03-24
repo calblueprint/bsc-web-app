@@ -64,38 +64,39 @@ export type User = {
 export type Shift = {
   // optional id attribute for table stuff
   id?: string
-  // Name of the shift
-  name: string
+  // Name of the shift  
+  name: string           //! Form Item
   // ID of the shift (not stored in Firebase, attached to shift)
   shiftID: string
   // Description of the shift
-  description: string
+  description: string   //! Form Item
   // Possible days that the shift can be done on
-  possibleDays: string[]
+  possibleDays: string[]    //! Form Item
   // Number of people who can be assigned to this shift
   // TODO: remove this because all shifts will have only one user
   numOfPeople?: number
-  // Time window that this shift must be done in [startTime, endTime]
-  timeWindow: number[]
+  // Time window that this shift must be done in [startTime, endTime] //! Changed this property
+  timeWindow: {startTime:number, endTime:number}  //! Form Item
   // property to display timeWindow
-  timeWindowDisplay: string
+  timeWindowDisplay: string               //Todo: Maybe delete this property
   // Day that the shift is assigned
-  assignedDay: string
+  assignedDay: string               //! Form Item  
   // Hours earned for a user
-  hours: number
+  hours: number                     //! Form Item
   // Number of hours since end time that you are allowed to verify a shift for
-  verificationBuffer: number
+  verificationBuffer: number        //! Form Item
+  // Verification
   verification: boolean
   // Users assigned to the shift
   // TODO: remove this because all shifts will have only one user
   usersAssigned?: string[]
   // Category of work that the shift belongs to
-  category: string
+  category: string              //! Form Item
 
   //** new attributes below */
 
   // User assigned to the shift
-  assignedUser?: string
+  assignedUser?: string         //! Form Item
 }
 
 // TODO: remove this because we are no longer using this
