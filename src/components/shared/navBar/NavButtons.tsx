@@ -17,6 +17,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import MapIcon from '@mui/icons-material/Map'
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
+import { useTheme } from '@mui/material/styles'
 
 //** Hooks */
 import { useSelector, useDispatch } from 'react-redux'
@@ -41,10 +42,10 @@ import { useRouter } from 'next/router'
 const item = {
     py: 1.5,
     px: 3,
-    color: 'rgba(255, 255, 255, 0.7)',
-    '&:hover, &:focus': {
-        bgcolor: 'rgba(255, 255, 255, 0.08)',
-    },
+    // color: 'rgba(255, 255, 255, 0.7)',
+    // '&:hover, &:focus': {
+    //     bgcolor: 'rgba(255, 255, 255, 0.08)',
+    // },
 }
 
 // const icons = {
@@ -97,6 +98,7 @@ const NavButtons = () => {
     const managerNavState = useSelector(selectManagerNavState)
     const supervisorNavState = useSelector(selectSupervisorNavState)
     const currentRole = useSelector(selectCurrentRole)
+    const theme = useTheme()
 
     //** Action dispatcher from redux */
     const dispatch = useDispatch()
@@ -173,16 +175,20 @@ const NavButtons = () => {
 
     let buttons = categories?.map(({ id, children }) => (
         <Box key={id} sx={{ bgcolor: '#101F33' }}>
-            <ListItem sx={{ py: 2, px: 3 }}>
+            {/* <ListItem sx={{ py: 2, px: 3 }}>
                 <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
-            </ListItem>
+            </ListItem> */}
             {children.map(({ id: childId, active }) => {
                 const isActive = active === activeButton ? true : false
                 return (
                     <ListItem disablePadding key={childId}>
                         <ListItemButton
                             selected={isActive}
-                            sx={item}
+                            sx={
+                                item
+                                // color: theme.palette.primary.light,
+                                // '&:hover, &:focus': theme.palette.primary.main,
+                            }
                             onClick={() => handleClick(childId)}
                         >
                             <ListItemIcon>{getIcon(childId)}</ListItemIcon>

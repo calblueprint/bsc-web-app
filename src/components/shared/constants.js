@@ -16,7 +16,7 @@ export const managerTabs = {
 }
 export const supervisorTabs = {
     Schedule: [{ id: 'All Shifts' }, { id: 'Individual' }],
-    Planner: [{ id: 'Unassigned' }, { id: 'Assigned' }],
+    Planner: [{ id: 'Unassigned' }, { id: 'Assigned' }, { id: 'Categories' }],
     Members: [{ id: 'Information' }, { id: 'Availability' }],
 }
 
@@ -28,24 +28,19 @@ export const memberCategories = [
             {
                 id: 'Schedule',
                 path: '/account/member',
-                active: 1,
+                active: 0,
                 icon: <CalendarMonthRoundedIcon />,
             },
             {
                 id: 'Members',
                 path: '/account/member',
-                active: 2,
+                active: 1,
                 icon: <StorefrontRoundedIcon />,
             },
-        ],
-    },
-    {
-        id: 'Other',
-        children: [
             {
                 id: 'Settings',
                 path: '/account/member',
-                active: 3,
+                active: 2,
             },
         ],
     },

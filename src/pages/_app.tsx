@@ -1,4 +1,4 @@
-import '@/styles/globals.css'
+// import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AuthState } from '@/features/auth/AuthState'
 
@@ -12,9 +12,22 @@ import CssBaseline from '@mui/material/CssBaseline'
 let theme = createTheme({
     palette: {
         primary: {
-            light: '#63ccff',
+            // light: '#63ccff',
+
+            light: '#C0C0C0',
             main: '#1A202C',
-            dark: '#006db3',
+            // main: '#1A202C',
+            dark: '#232323',
+            // dark: '#006db3',
+        },
+        secondary: {
+            // light: '#63ccff',
+
+            light: '#C0C0C0',
+            main: '#ffffff',
+            // main: '#1A202C',
+            dark: '#232323',
+            // dark: '#006db3',
         },
     },
     typography: {
@@ -22,11 +35,14 @@ let theme = createTheme({
             fontWeight: 500,
             fontSize: 40,
             letterSpacing: 0.5,
+            font: 'Inter',
         },
         subtitle1: {
             fontWeight: 500,
+            font: 'Inter',
             fontSize: 20,
             letterSpacing: 0.5,
+            color: '#ffffff',
         },
     },
 
@@ -79,7 +95,7 @@ theme = {
                     height: 3,
                     borderTopLeftRadius: 3,
                     borderTopRightRadius: 3,
-                    backgroundColor: theme.palette.common.white,
+                    backgroundColor: theme.palette.primary.dark,
                 },
             },
         },
@@ -123,16 +139,31 @@ theme = {
             styleOverrides: {
                 root: {
                     '&.Mui-selected': {
-                        color: '#4fc3f7',
+                        color: theme.palette.secondary.main,
+                        borderLeft: `5px solid ${theme.palette.secondary.main}`,
                     },
+                    color: theme.palette.primary.light,
+                    '&:hover, &:focus': { color: theme.palette.secondary.main },
                 },
             },
         },
+        // MuiListItem: {
+        //     styleOverrides: {
+        //         root: {
+        //             '&.Mui-selected': {
+        //                 color: theme.palette.primary.main,
+        //             },
+        //             color: theme.palette.primary.light,
+        //             '&:hover, &:focus': { color: theme.palette.primary.main },
+        //         },
+        //     },
+        // },
         MuiListItemText: {
             styleOverrides: {
                 primary: {
                     fontSize: 16,
                     fontWeight: theme.typography.fontWeightMedium,
+                    // color: theme.palette.primary.light,
                 },
             },
         },

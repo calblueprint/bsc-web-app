@@ -45,10 +45,10 @@ import { capitalizeFirstLetter } from '@/utils/utils'
 const item = {
     py: '2px',
     px: 3,
-    color: 'rgba(255, 255, 255, 0.7)',
-    '&:hover, &:focus': {
-        bgcolor: 'rgba(255, 255, 255, 0.08)',
-    },
+    // color: 'rgba(255, 255, 255, 0.7)',
+    // '&:hover, &:focus': {
+    //     bgcolor: 'rgba(255, 255, 255, 0.08)',
+    // },
 }
 
 const itemCategory = {
@@ -176,7 +176,9 @@ const NavBar = (props: DrawerProps) => {
                         </ListItemIcon>
                         <Box sx={{ display: 'flex', flexDirection: 'column', py: 4 }}>
                             <Typography variant='subtitle1' fontWeight={'bold'}>
-                                {authUser.preferredName ? authUser.preferredName : 'Member'}
+                                {authUser.preferredName
+                                    ? authUser.preferredName
+                                    : `${authUser.firstName} ${authUser.lastName}`}
                             </Typography>
                             <Typography variant='body2'>
                                 {`${houseName} ${
