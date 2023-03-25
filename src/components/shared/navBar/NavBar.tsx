@@ -189,7 +189,7 @@ const NavBar = (props: DrawerProps) => {
                     </ListItem>
 
                     <NavButtons />
-
+                    <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ bgcolor: '#101F33' }}>
                         <ListItem disablePadding>
                             <PopupState variant='popover' popupId='demo-popup-menu'>
