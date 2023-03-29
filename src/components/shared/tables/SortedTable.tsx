@@ -48,6 +48,7 @@ export default function SortedTable<
     isSortable,
     disable,
     handleRowClick,
+    handleButtonClick,
 }: {
     ids: EntityId[]
     entities: Dictionary<T>
@@ -56,6 +57,7 @@ export default function SortedTable<
     isSortable: boolean
     disable?: boolean
     handleRowClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
+    handleButtonClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
 }) {
     const [order, setOrder] = React.useState<Order>('asc')
     const [orderBy, setOrderBy] = React.useState<keyof T>(headCells[0].id)
@@ -174,7 +176,9 @@ export default function SortedTable<
                                 align={cell.align}
                                 sx={disable ? { backgroundColor: 'gray' } : {}}
                             >
-                                {row[cell.id]}
+                                {cell.isButton && cell.button
+                                    ? cell.button({ handleButtonClick, id })
+                                    : row[cell.id]}
                             </StyledTableCell>
                         )
                     }

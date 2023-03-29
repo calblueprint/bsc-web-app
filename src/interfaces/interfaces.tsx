@@ -1,3 +1,5 @@
+import { EntityId } from '@reduxjs/toolkit'
+
 export interface User {
     // this id attribute is for the table stuff
     id?: string
@@ -109,6 +111,10 @@ export interface NavP {
     tabValue: number
     setTabValue: React.Dispatch<React.SetStateAction<number>>
 }
+type ButtonProps = {
+    handleButtonClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
+    id: EntityId
+}
 
 // passing in any data type
 export interface HeadCell<
@@ -127,7 +133,7 @@ export interface HeadCell<
     isNumeric: boolean
     isSortable: boolean
     isButton?: boolean
-    button?: React.FC
+    button?: React.FC<ButtonProps>
     align: 'left' | 'center' | 'right' | 'justify' | 'inherit' | undefined
     transformFn?: (value: T) => string
     complexTransformFn?: (a: T, b: string | number) => string

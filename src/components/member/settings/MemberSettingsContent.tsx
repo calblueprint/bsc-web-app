@@ -1,5 +1,6 @@
 import { selectMemberNavState } from '@/features/user/usersSlice'
 import { useSelector } from 'react-redux'
+import MemberAvailabilityTab from './availabilityTab/MemberAvailabilityTab'
 
 const MemberSettingsContent = () => {
     const memberNavState = useSelector(selectMemberNavState)
@@ -7,7 +8,7 @@ const MemberSettingsContent = () => {
     if (memberNavState.tab === 0) {
         content = <h1>Information Content</h1>
     } else if (memberNavState.tab === 1) {
-        content = <h1>Availability Content</h1>
+        content = <MemberAvailabilityTab />
     } else if (memberNavState.tab === 2) {
         content = <h1>Preferences Content</h1>
     } else {
