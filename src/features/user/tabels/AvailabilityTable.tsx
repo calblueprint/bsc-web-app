@@ -1,102 +1,65 @@
-import { HeadCell } from '@/interfaces/interfaces'
-import IconButton from '@mui/material/IconButton'
-import React, { useEffect, useState } from 'react'
-import Delete from '@mui/icons-material/Delete'
-import SortedTable from '../../../components/shared/tables/SortedTable'
-import { selectCurrentUser } from '@/features/auth/authSlice'
+import * as React from 'react'
+import Box from '@mui/material/Box'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell, { tableCellClasses } from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import { styled } from '@mui/material/styles'
+import TableSortLabel from '@mui/material/TableSortLabel'
+import Paper from '@mui/material/Paper'
+import Checkbox from '@mui/material/Checkbox'
+import { visuallyHidden } from '@mui/utils'
+import { getComparator, stableSort, Order } from '../../../utils/utils'
+import { HeadCell } from '../../../interfaces/interfaces'
+import uuid from 'react-uuid'
+import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import { useSelector } from 'react-redux'
-import { Dictionary, EntityId } from '@reduxjs/toolkit'
+import { selectShiftById } from '@/features/shift/shiftApiSlice'
+import AvailabilityItem from '../items/AvailabilityItem'
+import { selectCurrentUser } from '@/features/auth/authSlice'
+import { useEffect, useState } from 'react'
+import { User } from '@/types/schema'
 
-const Days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-
-type ButtonProps = {
-    handleButtonClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
-    id: EntityId
-}
-const DeleteButton = ({ handleButtonClick, id }: ButtonProps) => {
-    return (
-        <IconButton onClick={(event) => (handleButtonClick ? handleButtonClick(event, id) : null)}>
-            <Delete />
-        </IconButton>
-    )
-}
-
-type MemberAvailability = { day: string; time: string; length: number; button: string }
-
-const availabilityHeadCells: HeadCell<
-    MemberAvailability & { [key in keyof MemberAvailability]: string | number }
->[] = [
-    {
-        id: 'day',
-        isNumeric: false,
-        label: 'Day',
-        isSortable: true,
-        align: 'left',
-    },
-    {
-        id: 'time',
-        isNumeric: false,
-        label: 'Time',
-        isSortable: false,
-        align: 'right',
-    },
-    {
-        id: 'length',
-        isNumeric: true,
-        label: 'Length',
-        isSortable: true,
-        align: 'right',
-    },
-    {
-        id: 'button',
-        isNumeric: true,
-        label: '',
-        isSortable: false,
-        align: 'right',
-        isButton: true,
-        button: DeleteButton,
-    },
-]
-
-const AvailabilityTable = () => {
+export default function AvailabilityTable() {
     const authUser = useSelector(selectCurrentUser)
-    const [ids, setIds] = useState<EntityId[]>([])
-    const [entities, setEntities] = useState<Dictionary<MemberAvailability>>({})
-
-    const handleDelete = () => {
-        console.log('handleDelete')
-    }
+    const [availabilities, setAvailabilities] = useState<User['availabilities']>()
 
     useEffect(() => {
-        if (authUser) {
-            const newIds: EntityId[] = []
-            let newEntities: Dictionary<MemberAvailability> = {}
-            for (var i = 0; i < 10; i++) {
-                newIds.push(i.toString())
-                const avail: MemberAvailability = {
-                    day: Days[i % 7],
-                    time: '0' + i + '00',
-                    length: i,
-                    button: 'button',
-                }
-                newEntities[i.toString()] = avail
-            }
-
-            setIds(newIds)
-            setEntities(newEntities)
+        if (authUser && authUser.availabilities) {
+            console.log('User Availabilities: ' + authUser.availabilities)
+            setAvailabilities(authUser.availabilities)
         }
     }, [authUser])
-
     return (
-        <SortedTable
-            ids={ids}
-            entities={entities}
-            headCells={availabilityHeadCells}
-            isCheckable={false}
-            isSortable={true}
-            handleButtonClick={handleDelete}
-        />
+        <Box sx={{ width: '100%' }}>
+            <Paper sx={{ width: '100%', mb: 2 }}>
+                <TableContainer sx={{ maxHeight: 440 }}>
+                    <Table
+                        stickyHeader
+                        sx={{ minWidth: 750 }}
+                        aria-labelledby='tableTitle'
+                        size={'medium'}
+                    >
+                        <TableBody>
+                            {availibilities
+                                ? Object.keys(availabilities).map((day) => {
+                                      console.log('key: ' + day)
+                                      return (
+                                          <AvailabilityItem
+                                              key={uuid()}
+                                              dayAvailability={
+                                                  availabilities ? availabilities[day] : {}
+                                              }
+                                          />
+                                      )
+                                  })
+                                : null}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Paper>
+        </Box>
     )
 }
-
-export default AvailabilityTable
