@@ -1,6 +1,6 @@
-import MemberMembersContent from "@/components/member/members/MemberMembersContent";
-import MemberScheduleContent from "@/components/member/schedule/MemberScheduleContent";
-import MemberSettingsContent from "@/components/member/settings/MemberSettingsContent";
+import MemberMembersContent from "@/components/member/membersPage/MemberMembersPageContent";
+import MemberScheduleContent from "@/components/member/schedulePage/MemberSchedulePageContent";
+import MemberSettingsContent from "@/components/member/settingsPage/MemberSettingsPageContent";
 import Loading from "@/components/shared/Loading";
 import {
   selectCurrentRole,
