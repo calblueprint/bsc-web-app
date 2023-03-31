@@ -43,15 +43,21 @@ export default function AvailabilityTable() {
                         size={'medium'}
                     >
                         <TableBody>
-                            {availibilities
+                            {availabilities
                                 ? Object.keys(availabilities).map((day) => {
                                       console.log('key: ' + day)
                                       return (
                                           <AvailabilityItem
                                               key={uuid()}
                                               dayAvailability={
-                                                  availabilities ? availabilities[day] : {}
+                                                  availabilities &&
+                                                  availabilities[day as keyof typeof availabilities]
+                                                      ? availabilities[
+                                                            day as keyof typeof availabilities
+                                                        ]
+                                                      : []
                                               }
+                                              day={day}
                                           />
                                       )
                                   })
