@@ -11,9 +11,9 @@ import { selectManagerNavState } from "@/features/user/usersSlice";
 import Loading from "@/components/shared/Loading";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/router";
-import ManagerScheduleContent from "@/components/manager/schedule/ManagerScheduleContent";
-import ManagerPlannerContent from "@/components/manager/planner/ManagerPlannerContent";
-import ManagerMembersContent from "@/components/manager/members/ManagerMembersContent";
+import ManagerScheduleContent from "@/components/manager/schedulePage/ManagerSchedulePageContent";
+import ManagerPlannerContent from "@/components/manager/plannerPage/ManagerPlannerPageContent";
+import ManagerMembersContent from "@/components/manager/membersPage/ManagerMembersPageContent";
 
 const ManagerAccount = () => {
   const authUser = useSelector(selectCurrentUser);

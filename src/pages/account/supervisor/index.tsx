@@ -1,7 +1,7 @@
 import Loading from "@/components/shared/Loading";
-import SupervisorMembersContent from "@/components/supervisor/members/SupervisorMembersContent";
-import SupervisorPlannerContent from "@/components/supervisor/planner/SupervisorPlannerContent";
-import SupervisorScheduleContent from "@/components/supervisor/schedule/SupervisorScheduleContent";
+import SupervisorMembersContent from "@/components/supervisor/membersPage/SupervisorMembersPageContent";
+import SupervisorPlannerContent from "@/components/supervisor/plannerPage/SupervisorPlannerPageContent";
+import SupervisorScheduleContent from "@/components/supervisor/schedulePage/SupervisorSchedulePageContent";
 import {
   selectCurrentRole,
   selectCurrentUser,
