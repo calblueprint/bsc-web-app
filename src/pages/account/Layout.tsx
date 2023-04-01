@@ -1,26 +1,26 @@
-import * as React from "react";
-import { ReactNode, useEffect, useState } from "react";
+import * as React from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 //** React Router imports */
 
 //** Materials UI components */
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Box from "@mui/material/Box";
+import useMediaQuery from '@mui/material/useMediaQuery'
+import Box from '@mui/material/Box'
 // import AppBar from '@mui/material/AppBar'
 
 //** Materials UI styles */
-import { useTheme } from "@mui/material/styles";
+import { useTheme } from '@mui/material/styles'
 
 //** Custom components */
-import Copyright from "@/components/shared/Copyright";
-import NavBar from "@/components/shared/navBar/NavBar";
-import Header from "@/components/shared/header/Header";
+import Copyright from '@/components/shared/Copyright'
+import NavBar from '@/components/shared/navBar/NavBar'
+import Header from '@/components/shared/header/Header'
 
 type Props = {
-  children: ReactNode;
-};
+  children: ReactNode
+}
 //** NavBar width constant */
-const drawerWidth = 230; //256
+const drawerWidth = 230 //256
 
 /**
  *
@@ -29,17 +29,17 @@ const drawerWidth = 230; //256
  */
 export default function PrivateLayout({ children }: Props) {
   /** Materials UI styles */
-  const theme = useTheme();
+  const theme = useTheme()
   // TODO: Add description
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false)
 
   // TODO: Add description
-  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'))
 
   // TODO: Add description
   const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+    setMobileOpen(!mobileOpen)
+  }
 
   //TODO: Delete after testing ******************************
   // useEffect(() => {
@@ -52,7 +52,7 @@ export default function PrivateLayout({ children }: Props) {
 
   return (
     <React.Fragment>
-      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         <Box
           component="nav"
           sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -67,22 +67,22 @@ export default function PrivateLayout({ children }: Props) {
           )}
           <NavBar
             PaperProps={{ style: { width: drawerWidth } }}
-            sx={{ display: { sm: "block", xs: "none" } }}
+            sx={{ display: { sm: 'block', xs: 'none' } }}
           />
         </Box>
-        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} />
           <Box
             component="main"
-            sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
+            sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}
           >
             {children}
           </Box>
-          <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
+          <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
             <Copyright />
           </Box>
         </Box>
       </Box>
     </React.Fragment>
-  );
+  )
 }

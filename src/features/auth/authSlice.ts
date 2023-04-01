@@ -6,13 +6,12 @@ type InitialStateProps = {
   currentHouse: House | null
   currentUser: User | null
   currentRole: string
-
 }
 
-const initialState: InitialStateProps = { 
+const initialState: InitialStateProps = {
   currentHouse: null,
   currentUser: null,
-  currentRole: ''
+  currentRole: '',
 }
 
 const authSlice = createSlice({
@@ -23,7 +22,6 @@ const authSlice = createSlice({
       const { user, house } = action.payload
       state.currentUser = user
       state.currentHouse = house
-      
     },
 
     setCurrentHouse: (state, action) => {
@@ -31,7 +29,7 @@ const authSlice = createSlice({
     },
     setCurrentRole: (state, action) => {
       state.currentRole = action.payload
-  },
+    },
     setCurrentUser: (state, action) => {
       state.currentUser = action.payload
     },
@@ -42,8 +40,13 @@ const authSlice = createSlice({
   },
 })
 
-export const { setCredentials, logOut, setCurrentHouse, setCurrentUser, setCurrentRole } =
-  authSlice.actions
+export const {
+  setCredentials,
+  logOut,
+  setCurrentHouse,
+  setCurrentUser,
+  setCurrentRole,
+} = authSlice.actions
 export const selectCurrentHouse = (state: RootState) => state.auth.currentHouse
 export const selectCurrentUser = (state: RootState) => state.auth.currentUser
 export const selectCurrentRole = (state: RootState) => state.auth.currentRole

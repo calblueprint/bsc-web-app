@@ -1,80 +1,80 @@
-import { Formik, Form, FormikHelpers } from "formik";
-import { Stack, Button } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+import { Formik, Form, FormikHelpers } from 'formik'
+import { Stack, Button } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker'
 
-import dayjs from "dayjs";
-import * as Yup from "yup";
+import dayjs from 'dayjs'
+import * as Yup from 'yup'
 import {
   TextInput,
   SelectInput,
-} from "../../../components/shared/forms/CustomFormikFields";
+} from '../../../components/shared/forms/CustomFormikFields'
 import {
   selectShiftById,
   useAddNewShiftMutation,
   useUpdateShiftMutation,
-} from "../../shift/shiftApiSlice";
-import { useSelector } from "react-redux";
-import React from "react";
-import { formatMilitaryTime } from "../../../utils/utils";
-import { RootState } from "../../../store/store";
-import { EntityId } from "@reduxjs/toolkit";
-import { Shift } from "../../../types/schema";
+} from '../../shift/shiftApiSlice'
+import { useSelector } from 'react-redux'
+import React from 'react'
+import { formatMilitaryTime } from '../../../utils/utils'
+import { RootState } from '../../../store/store'
+import { EntityId } from '@reduxjs/toolkit'
+import { Shift } from '../../../types/schema'
 
 //** Yup allows us to define a schema, transform a value to match, and/or assert the shape of an existing value. */
 //** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. */
 const ShiftSchema = Yup.object({
   name: Yup.string()
-    .required("Name is required")
-    .min(1, "Name must have at least 1 characters"),
+    .required('Name is required')
+    .min(1, 'Name must have at least 1 characters'),
   description: Yup.string(),
   possibleDays: Yup.array().of(Yup.string()),
-  timeWindowStartTime: Yup.date().required("Start time is required"),
-  timeWindowEndTime: Yup.date().required("End time is required"),
-  category: Yup.string().required("Cagegory is required"),
-  hours: Yup.number().required("Hours credit is required"),
+  timeWindowStartTime: Yup.date().required('Start time is required'),
+  timeWindowEndTime: Yup.date().required('End time is required'),
+  category: Yup.string().required('Cagegory is required'),
+  hours: Yup.number().required('Hours credit is required'),
   verificationBuffer: Yup.number(),
   assignedUser: Yup.string(),
-});
+})
 
 const daysList = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+]
 
 const shiftCategories = [
-  "cook dinner",
-  "clean bathroom",
-  "wash dishes",
-  "clean basement",
-];
+  'cook dinner',
+  'clean bathroom',
+  'wash dishes',
+  'clean basement',
+]
 
 const emptyShift = {
-  name: "",
-  category: "",
+  name: '',
+  category: '',
   possibleDays: [],
   timeWindowStartTime: dayjs(),
   timeWindowEndTime: dayjs(),
   hours: 0,
-  despription: "",
+  despription: '',
   verificationBuffer: 0,
-  assignedUser: "",
-};
+  assignedUser: '',
+}
 
 const ShiftForm = ({
   setOpen,
   shiftId,
   isNewShift,
 }: {
-  setOpen: (value: React.SetStateAction<boolean>) => void;
-  shiftId?: string;
-  isNewShift: boolean;
+  setOpen: (value: React.SetStateAction<boolean>) => void
+  shiftId?: string
+  isNewShift: boolean
 }) => {
   //* Get API helpers to create or update a shift
   const [
@@ -85,7 +85,7 @@ const ShiftForm = ({
       // isError: isErrorNewShift,
       // error: errorNewShift,
     },
-  ] = useAddNewShiftMutation();
+  ] = useAddNewShiftMutation()
   const [
     updateShift,
     {
@@ -94,23 +94,23 @@ const ShiftForm = ({
       // isError: isErrorUpdateShift,
       // error: errorUpdateShift,
     },
-  ] = useUpdateShiftMutation();
+  ] = useUpdateShiftMutation()
 
   const shift: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById("EUC")(state, shiftId as EntityId) as Shift
-  );
+      selectShiftById('EUC')(state, shiftId as EntityId) as Shift
+  )
 
   const onSubmit = async (
     values: {
-      name: string;
-      category: string;
-      hours: number;
-      timeWindowStartTime: dayjs.Dayjs;
-      timeWindowEndTime: dayjs.Dayjs;
-      possibleDays: string[];
-      description: string;
-      verificationBuffer: number;
+      name: string
+      category: string
+      hours: number
+      timeWindowStartTime: dayjs.Dayjs
+      timeWindowEndTime: dayjs.Dayjs
+      possibleDays: string[]
+      description: string
+      verificationBuffer: number
     },
     formikBag: FormikHelpers<any>
   ) => {
@@ -124,21 +124,21 @@ const ShiftForm = ({
       timeWindowStartTime,
       timeWindowEndTime,
       verificationBuffer,
-    } = values;
+    } = values
 
-    const startTime = Number(timeWindowStartTime.format("HHmm"));
-    const endTime = Number(timeWindowEndTime.format("HHmm"));
+    const startTime = Number(timeWindowStartTime.format('HHmm'))
+    const endTime = Number(timeWindowEndTime.format('HHmm'))
 
     // console.log(dayjs('1900', 'HHmm').format('HHmm'))
     // const num = 1900
     // console.log(dayjs(num.toString(), 'HHmm'))
 
     // const dayString = possibleDays.join('')
-    let result;
-    const timeWindow = [startTime, endTime];
+    let result
+    const timeWindow = [startTime, endTime]
     const timeWindowDisplay =
-      formatMilitaryTime(startTime) + " - " + formatMilitaryTime(endTime);
-    const data = { data: {}, houseId: "", shiftId: "" };
+      formatMilitaryTime(startTime) + ' - ' + formatMilitaryTime(endTime)
+    const data = { data: {}, houseId: '', shiftId: '' }
     data.data = {
       name,
       category,
@@ -148,22 +148,22 @@ const ShiftForm = ({
       timeWindow,
       verificationBuffer,
       timeWindowDisplay,
-    };
-    data.houseId = "EUC";
-    data.shiftId = shiftId ? shiftId : "";
+    }
+    data.houseId = 'EUC'
+    data.shiftId = shiftId ? shiftId : ''
     // console.log('data: ', data)
     if (isNewShift || !shiftId) {
-      result = await addNewShift(data);
+      result = await addNewShift(data)
     } else {
-      result = await updateShift(data);
+      result = await updateShift(data)
     }
     if (result) {
-      console.log("success with shift: ", result);
+      console.log('success with shift: ', result)
     }
 
-    formikBag.resetForm();
-    setOpen(false);
-  };
+    formikBag.resetForm()
+    setOpen(false)
+  }
 
   // React.useEffect(() => {
   //   console.log('This is the selected shift', shift)
@@ -178,10 +178,10 @@ const ShiftForm = ({
           category: shift ? shift.category : emptyShift.category,
           hours: shift ? shift.hours : emptyShift.hours,
           timeWindowStartTime: shift
-            ? dayjs(shift.timeWindow[0].toString(), "HHmm")
+            ? dayjs(shift.timeWindow[0].toString(), 'HHmm')
             : emptyShift.timeWindowStartTime,
           timeWindowEndTime: shift
-            ? dayjs(shift.timeWindow[1].toString(), "HHmm")
+            ? dayjs(shift.timeWindow[1].toString(), 'HHmm')
             : emptyShift.timeWindowEndTime,
           possibleDays: shift
             ? shift.possibleDays
@@ -213,7 +213,7 @@ const ShiftForm = ({
                 minutesStep={30}
                 value={values.timeWindowStartTime}
                 onChange={(newValue) =>
-                  setFieldValue("timeWindowStartTime", newValue)
+                  setFieldValue('timeWindowStartTime', newValue)
                 }
               />
               <MobileTimePicker
@@ -221,7 +221,7 @@ const ShiftForm = ({
                 minutesStep={30}
                 value={values.timeWindowEndTime}
                 onChange={(newValue) => {
-                  setFieldValue("timeWindowEndTime", newValue);
+                  setFieldValue('timeWindowEndTime', newValue)
                 }}
               />
             </LocalizationProvider>
@@ -248,7 +248,7 @@ const ShiftForm = ({
                 color="primary"
                 disabled={isSubmitting}
               >
-                {isNewShift || !shiftId ? "Submit" : "Update"}
+                {isNewShift || !shiftId ? 'Submit' : 'Update'}
               </Button>
               <Button
                 fullWidth
@@ -263,7 +263,7 @@ const ShiftForm = ({
         )}
       </Formik>
     </>
-  );
-};
+  )
+}
 
-export default ShiftForm;
+export default ShiftForm

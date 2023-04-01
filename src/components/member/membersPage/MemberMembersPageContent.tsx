@@ -1,15 +1,15 @@
-import { selectMemberNavState } from "@/features/user/usersSlice";
-import { useSelector } from "react-redux";
-import MemberInformationTabContent from "./informationTab/MemberInformationTabContent";
+import { selectMemberNavState } from '@/features/user/usersSlice'
+import { useSelector } from 'react-redux'
+import MemberMembersInformationTabContent from './informationTab/MemberMembersInformationTabContent'
 
 const MemberMembersContent = () => {
-  const memberNavState = useSelector(selectMemberNavState);
-  let content = null;
+  const memberNavState = useSelector(selectMemberNavState)
+  let content = null
   if (memberNavState.tab === 0) {
-    content = <MemberInformationTabContent />;
+    content = <MemberMembersInformationTabContent />
   } else {
-    content = <h1>Error</h1>;
+    content = <h1>Error</h1>
   }
-  return content;
-};
-export default MemberMembersContent;
+  return content
+}
+export default MemberMembersContent

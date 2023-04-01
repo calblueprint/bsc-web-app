@@ -1,19 +1,19 @@
-import { Formik, Form, FormikHelpers, FormikValues } from "formik";
-import { Stack, Button } from "@mui/material";
+import { Formik, Form, FormikHelpers, FormikValues } from 'formik'
+import { Stack, Button } from '@mui/material'
 
-import * as Yup from "yup";
-import { TextInput } from "../../../components/shared/forms/CustomFormikFields"; //, SelectInput
+import * as Yup from 'yup'
+import { TextInput } from '../../../components/shared/forms/CustomFormikFields' //, SelectInput
 import {
   selectUserById,
   useAddNewUserMutation,
   useUpdateUserMutation,
-} from "../../user/userApiSlice";
+} from '../../user/userApiSlice'
 // import { getCategories } from '../../../firebase/queries/house'
-import { useSelector } from "react-redux";
-import React from "react";
-import { RootState } from "../../../store/store";
-import { EntityId } from "@reduxjs/toolkit";
-import { User } from "../../../types/schema";
+import { useSelector } from 'react-redux'
+import React from 'react'
+import { RootState } from '../../../store/store'
+import { EntityId } from '@reduxjs/toolkit'
+import { User } from '../../../types/schema'
 // import { useUserContext } from '../../../context/UserContext'
 
 //** Yup allows us to define a schema, transform a value to match, and/or assert the shape of an existing value. */
@@ -21,7 +21,7 @@ import { User } from "../../../types/schema";
 const UserSchema = Yup.object({
   firstName: Yup.string(),
   lastName: Yup.string(),
-  displayName: Yup.string().required("Display Name is required"),
+  displayName: Yup.string().required('Display Name is required'),
   email: Yup.string(),
   roles: Yup.array().of(Yup.string()),
   houseID: Yup.string(),
@@ -32,7 +32,7 @@ const UserSchema = Yup.object({
   weekPenaltyHours: Yup.number(),
   runningTotalMissedHours: Yup.number(),
   runningTotalPenatlyHours: Yup.number(),
-});
+})
 
 // const daysList = [
 //   '',
@@ -56,15 +56,15 @@ const emptyUser = {
   // Role(s) of the user
   roles: [],
   // Last Name
-  lastName: "",
+  lastName: '',
   // First Name
-  firstName: "",
+  firstName: '',
   // full name that gets displayed
-  displayName: "",
+  displayName: '',
   // User email
-  email: "",
+  email: '',
   // The houseID of the house that the user resides in
-  houseID: "",
+  houseID: '',
   // Hours the user has been assigned
   hoursAssigned: 0,
   // Hours the user must be assigned, always set to 5
@@ -85,21 +85,21 @@ const emptyUser = {
   // Missed workshift hours this user has missed this current week
   weekMissedHours: 0,
   // Hours that manager has added to this user as a penatly for missing a shift this current week
-  weekPenaltyHours: "",
+  weekPenaltyHours: '',
   // The running total of missed workshift hours for the whole semester
-  runningTotalMissedHours: "",
+  runningTotalMissedHours: '',
   // The running total of penalty hours for the whole semester
-  runningTotalPenatlyHours: "",
-};
+  runningTotalPenatlyHours: '',
+}
 
 const UserForm = ({
   setOpen,
   userId,
   isNewUser,
 }: {
-  setOpen: (value: React.SetStateAction<boolean>) => void;
-  userId?: string;
-  isNewUser: boolean;
+  setOpen: (value: React.SetStateAction<boolean>) => void
+  userId?: string
+  isNewUser: boolean
 }) => {
   // const { authUser, house } = useUserContext()
   // const [currentUser, setCurrentUser] = React.useState(User)
@@ -115,7 +115,7 @@ const UserForm = ({
       // isError: isErrorNewUser,
       // error: errorNewUser,
     },
-  ] = useAddNewUserMutation();
+  ] = useAddNewUserMutation()
   const [
     updateUser,
     {
@@ -124,48 +124,48 @@ const UserForm = ({
       // isError: isErrorUpdateUser,
       // error: errorUpdateUser,
     },
-  ] = useUpdateUserMutation();
+  ] = useUpdateUserMutation()
 
   const user: User = useSelector(
     (state: RootState) => selectUserById(state, userId as EntityId) as User
-  );
+  )
 
   const onSubmit = async (
     values: FormikValues,
     formikBag: FormikHelpers<any>
   ) => {
     // console.log('Submiting UserForm: ', values)
-    const { firstName, lastName, displayName, email } = values;
+    const { firstName, lastName, displayName, email } = values
 
     // console.log(dayjs('1900', 'HHmm').format('HHmm'))
     // const num = 1900
     // console.log(dayjs(num.toString(), 'HHmm'))
 
     // const dayString = possibleDays.join('')
-    let result;
+    let result
 
-    const data = { data: {}, houseId: "", userId: "" };
+    const data = { data: {}, houseId: '', userId: '' }
     data.data = {
       firstName,
       lastName,
       displayName,
       email,
-    };
-    data.houseId = "EUC";
-    data.userId = userId ? userId : "";
+    }
+    data.houseId = 'EUC'
+    data.userId = userId ? userId : ''
     // console.log('data: ', data)
     if (isNewUser || !userId) {
-      result = await addNewUser(data);
+      result = await addNewUser(data)
     } else {
-      result = await updateUser(data);
+      result = await updateUser(data)
     }
     if (result) {
-      console.log("success with user: ", result);
+      console.log('success with user: ', result)
     }
 
-    formikBag.resetForm();
-    setOpen(false);
-  };
+    formikBag.resetForm()
+    setOpen(false)
+  }
 
   // React.useEffect(() => {
   //   console.log('This is the selected user', user)
@@ -199,7 +199,7 @@ const UserForm = ({
                 color="primary"
                 disabled={isSubmitting}
               >
-                {isNewUser || !userId ? "Submit" : "Update"}
+                {isNewUser || !userId ? 'Submit' : 'Update'}
               </Button>
               <Button
                 fullWidth
@@ -214,7 +214,7 @@ const UserForm = ({
         )}
       </Formik>
     </>
-  );
-};
+  )
+}
 
-export default UserForm;
+export default UserForm

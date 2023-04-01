@@ -65,49 +65,49 @@
 
 export interface NavP {
   memberNavState: {
-    id: string;
-    tab: number;
-    path: string;
-    active: number;
-  };
+    id: string
+    tab: number
+    path: string
+    active: number
+  }
   setMemberNavState: React.Dispatch<
     React.SetStateAction<{
-      id: string;
-      tab: number;
-      path: string;
-      active: number;
+      id: string
+      tab: number
+      path: string
+      active: number
     }>
-  >;
+  >
   managerNavState: {
-    id: string;
-    tab: number;
-    path: string;
-    active: number;
-  };
+    id: string
+    tab: number
+    path: string
+    active: number
+  }
   setManagerNavState: React.Dispatch<
     React.SetStateAction<{
-      id: string;
-      tab: number;
-      path: string;
-      active: number;
+      id: string
+      tab: number
+      path: string
+      active: number
     }>
-  >;
+  >
   supervisorNavState: {
-    id: string;
-    tab: number;
-    path: string;
-    active: number;
-  };
+    id: string
+    tab: number
+    path: string
+    active: number
+  }
   setSupervisorNavState: React.Dispatch<
     React.SetStateAction<{
-      id: string;
-      tab: number;
-      path: string;
-      active: number;
+      id: string
+      tab: number
+      path: string
+      active: number
     }>
-  >;
-  tabValue: number;
-  setTabValue: React.Dispatch<React.SetStateAction<number>>;
+  >
+  tabValue: number
+  setTabValue: React.Dispatch<React.SetStateAction<number>>
 }
 
 // passing in any data type
@@ -119,16 +119,16 @@ export interface HeadCell<
       | string[]
       | number[]
       | { day: number[] }[]
-      | { taskID: number }[];
+      | { taskID: number }[]
   }
 > {
-  id: keyof T;
-  label: string;
-  isNumeric: boolean;
-  isSortable: boolean;
-  isButton?: boolean;
-  button?: React.FC;
-  align: "left" | "center" | "right" | "justify" | "inherit" | undefined;
-  transformFn?: (value: T) => string;
-  complexTransformFn?: (a: T, b: string | number) => string;
+  id: keyof T
+  label: string
+  isNumeric: boolean
+  isSortable: boolean
+  isButton?: boolean
+  button?: React.FC
+  align: 'left' | 'center' | 'right' | 'justify' | 'inherit' | undefined
+  transformFn?: (value: T) => string
+  complexTransformFn?: (a: T, b: string | number) => string
 }

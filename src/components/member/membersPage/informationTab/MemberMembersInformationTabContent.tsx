@@ -1,4 +1,4 @@
-const MemberInformationTabContent = () => {
-  return <div>MemberInformationTabContent</div>;
-};
-export default MemberInformationTabContent;
+const MemberMembersInformationTabContent = () => {
+  return <div>MemberMembersInformationTabContent</div>
+}
+export default MemberMembersInformationTabContent
