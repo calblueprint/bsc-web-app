@@ -25,9 +25,9 @@ export type User = {
   // Pin Number for verifying other people's tasks
   pinNumber: number
   // Map of availabilities (day: time windows when they're free)
-  availabilities: Record<string, number>[]//{ day: number[] }[]
+  availabilities: Record<string, number>[] //{ day: number[] }[]
   // Map of preferences (taskID: (0/1/2 (higher number = greater preference)))
-  preferences: Record<string, string>[]//{ taskID: number }[]
+  preferences: Record<string, string>[] //{ taskID: number }[]
   // The scheduled shifts that the user has been assigned
   assignedScheduledShifts: string[]
   // Missed workshift hours this user has missed this current week
@@ -86,15 +86,15 @@ export type House = {
   id: string
   name: string
   houseID: string
-  categories:  Record<string, string[]>
+  categories: Record<string, string[]>
   address: string
-  schedule: Record<string, string[]> 
-  userPINs: Record<string, string> 
+  schedule: Record<string, string[]>
+  userPINs: Record<string, string>
 }
 
 export enum Days {
   Mon = 'Monday',
-  mon = "monday",
+  mon = 'monday',
   Tue = 'Tuesday',
   tue = 'tuesday',
   Wed = 'Wednesday',
@@ -106,7 +106,7 @@ export enum Days {
   Sat = 'Saturday',
   sat = 'saturday',
   Sun = 'Sunday',
-  sun = 'sunday'
+  sun = 'sunday',
 }
 export type RowOfCSV = {
   // TODO: add application number so that we can use this as the unique id for the authorizedUsers

@@ -1,4 +1,4 @@
 const ManagerAvailabilityTabContent = () => {
-  return <div>ManagerAvailabilityTabContent</div>;
-};
-export default ManagerAvailabilityTabContent;
+  return <div>ManagerAvailabilityTabContent</div>
+}
+export default ManagerAvailabilityTabContent

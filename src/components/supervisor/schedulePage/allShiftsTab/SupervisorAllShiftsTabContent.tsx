@@ -1,4 +1,4 @@
 const SupervisorAllShiftsTabContent = () => {
-  return <div>SupervisorAllShiftsTabContent</div>;
-};
-export default SupervisorAllShiftsTabContent;
+  return <div>SupervisorAllShiftsTabContent</div>
+}
+export default SupervisorAllShiftsTabContent

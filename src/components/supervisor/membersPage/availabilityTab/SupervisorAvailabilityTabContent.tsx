@@ -1,4 +1,4 @@
 const SupervisorAvailabilityTabContent = () => {
-  return <div>SupervisorAvailabilityTabContent</div>;
-};
-export default SupervisorAvailabilityTabContent;
+  return <div>SupervisorAvailabilityTabContent</div>
+}
+export default SupervisorAvailabilityTabContent
