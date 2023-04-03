@@ -27,145 +27,154 @@ import { Typography } from '@mui/material'
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
 import { setMemberAvailability } from '../usersSlice'
 
-const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+const days = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+]
 
 export default function AvailabilityTable() {
-    const authUser = useSelector(selectCurrentUser)
-    const dispatch = useDispatch()
-    const [updateUser, { isLoading: updateUserIsLoading, isSuccess: updateUserIsSuccess }] =
-        useUpdateUserMutation()
-    const [establishContext, { isLoading, isSuccess }] = useEstablishContextMutation()
-    const [availabilities, setAvailabilities] = useState<User['availabilities']>()
-    const [isEditing, setIsEditing] = useState(false)
+  const authUser = useSelector(selectCurrentUser)
+  const dispatch = useDispatch()
+  const [
+    updateUser,
+    { isLoading: updateUserIsLoading, isSuccess: updateUserIsSuccess },
+  ] = useUpdateUserMutation()
+  const [establishContext, { isLoading, isSuccess }] =
+    useEstablishContextMutation()
+  const [availabilities, setAvailabilities] = useState<User['availabilities']>()
+  const [isEditing, setIsEditing] = useState(false)
 
-    const onAvailabilityChange = (
-        availability: { startTime: string; endTime: string }[],
-        day: string
-    ) => {
-        console.log(' day: ' + day)
-        // availability.forEach((a) => console.log('onAvailabilityChange: ', a))
-        const newAvailabilities = { ...availabilities, [day]: availability }
-        // console.log({ ...availabilities, [day]: availability })
+  const onAvailabilityChange = (
+    availability: { startTime: string; endTime: string }[],
+    day: string
+  ) => {
+    console.log(' day: ' + day)
+    // availability.forEach((a) => console.log('onAvailabilityChange: ', a))
+    const newAvailabilities = { ...availabilities, [day]: availability }
+    // console.log({ ...availabilities, [day]: availability })
 
-        setAvailabilities(newAvailabilities)
+    setAvailabilities(newAvailabilities)
+  }
+
+  const handleCancel = () => {
+    setIsEditing(false)
+  }
+
+  const handleSave = async () => {
+    if (!authUser) {
+      console.log('[ERROR]: authUser is not defined')
+      return false
+    }
+    if (!availabilities) {
+      console.log('[ERROR]: availabilities is not defined')
+      return false
     }
 
-    const handleCancel = () => {
-        setIsEditing(false)
+    const data = { data: {}, userId: authUser.id }
+    data.data = { availabilities }
+    try {
+      const payload = await updateUser(data).unwrap()
+      console.log('Success!! Payload: ', payload)
+      establishContext(authUser.id as string)
+    } catch (error) {
+      console.log('[ERROR]: ', error)
     }
+  }
 
-    const handleSave = async () => {
-        if (!authUser) {
-            console.log('[ERROR]: authUser is not defined')
-            return false
-        }
-        if (!availabilities) {
-            console.log('[ERROR]: availabilities is not defined')
-            return false
-        }
-
-        const data = { data: {}, userId: authUser.id }
-        data.data = { availabilities }
-        try {
-            const payload = await updateUser(data).unwrap()
-            console.log('Success!! Payload: ', payload)
-            establishContext(authUser.id as string)
-        } catch (error) {
-            console.log('[ERROR]: ', error)
-        }
+  useEffect(() => {
+    if (authUser && authUser.availabilities) {
+      dispatch(setMemberAvailability(authUser.availabilities))
     }
+  }, [authUser])
 
-    useEffect(() => {
-        if (authUser && authUser.availabilities) {
-            dispatch(setMemberAvailability(authUser.availabilities))
-        }
-    }, [authUser])
+  useEffect(() => {
+    if (authUser && authUser.availabilities && !isEditing) {
+      console.log('User Availabilities: ' + authUser.availabilities)
+      // const stableAvailabilities = authUser.availabilities.map(day => )
+      setAvailabilities(authUser.availabilities)
+    }
+  }, [authUser, isEditing])
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <TableContainer sx={{ maxHeight: 840 }}>
+          <Table
+            stickyHeader
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={'medium'}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography flexGrow={1}>Weekly Schedule</Typography>
+                </TableCell>
 
-    useEffect(() => {
-        if (authUser && authUser.availabilities && !isEditing) {
-            console.log('User Availabilities: ' + authUser.availabilities)
-            // const stableAvailabilities = authUser.availabilities.map(day => )
-            setAvailabilities(authUser.availabilities)
-        }
-    }, [authUser, isEditing])
-    return (
-        <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
-                <TableContainer sx={{ maxHeight: 840 }}>
-                    <Table
-                        stickyHeader
-                        sx={{ minWidth: 750 }}
-                        aria-labelledby='tableTitle'
-                        size={'medium'}
-                    >
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography flexGrow={1}>Weekly Schedule</Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Box flexGrow={2} />
-                                </TableCell>
-                                <TableCell>
-                                    {isEditing ? (
-                                        <Box display={'flex'}>
-                                            <Button
-                                                fullWidth
-                                                variant='outlined'
-                                                onClick={handleCancel}
-                                            >
-                                                Cancle
-                                            </Button>
-                                            <Button
-                                                fullWidth
-                                                variant='contained'
-                                                sx={{ marginLeft: 2 }}
-                                                onClick={handleSave}
-                                            >
-                                                Save
-                                            </Button>
-                                        </Box>
-                                    ) : (
-                                        <Box display={'flex'}>
-                                            <Button
-                                                fullWidth
-                                                variant='contained'
-                                                onClick={() => setIsEditing(true)}
-                                            >
-                                                Edit Availability
-                                            </Button>
-                                        </Box>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {availabilities
-                                ? days.map((day) => {
-                                      console.log('key: ' + day)
-                                      return (
-                                          <AvailabilityItem
-                                              key={uuid()}
-                                              dayAvailability={
-                                                  availabilities &&
-                                                  availabilities[day as keyof typeof availabilities]
-                                                      ? availabilities[
-                                                            day as keyof typeof availabilities
-                                                        ]
-                                                      : []
-                                              }
-                                              day={day}
-                                              isEditing={isEditing}
-                                              onAvailabilityChange={onAvailabilityChange}
-                                          />
-                                      )
-                                  })
-                                : null}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Paper>
-        </Box>
-    )
+                <TableCell>
+                  <Box flexGrow={2} />
+                </TableCell>
+                <TableCell>
+                  {isEditing ? (
+                    <Box display={'flex'}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={handleCancel}
+                      >
+                        Cancle
+                      </Button>
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        sx={{ marginLeft: 2 }}
+                        onClick={handleSave}
+                      >
+                        Save
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Box display={'flex'}>
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        Edit Availability
+                      </Button>
+                    </Box>
+                  )}
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {availabilities
+                ? days.map((day) => {
+                    console.log('key: ' + day)
+                    return (
+                      <AvailabilityItem
+                        key={uuid()}
+                        dayAvailability={
+                          availabilities &&
+                          availabilities[day as keyof typeof availabilities]
+                            ? availabilities[day as keyof typeof availabilities]
+                            : []
+                        }
+                        day={day}
+                        isEditing={isEditing}
+                        onAvailabilityChange={onAvailabilityChange}
+                      />
+                    )
+                  })
+                : null}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </Box>
+  )
 }

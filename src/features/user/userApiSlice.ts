@@ -5,7 +5,7 @@ import { RootState, store } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '../auth/authSlice'
 import { selectMemberAvailability } from './usersSlice'
-import {useEstablishContextMutation} from '../auth/authApiSlice'
+import { useEstablishContextMutation } from '../auth/authApiSlice'
 
 const usersAdapter = createEntityAdapter<User>({})
 
@@ -66,19 +66,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
     updateUserAvailability: builder.mutation<User, { id: string }>({
       query: (arg) => {
-        const { id } = arg;
+        const { id } = arg
         // Access the Redux state and get the availability data
-        const state = store.getState() as RootState;
-        const availability = selectMemberAvailability(state);
-    
+        const state = store.getState() as RootState
+        const availability = selectMemberAvailability(state)
+
         return {
           url: `/users/${id}`,
           method: 'PATCH',
           // Include the availability data in the body
           body: { availability },
-        };
+        }
       },
-      
+
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const result = await queryFulfilled
@@ -94,13 +94,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
           //   '  --house: ',
           //   house
           // )
-         
+
           // return { data: arg }
         } catch (error) {
           console.log(error)
         }
       },
-      
     }),
     // deleteUser: builder.mutation({
     //   query: ({ id }) => ({
