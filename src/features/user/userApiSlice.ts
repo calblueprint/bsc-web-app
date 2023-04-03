@@ -69,13 +69,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         const { id } = arg;
         // Access the Redux state and get the availability data
         const state = store.getState() as RootState;
-        const availability = selectMemberAvailability(state);
+        const availabilities = selectMemberAvailability(state);
     
         return {
           url: `/users/${id}`,
           method: 'PATCH',
           // Include the availability data in the body
-          body: { availability },
+          body: { availabilities },
         };
       },
       
@@ -117,6 +117,7 @@ export const {
   useGetUsersQuery,
   useAddNewUserMutation,
   useUpdateUserMutation,
+  useUpdateUserAvailabilityMutation,
   //   useDeleteUserMutation,
 } = usersApiSlice
 

@@ -32,8 +32,11 @@ const usersSlice = createSlice({
             state.memberAvailability = action.payload
         },
         setMemberAvailabilityDay: (state, action) => {
+            console.log(action.payload)
             const {day, availabilityDay} = action.payload
-            state.memberAvailability[day as keyof typeof state.memberAvailability] = availabilityDay
+            console.log(availabilityDay)
+            const newAvailability = {...state.memberAvailability, [day]:availabilityDay}
+            state.memberAvailability = newAvailability
         }
     },
 })

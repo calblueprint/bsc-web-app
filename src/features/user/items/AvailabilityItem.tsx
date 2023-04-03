@@ -14,9 +14,12 @@ import AddIcon from '@mui/icons-material/Add'
 import Box from '@mui/material/Box'
 import { Table, TableBody, Typography } from '@mui/material'
 import uuid from 'react-uuid'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectMemberAvailability, setMemberAvailabilityDay } from '../usersSlice'
+import { User } from '@/types/schema'
 
 type AvailabilitiesProps = {
-    dayAvailability: { startTime: string; endTime: string }[]
+    // dayAvailability: { startTime: string; endTime: string }[]
     day: string
     isEditing: boolean
     onAvailabilityChange: (
@@ -57,7 +60,7 @@ const generateTimeOptionsIndex = () => {
 }
 
 const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
-    dayAvailability,
+    // dayAvailability,
     day,
     isEditing,
     onAvailabilityChange,
@@ -65,6 +68,20 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
     const [editedAvailability, setEditedAvailability] = useState<
         { startTime: string; endTime: string }[]
     >([])
+
+    const [dayAvailability, setDayAvailability] = useState<
+        { startTime: string; endTime: string }[]
+    >([])
+
+    const timeOtions = generateTimeOptions()
+    const timeIndex = generateTimeOptionsIndex()
+
+    //** get the dispatch hook to dispatch the availability update state */
+    const dispatch = useDispatch()
+
+    //** Get the availability from redux state. This should be updated when the user navegates to the availability tab */
+    const availability = useSelector(selectMemberAvailability)
+
     function handleSelectChange(event: SelectChangeEvent<string>, child: React.ReactNode) {
         const newValue = event.target.value
     }
@@ -73,29 +90,40 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
         const weekDay = id.split('-')[0]
         const index = parseInt(id.split('-')[1], 10)
 
-        const newEditedAvailability = [...editedAvailability] // create a new copy of the array
+        const newEditedAvailability = [...availability[day as keyof typeof availability]] as Array<{
+            startTime: string
+            endTime: string
+        }> // create a new copy of the array
 
-        if (newEditedAvailability.length > index) {
+        if (dayAvailability.length > index) {
             newEditedAvailability[index] = { startTime, endTime }
         } else {
             newEditedAvailability.push({ startTime, endTime })
         }
 
-        setEditedAvailability(newEditedAvailability) // update the state with the new copy of the array
-        onAvailabilityChange(newEditedAvailability, day)
+        dispatch(setMemberAvailabilityDay({ day, availabilityDay: newEditedAvailability }))
+
+        // setEditedAvailability(newEditedAvailability) // update the state with the new copy of the array
+        // onAvailabilityChange(newEditedAvailability, day)
+    }
+
+    const handleAddTimeBlock = () => {
+        const newEditedAvailability = [...availability[day as keyof typeof availability]] as Array<{
+            startTime: string
+            endTime: string
+        }>
+        newEditedAvailability.push({
+            startTime: timeIndex[10],
+            endTime: timeIndex[11],
+        })
+        dispatch(setMemberAvailabilityDay({ day, availabilityDay: newEditedAvailability }))
     }
 
     useEffect(() => {
-        if (dayAvailability) {
-            setEditedAvailability(dayAvailability)
+        if (availability) {
+            setDayAvailability(availability[day as keyof typeof availability])
         }
-    }, [dayAvailability])
-
-    // useEffect(() => {
-    //     if (editedAvailability) {
-    //         onAvailabilityChange(editedAvailability, day)
-    //     }
-    // }, [editedAvailability])
+    }, [availability])
 
     return (
         <React.Fragment>
@@ -107,24 +135,31 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
                 <TableCell component='th' scope='row' align={'left'}>
                     <Table>
                         <TableBody>
-                            {dayAvailability.sort().map(({ startTime, endTime }, index) => {
-                                return (
-                                    <AvailabilityForm
-                                        key={day + '-' + index}
-                                        startTime={startTime}
-                                        endTime={endTime}
-                                        id={day + '-' + index}
-                                        onTimeChange={handleTimeChange}
-                                    />
-                                )
-                            })}
+                            {availability && availability[day as keyof typeof availability]
+                                ? availability[day as keyof typeof availability].map(
+                                      ({ startTime, endTime }, index) => {
+                                          return (
+                                              <AvailabilityForm
+                                                  key={day + '-' + index}
+                                                  startTime={startTime}
+                                                  endTime={endTime}
+                                                  id={day + '-' + index}
+                                                  isEditing={isEditing}
+                                                  onTimeChange={handleTimeChange}
+                                              />
+                                          )
+                                      }
+                                  )
+                                : null}
                         </TableBody>
                     </Table>
                 </TableCell>
                 <TableCell>
-                    <IconButton>
-                        <AddIcon />
-                    </IconButton>
+                    {isEditing ? (
+                        <IconButton onClick={handleAddTimeBlock}>
+                            <AddIcon />
+                        </IconButton>
+                    ) : null}
                 </TableCell>
             </TableRow>
         </React.Fragment>
@@ -137,6 +172,7 @@ type AvailabilityFormProps = {
     startTime: string
     endTime: string
     id: string
+    isEditing: boolean
     onTimeChange: (id: string, startTime: string, endTime: string) => void
 }
 
@@ -148,12 +184,24 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
     startTime,
     endTime,
     id,
+    isEditing,
     onTimeChange,
 }) => {
     const timeOptions: TimeOptions = generateTimeOptions()
     const timeOptionsIndex: string[] = generateTimeOptionsIndex()
     const [editedStartTime, setEditedStartTime] = useState(startTime)
     const [editedEndTime, setEditedEndTime] = useState(endTime)
+    const availability = useSelector(selectMemberAvailability)
+    const dispatch = useDispatch()
+
+    const handleDeleteTimeBlock = () => {
+        const weekDay = id.split('-')[0]
+        const index = parseInt(id.split('-')[1], 10)
+
+        const dayAvailability = [...availability[weekDay as keyof typeof availability]]
+        dayAvailability.splice(index, 1)
+        dispatch(setMemberAvailabilityDay({ day: weekDay, availabilityDay: dayAvailability }))
+    }
 
     const form = (
         <TableRow key={id} sx={{ borderBottom: 'none' }}>
@@ -233,7 +281,7 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
                             </Select>
                         </FormControl>
                     </Box>
-                    <IconButton>
+                    <IconButton onClick={(id) => handleDeleteTimeBlock()}>
                         <DeleteIcon />
                     </IconButton>
                 </Box>
@@ -241,5 +289,13 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
         </TableRow>
     )
 
-    return <React.Fragment>{form}</React.Fragment>
+    const display = (
+        <TableRow key={id} sx={{ borderBottom: 'none' }}>
+            <TableCell component='th' scope='row' align={'left'} sx={{ borderBottom: 'none' }}>
+                {`${timeOptions[startTime]} - ${timeOptions[endTime]}`}
+            </TableCell>
+        </TableRow>
+    )
+
+    return <React.Fragment>{isEditing ? form : display}</React.Fragment>
 }
