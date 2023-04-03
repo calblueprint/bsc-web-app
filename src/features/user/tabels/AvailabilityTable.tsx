@@ -152,7 +152,7 @@ export default function AvailabilityTable() {
                         variant="outlined"
                         onClick={handleCancel}
                       >
-                        Cancle
+                        Cancel
                       </Button>
                       <Button
                         fullWidth
