@@ -23,6 +23,15 @@ const usersSlice = createSlice({
       active: 0,
     },
     tabValue: 0,
+    memberAvailability: {
+      monday: [],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+      saturday: [],
+      sunday: [],
+    },
   },
   reducers: {
     setMemberNavState: (state, action) => {
@@ -37,6 +46,19 @@ const usersSlice = createSlice({
     setTabValue: (state, action) => {
       state.tabValue = action.payload
     },
+    setMemberAvailability: (state, action) => {
+      state.memberAvailability = action.payload
+    },
+    setMemberAvailabilityDay: (state, action) => {
+      console.log(action.payload)
+      const { day, availabilityDay } = action.payload
+      console.log(availabilityDay)
+      const newAvailability = {
+        ...state.memberAvailability,
+        [day]: availabilityDay,
+      }
+      state.memberAvailability = newAvailability
+    },
   },
 })
 
@@ -45,6 +67,8 @@ export const {
   setManagerNavState,
   setSupervisorNavState,
   setTabValue,
+  setMemberAvailability,
+  setMemberAvailabilityDay,
 } = usersSlice.actions
 
 export const selectMemberNavState = (state: RootState) =>
@@ -54,5 +78,7 @@ export const selectManagerNavState = (state: RootState) =>
 export const selectSupervisorNavState = (state: RootState) =>
   state.users.supervisorNavState
 export const selectTabValue = (state: RootState) => state.users.tabValue
+export const selectMemberAvailability = (state: RootState) =>
+  state.users.memberAvailability
 
 export default usersSlice.reducer

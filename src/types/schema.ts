@@ -25,7 +25,17 @@ export type User = {
   // Pin Number for verifying other people's tasks
   pinNumber: number
   // Map of availabilities (day: time windows when they're free)
-  availabilities: Record<string, number>[] //{ day: number[] }[]
+  availabilities: { [key: string]: { startTime: string; endTime: string }[] }
+
+  // {
+  //   sunday: {startTime: string, endTime: string}[]
+  //   monday: {startTime: string, endTime: string}[]
+  //   tuesday: {startTime: string, endTime: string}[]
+  //   wednesday: {startTime: string, endTime: string}[]
+  //   thursday: {startTime: string, endTime: string}[]
+  //   friday: {startTime: string, endTime: string}[]
+  //   saturday: {startTime: string, endTime: string}[]
+  // } //{startTime: 'endTime'}}//Record<string, number>//{ day: number[] }[]
   // Map of preferences (taskID: (0/1/2 (higher number = greater preference)))
   preferences: Record<string, string>[] //{ taskID: number }[]
   // The scheduled shifts that the user has been assigned
@@ -44,25 +54,26 @@ export type Shift = {
   // optional id attribute for table stuff
   id?: string
   // Name of the shift
-  name: string
+  name: string //! Form Item
   // ID of the shift (not stored in Firebase, attached to shift)
   shiftID: string
   // Description of the shift
-  description: string
+  description: string //! Form Item
   // Possible days that the shift can be done on
   possibleDays: string[]
   // Time window that this shift must be done in [startTime, endTime]
-  timeWindow: number[]
+  timeWindow: { startTime: number; endTime: number }
   // property to display timeWindow
-  timeWindowDisplay: string
+  timeWindowDisplay: string //Todo: Maybe delete this property
   // Day that the shift is assigned
   assignedDay: string
   // User assigned to the shift
   assignedUser: string
   // Hours earned for a user
-  hours: number
+  hours: number //! Form Item
   // Number of hours since end time that you are allowed to verify a shift for
-  verificationBuffer: number
+  verificationBuffer: number //! Form Item
+  // Verification
   verification: boolean
   // Category of work that the shift belongs to
   category: string
@@ -92,22 +103,33 @@ export type House = {
   userPINs: Record<string, string>
 }
 
-export enum Days {
-  Mon = 'Monday',
-  mon = 'monday',
-  Tue = 'Tuesday',
-  tue = 'tuesday',
-  Wed = 'Wednesday',
-  wed = 'wednesday',
-  Thu = 'Thursday',
-  thu = 'thursday',
-  Fri = 'Friday',
-  fri = 'friday',
-  Sat = 'Saturday',
-  sat = 'saturday',
-  Sun = 'Sunday',
-  sun = 'sunday',
-}
+// export enum Days {
+//   Mon = 'Monday',
+//   mon = 'monday',
+//   Tue = 'Tuesday',
+//   tue = 'tuesday',
+//   Wed = 'Wednesday',
+//   wed = 'wednesday',
+//   Thu = 'Thursday',
+//   thu = 'thursday',
+//   Fri = 'Friday',
+//   fri = 'friday',
+//   Sat = 'Saturday',
+//   sat = 'saturday',
+//   Sun = 'Sunday',
+//   sun = 'sunday',
+// }
+
+export type Days =
+  | 'All'
+  | 'Monday'
+  | 'Tuesday'
+  | 'Wednesday'
+  | 'Thursday'
+  | 'Friday'
+  | 'Saturday'
+  | 'Sunday'
+
 export type RowOfCSV = {
   // TODO: add application number so that we can use this as the unique id for the authorizedUsers
   email: string

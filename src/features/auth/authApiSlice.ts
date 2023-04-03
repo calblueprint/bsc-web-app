@@ -128,7 +128,7 @@ const establishUserContext = async (userId: string) => {
     if (!houseSnap.exists()) {
       return { error: 'User not assigned to a valid house.' }
     }
-    const house = houseSnap.data() as House
+    const house = { ...(houseSnap.data() as House), id: houseSnap.id }
 
     return { data: { user, house } }
   } catch (error) {

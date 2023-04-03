@@ -1,3 +1,5 @@
+/** This file was copied and pasted into ManagerUnassignedTabContent.tsx */
+
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import NewShiftBtn from '@/features/shift/buttons/NewShiftBtn'
 import UnassignedShiftsTable from '@/features/shift/tables/UnassignedShiftsTable'
@@ -26,7 +28,7 @@ const filterOptions: Days[] = [
   'Sunday',
 ]
 
-const ManagerUnassignedTabContent = () => {
+const UserTesting = () => {
   const authUser = useSelector(selectCurrentUser)
   const authHouse = useSelector(selectCurrentHouse) as House
   const { data: shiftData } = useGetShiftsQuery(authHouse.id)
@@ -116,4 +118,4 @@ const ManagerUnassignedTabContent = () => {
   )
 }
 
-export default ManagerUnassignedTabContent
+export default UserTesting

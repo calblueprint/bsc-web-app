@@ -167,7 +167,7 @@ const customBaseQuery: BaseQueryFn<
           //** Add resObj to the resObj array and return it */
           return {
             data: {
-              message: `New Document created with id: ${updatedDoc}`,
+              message: `Document with id: ${updatedDoc} updated `,
             },
           }
 

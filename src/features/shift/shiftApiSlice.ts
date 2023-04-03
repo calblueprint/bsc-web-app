@@ -29,9 +29,9 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
           entity.id = entity.id
           if (!entity.timeWindowDisplay) {
             entity.timeWindowDisplay =
-              formatMilitaryTime(entity.timeWindow[0]) +
+              formatMilitaryTime(entity.timeWindow.startTime) +
               ' - ' +
-              formatMilitaryTime(entity.timeWindow[1])
+              formatMilitaryTime(entity.timeWindow.endTime)
           }
           return entity
         })
@@ -48,10 +48,7 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewShift: builder.mutation({
-      query: (data: {
-        houseId: string, 
-        data: Partial<Shift>
-      }) => ({
+      query: (data: { houseId: string; data: Partial<Shift> }) => ({
         url: `houses/${data.houseId}/shifts`,
         method: 'POST',
         body: {
@@ -62,8 +59,8 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
     }),
     updateShift: builder.mutation({
       query: (data: {
-        houseId: string,
-        shiftId: string,
+        houseId: string
+        shiftId: string
         data: Partial<Shift>
       }) => ({
         url: `houses/${data.houseId}/shifts/${data.shiftId}`,
@@ -72,7 +69,9 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
           ...data.data,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'Shift', id: arg.shiftId }],
+      invalidatesTags: (result, error, arg) => [
+        { type: 'Shift', id: arg.shiftId },
+      ],
     }),
     // deleteShift: builder.mutation({
     //   query: ({ id }) => ({

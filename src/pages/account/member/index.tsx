@@ -23,13 +23,13 @@ const MemberAccount = () => {
 
   useEffect(() => {
     if (authUser) {
-      if (!authUser.roles?.includes('supervisor')) {
-        console.log('No supervisors here *********')
+      if (!authUser.roles?.includes('member')) {
+        console.log('No members here *********')
         dispatch(setCurrentRole(''))
         router.replace('/')
       } else {
         if (!currentRole) {
-          dispatch(setCurrentRole('supervisor'))
+          dispatch(setCurrentRole('member'))
         }
       }
     }

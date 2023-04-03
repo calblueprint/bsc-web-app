@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import PrivateLayout from '../Layout'
-import ReduxTesting from '@/pages/ReduxTesting'
+// import ReduxTesting from '@/pages/ReduxTesting'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   selectCurrentRole,

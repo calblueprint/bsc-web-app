@@ -1,7 +1,11 @@
 import { createSelector, createEntityAdapter } from '@reduxjs/toolkit'
 import { User } from '../../types/schema'
 import { apiSlice } from '../../store/api/apiSlice'
-import { RootState } from '../../store/store'
+import { RootState, store } from '../../store/store'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '../auth/authSlice'
+import { selectMemberAvailability } from './usersSlice'
+import { useEstablishContextMutation } from '../auth/authApiSlice'
 
 const usersAdapter = createEntityAdapter<User>({})
 
@@ -41,9 +45,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewUser: builder.mutation({
-      query: (data: {
-        data: Partial<User>
-      }) => ({
+      query: (data: { data: Partial<User> }) => ({
         url: `users`,
         method: 'POST',
         body: {
@@ -53,17 +55,53 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'User', id: 'LIST' }],
     }),
     updateUser: builder.mutation({
-      query: (data: {
-        userId: string,
-        data: Partial<User>
-      }) => ({
+      query: (data: { userId: string; data: Partial<User> }) => ({
         url: `users/${data.userId}`,
         method: 'PATCH',
         body: {
           ...data.data,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'User', id: arg.userId }],
+      invalidatesTags: (result, error, arg) => [
+        { type: 'User', id: arg.userId },
+      ],
+    }),
+    updateUserAvailability: builder.mutation<User, { id: string }>({
+      query: (arg) => {
+        const { id } = arg
+        // Access the Redux state and get the availability data
+        const state = store.getState() as RootState
+        const availabilities = selectMemberAvailability(state)
+
+        return {
+          url: `/users/${id}`,
+          method: 'PATCH',
+          // Include the availability data in the body
+          body: { availabilities },
+        }
+      },
+
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const result = await queryFulfilled
+          // console.log('[Refreshed]: Query Fulfilled: ', result)
+          if (!result.data) {
+            console.log('User and House object are empty')
+            return
+          }
+          console.log(result.data)
+          // console.log(
+          //   '[Refreshed]: Query Fulfilled:  --user: ',
+          //   user,
+          //   '  --house: ',
+          //   house
+          // )
+
+          // return { data: arg }
+        } catch (error) {
+          console.log(error)
+        }
+      },
     }),
     // deleteUser: builder.mutation({
     //   query: ({ id }) => ({
@@ -80,6 +118,7 @@ export const {
   useGetUsersQuery,
   useAddNewUserMutation,
   useUpdateUserMutation,
+  useUpdateUserAvailabilityMutation,
   //   useDeleteUserMutation,
 } = usersApiSlice
 

@@ -1,4 +1,6 @@
+import AvailabilityTable from '@/features/user/tabels/AvailabilityTable'
+
 const MemberAvailabilityTabContent = () => {
-  return <div>MemberAvailabilityTabContent</div>
+  return <AvailabilityTable />
 }
 export default MemberAvailabilityTabContent
