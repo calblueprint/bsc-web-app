@@ -11,7 +11,7 @@ const initialState = housesAdapter.getInitialState()
 export const housesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getHouse: builder.query({
-      query: (houseId) => ({
+      query: (houseId: string) => ({
         url: `houses/${houseId}`,
         method: 'GET',
         data: { body: 'hello world' },
@@ -42,7 +42,9 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewHouse: builder.mutation({
-      query: (data) => ({
+      query: (data: {
+        data: Partial<House>
+      }) => ({
         url: `houses`,
         method: 'POST',
         body: {
@@ -52,14 +54,17 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'House', id: 'LIST' }],
     }),
     updateHouses: builder.mutation({
-      query: (data) => ({
+      query: (data: {
+        houseId: string, 
+        data: Partial<House>
+      }) => ({
         url: `houses/${data.houseId}`,
         method: 'PATCH',
         body: {
           ...data.data,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'House', id: arg.id }],
+      invalidatesTags: (result, error, arg) => [{ type: 'House', id: arg.houseId }],
     }),
   }),
 })
