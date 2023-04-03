@@ -15,7 +15,7 @@ import { getComparator, stableSort, Order } from '../../../utils/utils'
 import { HeadCell } from '../../../interfaces/interfaces'
 import uuid from 'react-uuid'
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
 import AvailabilityItem from '../items/AvailabilityItem'
 import { selectCurrentUser } from '@/features/auth/authSlice'
@@ -25,11 +25,13 @@ import { useUpdateUserMutation } from '../userApiSlice'
 import Button from '@mui/material/Button'
 import { Typography } from '@mui/material'
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
+import { setMemberAvailability } from '../usersSlice'
 
 const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
 export default function AvailabilityTable() {
     const authUser = useSelector(selectCurrentUser)
+    const dispatch = useDispatch()
     const [updateUser, { isLoading: updateUserIsLoading, isSuccess: updateUserIsSuccess }] =
         useUpdateUserMutation()
     const [establishContext, { isLoading, isSuccess }] = useEstablishContextMutation()
@@ -74,8 +76,15 @@ export default function AvailabilityTable() {
     }
 
     useEffect(() => {
+        if (authUser && authUser.availabilities) {
+            dispatch(setMemberAvailability(authUser.availabilities))
+        }
+    }, [authUser])
+
+    useEffect(() => {
         if (authUser && authUser.availabilities && !isEditing) {
             console.log('User Availabilities: ' + authUser.availabilities)
+            // const stableAvailabilities = authUser.availabilities.map(day => )
             setAvailabilities(authUser.availabilities)
         }
     }, [authUser, isEditing])
@@ -147,6 +156,7 @@ export default function AvailabilityTable() {
                                                       : []
                                               }
                                               day={day}
+                                              isEditing={isEditing}
                                               onAvailabilityChange={onAvailabilityChange}
                                           />
                                       )

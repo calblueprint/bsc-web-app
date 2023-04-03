@@ -18,6 +18,7 @@ import uuid from 'react-uuid'
 type AvailabilitiesProps = {
     dayAvailability: { startTime: string; endTime: string }[]
     day: string
+    isEditing: boolean
     onAvailabilityChange: (
         availability: { startTime: string; endTime: string }[],
         day: string
@@ -58,6 +59,7 @@ const generateTimeOptionsIndex = () => {
 const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
     dayAvailability,
     day,
+    isEditing,
     onAvailabilityChange,
 }) => {
     const [editedAvailability, setEditedAvailability] = useState<
@@ -105,7 +107,7 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
                 <TableCell component='th' scope='row' align={'left'}>
                     <Table>
                         <TableBody>
-                            {dayAvailability.map(({ startTime, endTime }, index) => {
+                            {dayAvailability.sort().map(({ startTime, endTime }, index) => {
                                 return (
                                     <AvailabilityForm
                                         key={day + '-' + index}
