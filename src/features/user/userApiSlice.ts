@@ -45,9 +45,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewUser: builder.mutation({
-      query: (data: {
-        data: Partial<User>
-      }) => ({
+      query: (data: { data: Partial<User> }) => ({
         url: `users`,
         method: 'POST',
         body: {
@@ -57,30 +55,29 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'User', id: 'LIST' }],
     }),
     updateUser: builder.mutation({
-      query: (data: {
-        userId: string,
-        data: Partial<User>
-      }) => ({
+      query: (data: { userId: string; data: Partial<User> }) => ({
         url: `users/${data.userId}`,
         method: 'PATCH',
         body: {
           ...data.data,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'User', id: arg.userId }],
+      invalidatesTags: (result, error, arg) => [
+        { type: 'User', id: arg.userId },
+      ],
     }),
     updateUserAvailability: builder.mutation<User, { id: string }>({
       query: (arg) => {
         const { id } = arg
         // Access the Redux state and get the availability data
         const state = store.getState() as RootState
-        const availability = selectMemberAvailability(state)
+        const availabilities = selectMemberAvailability(state)
 
         return {
           url: `/users/${id}`,
           method: 'PATCH',
           // Include the availability data in the body
-          body: { availability },
+          body: { availabilities },
         }
       },
 
@@ -121,6 +118,7 @@ export const {
   useGetUsersQuery,
   useAddNewUserMutation,
   useUpdateUserMutation,
+  useUpdateUserAvailabilityMutation,
   //   useDeleteUserMutation,
 } = usersApiSlice
 

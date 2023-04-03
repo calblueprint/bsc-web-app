@@ -21,11 +21,14 @@ import AvailabilityItem from '../items/AvailabilityItem'
 import { selectCurrentUser } from '@/features/auth/authSlice'
 import { useEffect, useState } from 'react'
 import { User } from '@/types/schema'
-import { useUpdateUserMutation } from '../userApiSlice'
+import {
+  useUpdateUserAvailabilityMutation,
+  useUpdateUserMutation,
+} from '../userApiSlice'
 import Button from '@mui/material/Button'
 import { Typography } from '@mui/material'
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
-import { setMemberAvailability } from '../usersSlice'
+import { selectMemberAvailability, setMemberAvailability } from '../usersSlice'
 
 const days = [
   'sunday',
@@ -38,12 +41,14 @@ const days = [
 ]
 
 export default function AvailabilityTable() {
-  const authUser = useSelector(selectCurrentUser)
+  const authUser = useSelector(selectCurrentUser) as User
   const dispatch = useDispatch()
+  const userAvailability = useSelector(selectMemberAvailability)
   const [
-    updateUser,
+    updateUserAvailability,
     { isLoading: updateUserIsLoading, isSuccess: updateUserIsSuccess },
-  ] = useUpdateUserMutation()
+  ] = useUpdateUserAvailabilityMutation()
+
   const [establishContext, { isLoading, isSuccess }] =
     useEstablishContextMutation()
   const [availabilities, setAvailabilities] = useState<User['availabilities']>()
@@ -74,13 +79,23 @@ export default function AvailabilityTable() {
       console.log('[ERROR]: availabilities is not defined')
       return false
     }
+    if (!userAvailability) {
+      console.log('[ERROR]: userAvailabilities is not defined')
+      return false
+    }
 
     const data = { data: {}, userId: authUser.id }
     data.data = { availabilities }
     try {
-      const payload = await updateUser(data).unwrap()
-      console.log('Success!! Payload: ', payload)
-      establishContext(authUser.id as string)
+      if (authUser.id) {
+        const payload = await updateUserAvailability({
+          id: authUser.id,
+        }).unwrap()
+        console.log('Success!! Payload: ', payload)
+        establishContext(authUser.id as string)
+      } else {
+        console.error('[ERROR]: authUser.id is not defined')
+      }
     } catch (error) {
       console.log('[ERROR]: ', error)
     }
@@ -88,7 +103,17 @@ export default function AvailabilityTable() {
 
   useEffect(() => {
     if (authUser && authUser.availabilities) {
-      dispatch(setMemberAvailability(authUser.availabilities))
+      let availabilities = { ...authUser.availabilities }
+
+      Object.keys(availabilities).map((dayKey) => {
+        availabilities[dayKey] = [...availabilities[dayKey]].sort(
+          (
+            a: { startTime: string; endTime: string },
+            b: { startTime: string; endTime: string }
+          ) => parseInt(a.startTime) - parseInt(b.startTime)
+        )
+      })
+      dispatch(setMemberAvailability(availabilities))
     }
   }, [authUser])
 
@@ -158,12 +183,14 @@ export default function AvailabilityTable() {
                     return (
                       <AvailabilityItem
                         key={uuid()}
-                        dayAvailability={
-                          availabilities &&
-                          availabilities[day as keyof typeof availabilities]
-                            ? availabilities[day as keyof typeof availabilities]
-                            : []
-                        }
+                        //   dayAvailability={
+                        //       availabilities &&
+                        //       availabilities[day as keyof typeof availabilities]
+                        //           ? availabilities[
+                        //                 day as keyof typeof availabilities
+                        //             ]
+                        //           : []
+                        //   }
                         day={day}
                         isEditing={isEditing}
                         onAvailabilityChange={onAvailabilityChange}
