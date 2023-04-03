@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
-import { Days } from '@/types/schema'
+import { Days, House } from '@/types/schema'
 
 const filterOptions: Days[] = [
   'All',
@@ -28,10 +28,8 @@ const filterOptions: Days[] = [
 
 const ManagerUnassignedTabContent = () => {
   const authUser = useSelector(selectCurrentUser)
-  const authHouse = useSelector(selectCurrentHouse)
-  const { data: shiftData } = useGetShiftsQuery(
-    authHouse ? authHouse.id : undefined
-  )
+  const authHouse = useSelector(selectCurrentHouse) as House
+  const { data: shiftData } = useGetShiftsQuery(authHouse.id)
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [dayFilter, setDayFilter] = useState<Days>('All')
   const [filteredShiftIds, setFilteredShiftIds] = useState<EntityId[]>([])
