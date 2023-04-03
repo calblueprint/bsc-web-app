@@ -79,6 +79,7 @@ export default function AvailabilityTable() {
                 const payload = await updateUserAvailability({ id: authUser.id }).unwrap()
                 console.log('Success!! Payload: ', payload)
                 establishContext(authUser.id as string)
+                setIsEditing(false)
             } else {
                 console.error('[ERROR]: authUser.id is not defined')
             }
@@ -101,7 +102,7 @@ export default function AvailabilityTable() {
             })
             dispatch(setMemberAvailability(availabilities))
         }
-    }, [authUser])
+    }, [authUser, isEditing])
 
     useEffect(() => {
         if (authUser && authUser.availabilities && !isEditing) {
