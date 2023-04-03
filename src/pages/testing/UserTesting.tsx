@@ -1,3 +1,5 @@
+/** This file was copied and pasted into ManagerUnassignedTabContent.tsx */
+
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import NewShiftBtn from '@/features/shift/buttons/NewShiftBtn'
 import UnassignedShiftsTable from '@/features/shift/tables/UnassignedShiftsTable'
@@ -13,16 +15,7 @@ import { useSelector } from 'react-redux'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
-
-type Days =
-  | 'All'
-  | 'Monday'
-  | 'Tuesday'
-  | 'Wednesday'
-  | 'Thursday'
-  | 'Friday'
-  | 'Saturday'
-  | 'Sunday'
+import { Days } from '@/types/schema'
 
 const filterOptions: Days[] = [
   'All',

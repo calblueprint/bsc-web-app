@@ -103,22 +103,33 @@ export type House = {
   userPINs: Record<string, string>
 }
 
-export enum Days {
-  Mon = 'Monday',
-  mon = 'monday',
-  Tue = 'Tuesday',
-  tue = 'tuesday',
-  Wed = 'Wednesday',
-  wed = 'wednesday',
-  Thu = 'Thursday',
-  thu = 'thursday',
-  Fri = 'Friday',
-  fri = 'friday',
-  Sat = 'Saturday',
-  sat = 'saturday',
-  Sun = 'Sunday',
-  sun = 'sunday',
-}
+// export enum Days {
+//   Mon = 'Monday',
+//   mon = 'monday',
+//   Tue = 'Tuesday',
+//   tue = 'tuesday',
+//   Wed = 'Wednesday',
+//   wed = 'wednesday',
+//   Thu = 'Thursday',
+//   thu = 'thursday',
+//   Fri = 'Friday',
+//   fri = 'friday',
+//   Sat = 'Saturday',
+//   sat = 'saturday',
+//   Sun = 'Sunday',
+//   sun = 'sunday',
+// }
+
+export type Days =
+  | 'All'
+  | 'Monday'
+  | 'Tuesday'
+  | 'Wednesday'
+  | 'Thursday'
+  | 'Friday'
+  | 'Saturday'
+  | 'Sunday'
+
 export type RowOfCSV = {
   // TODO: add application number so that we can use this as the unique id for the authorizedUsers
   email: string
