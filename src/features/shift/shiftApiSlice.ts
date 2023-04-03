@@ -11,7 +11,7 @@ const initialState = shiftsAdapter.getInitialState()
 export const shiftsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getShifts: builder.query({
-      query: (houseId) => ({
+      query: (houseId: string) => ({
         url: `houses/${houseId}/shifts`,
         method: 'GET',
         data: { body: 'hello world' },
@@ -48,7 +48,10 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewShift: builder.mutation({
-      query: (data) => ({
+      query: (data: {
+        houseId: string, 
+        data: Partial<Shift>
+      }) => ({
         url: `houses/${data.houseId}/shifts`,
         method: 'POST',
         body: {
@@ -58,14 +61,18 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'Shift', id: 'LIST' }],
     }),
     updateShift: builder.mutation({
-      query: (data) => ({
+      query: (data: {
+        houseId: string,
+        shiftId: string,
+        data: Partial<Shift>
+      }) => ({
         url: `houses/${data.houseId}/shifts/${data.shiftId}`,
         method: 'PATCH',
         body: {
           ...data.data,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'Shift', id: arg.id }],
+      invalidatesTags: (result, error, arg) => [{ type: 'Shift', id: arg.shiftId }],
     }),
     // deleteShift: builder.mutation({
     //   query: ({ id }) => ({
