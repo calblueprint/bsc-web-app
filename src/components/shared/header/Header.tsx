@@ -18,14 +18,17 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 // import { useNavigate, useLocation } from 'react-router-dom'
 
 //** Redux API Slice */
-import { setCurrentRole, selectCurrentUser } from '../../../features/auth/authSlice'
 import {
-    setMemberNavState,
-    selectMemberNavState,
-    setManagerNavState,
-    selectManagerNavState,
-    setSupervisorNavState,
-    selectSupervisorNavState,
+  setCurrentRole,
+  selectCurrentUser,
+} from '../../../features/auth/authSlice'
+import {
+  setMemberNavState,
+  selectMemberNavState,
+  setManagerNavState,
+  selectManagerNavState,
+  setSupervisorNavState,
+  selectSupervisorNavState,
 } from '../../../features/user/usersSlice'
 
 //** Hooks */
@@ -45,12 +48,12 @@ import { useRouter } from 'next/router'
 const lightColor = 'rgba(255, 255, 255, 0.7)'
 
 function capitalizeFirstLetter(word: string) {
-    if (!word || word.length < 2) return word
-    return word.charAt(0).toUpperCase() + word.slice(1)
+  if (!word || word.length < 2) return word
+  return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
 interface HeaderProps {
-    onDrawerToggle: () => void
+  onDrawerToggle: () => void
 }
 
 /**
@@ -59,99 +62,99 @@ interface HeaderProps {
  * @returns
  */
 const Header = (props: HeaderProps) => {
-    const { onDrawerToggle } = props
+  const { onDrawerToggle } = props
 
-    const { isManager, isMember, isSupervisor } = useAuth()
-    const user = useSelector(selectCurrentUser)
-    const memberNavState = useSelector(selectMemberNavState)
-    const managerNavState = useSelector(selectManagerNavState)
-    const supervisorNavState = useSelector(selectSupervisorNavState)
-    // const nav = useGoToRoute()
-    const router = useRouter()
-    const dispatch = useDispatch()
-    const [userName, setUserName] = React.useState('User')
+  const { isManager, isMember, isSupervisor } = useAuth()
+  const user = useSelector(selectCurrentUser)
+  const memberNavState = useSelector(selectMemberNavState)
+  const managerNavState = useSelector(selectManagerNavState)
+  const supervisorNavState = useSelector(selectSupervisorNavState)
+  // const nav = useGoToRoute()
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const [userName, setUserName] = React.useState('User')
 
-    const { isManagerPath, isMemberPath, isSupervisorPath } = useUserRolePath()
+  const { isManagerPath, isMemberPath, isSupervisorPath } = useUserRolePath()
 
-    React.useEffect(() => {
-        // console.log(user)
-        if (user) {
-            setUserName(user.preferredName ? user.preferredName : user.firstName)
-        }
-    }, [user])
+  React.useEffect(() => {
+    // console.log(user)
+    if (user) {
+      setUserName(user.preferredName ? user.preferredName : user.firstName)
+    }
+  }, [user])
 
-    // const handleMemberClick = () => {
-    //     if (isMember) {
-    //         dispatch(setCurrentRole('Member'))
-    //     }
-    // }
-    // const handleManagerClick = () => {
-    //     if (isManager) {
-    //         dispatch(setCurrentRole('Manager'))
-    //     }
-    // }
-    // const handleSupervisorClick = () => {
-    //     if (isSupervisor) {
-    //         dispatch(setCurrentRole('Supervisor'))
-    //     }
-    // }
+  // const handleMemberClick = () => {
+  //     if (isMember) {
+  //         dispatch(setCurrentRole('Member'))
+  //     }
+  // }
+  // const handleManagerClick = () => {
+  //     if (isManager) {
+  //         dispatch(setCurrentRole('Manager'))
+  //     }
+  // }
+  // const handleSupervisorClick = () => {
+  //     if (isSupervisor) {
+  //         dispatch(setCurrentRole('Supervisor'))
+  //     }
+  // }
 
-    //TODO: Delete after testing ******************************
-    // React.useEffect(() => {
-    //     console.log('Mounting Header')
-    //     return () => {
-    //         console.log('Unmounting Header')
-    //     }
-    // }, [])
-    //TODO: Delete after testing ********************************
+  //TODO: Delete after testing ******************************
+  // React.useEffect(() => {
+  //     console.log('Mounting Header')
+  //     return () => {
+  //         console.log('Unmounting Header')
+  //     }
+  // }, [])
+  //TODO: Delete after testing ********************************
 
-    return (
-        <React.Fragment>
-            <AppBar color='secondary' position='sticky' elevation={0}>
-                <Toolbar>
-                    <Grid container spacing={1} alignItems='center'>
-                        <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
-                            <IconButton
-                                // color='secondary'
-                                aria-label='open drawer'
-                                onClick={onDrawerToggle}
-                                edge='start'
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <AppBar
-                component='div'
-                color='secondary'
-                position='static'
-                elevation={0}
-                sx={{ zIndex: 0 }}
-            >
-                <Toolbar>
-                    <Grid container alignItems='center' spacing={1}>
-                        <Grid item xs>
-                            <Typography color='inherit' variant='h5' component='h1'>
-                                {isMemberPath ? memberNavState.id : null}
-                                {isManagerPath ? managerNavState.id : null}
-                                {isSupervisorPath ? supervisorNavState.id : null}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <AppBar
-                color='secondary'
-                component='div'
-                position='static'
-                elevation={0}
-                sx={{ zIndex: 0 }}
-            >
-                <HeaderTabs />
-            </AppBar>
-        </React.Fragment>
-    )
+  return (
+    <React.Fragment>
+      <AppBar color="secondary" position="sticky" elevation={0}>
+        <Toolbar>
+          <Grid container spacing={1} alignItems="center">
+            <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
+              <IconButton
+                // color='secondary'
+                aria-label="open drawer"
+                onClick={onDrawerToggle}
+                edge="start"
+              >
+                <MenuIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+      <AppBar
+        component="div"
+        color="secondary"
+        position="static"
+        elevation={0}
+        sx={{ zIndex: 0 }}
+      >
+        <Toolbar>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs>
+              <Typography color="inherit" variant="h5" component="h1">
+                {isMemberPath ? memberNavState.id : null}
+                {isManagerPath ? managerNavState.id : null}
+                {isSupervisorPath ? supervisorNavState.id : null}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+      <AppBar
+        color="secondary"
+        component="div"
+        position="static"
+        elevation={0}
+        sx={{ zIndex: 0 }}
+      >
+        <HeaderTabs />
+      </AppBar>
+    </React.Fragment>
+  )
 }
 export default Header
