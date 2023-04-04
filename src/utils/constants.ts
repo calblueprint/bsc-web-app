@@ -1,7 +1,4 @@
-import DashboardCustomizeRoundedIcon from '@mui/icons-material/DashboardCustomizeRounded'
-import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded'
-import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded'
-import SettingsIcon from '@mui/icons-material/Settings'
+
 
 export const memberTabs = {
   Schedule: [{ id: 'Individual' }, { id: 'All Shifts' }],
@@ -33,13 +30,13 @@ export const memberCategories = [
         id: 'Schedule',
         path: '/account/member',
         active: 0,
-        icon: <CalendarMonthRoundedIcon />,
+        
       },
       {
         id: 'Members',
         path: '/account/member',
         active: 1,
-        icon: <StorefrontRoundedIcon />,
+        
       },
       {
         id: 'Settings',
@@ -58,13 +55,13 @@ export const managerCategories = [
         id: 'Schedule',
         path: '/account/manager',
         active: 0,
-        icon: <DashboardCustomizeRoundedIcon />,
+        
       },
       {
         id: 'Planner',
         path: '/account/manager',
         active: 1,
-        icon: <CalendarMonthRoundedIcon />,
+        
       },
       {
         id: 'Members',
@@ -83,13 +80,13 @@ export const supervisorCategories = [
         id: 'Schedule',
         path: '/account/supervisor',
         active: 0,
-        icon: <DashboardCustomizeRoundedIcon />,
+        
       },
       {
         id: 'Planner',
         path: '/account/supervisor',
         active: 1,
-        icon: <CalendarMonthRoundedIcon />,
+       
       },
       {
         id: 'Members',
@@ -100,12 +97,16 @@ export const supervisorCategories = [
   },
 ]
 
-const icons = {
-  Dashboard: <DashboardCustomizeRoundedIcon />,
-  Schedule: <CalendarMonthRoundedIcon />,
-  Planner: <CalendarMonthRoundedIcon />,
-  Profile: <SettingsIcon />,
-  Marketplace: <StorefrontRoundedIcon />,
-}
 
 export const ROLES = ['Manager', 'Member', 'Supervisor']
+
+
+export const DAYS = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+]

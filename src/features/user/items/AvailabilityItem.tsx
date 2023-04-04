@@ -25,10 +25,7 @@ type AvailabilitiesProps = {
   // dayAvailability: { startTime: string; endTime: string }[]
   day: string
   isEditing: boolean
-  onAvailabilityChange: (
-    availability: { startTime: string; endTime: string }[],
-    day: string
-  ) => void
+  
 }
 
 const generateTimeOptions = () => {
@@ -66,7 +63,7 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
   // dayAvailability,
   day,
   isEditing,
-  onAvailabilityChange,
+  
 }) => {
   const [editedAvailability, setEditedAvailability] = useState<
     { startTime: string; endTime: string }[]

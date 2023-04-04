@@ -38,7 +38,7 @@ import {
   memberCategories,
   managerCategories,
   supervisorCategories,
-} from './../constants'
+} from '../../../utils/constants'
 
 //** Interfaces */
 import { useRouter } from 'next/router'

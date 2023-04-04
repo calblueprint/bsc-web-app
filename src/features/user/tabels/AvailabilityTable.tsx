@@ -1,98 +1,101 @@
 import * as React from 'react'
+
+//** Materials UI Components */
 import Box from '@mui/material/Box'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
-import TableCell, { tableCellClasses } from '@mui/material/TableCell'
+import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import { styled } from '@mui/material/styles'
-import TableSortLabel from '@mui/material/TableSortLabel'
 import Paper from '@mui/material/Paper'
-import Checkbox from '@mui/material/Checkbox'
-import { visuallyHidden } from '@mui/utils'
-import { getComparator, stableSort, Order } from '../../../utils/utils'
-import { HeadCell } from '../../../interfaces/interfaces'
-import uuid from 'react-uuid'
-import { EntityId, Dictionary } from '@reduxjs/toolkit'
-import { useDispatch, useSelector } from 'react-redux'
-import { selectShiftById } from '@/features/shift/shiftApiSlice'
-import AvailabilityItem from '../items/AvailabilityItem'
-import { selectCurrentUser } from '@/features/auth/authSlice'
-import { useEffect, useState } from 'react'
-import { User } from '@/types/schema'
-import {
-  useUpdateUserAvailabilityMutation,
-  useUpdateUserMutation,
-} from '../userApiSlice'
 import Button from '@mui/material/Button'
 import { Typography } from '@mui/material'
-import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
+
+//** Custom packages */
+import uuid from 'react-uuid'
+
+//** Hooks */
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import AvailabilityItem from '../items/AvailabilityItem'
+
+//** Redux state imports */
 import { selectMemberAvailability, setMemberAvailability } from '../usersSlice'
+import { selectCurrentUser } from '@/features/auth/authSlice'
 
-const days = [
-  'sunday',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-]
+//** Redux Api imports */
+import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
+import {
+  useUpdateUserAvailabilityMutation,
+} from '../userApiSlice'
 
+//** Typescript types */
+import { User } from '@/types/schema'
+
+//** Import constants */
+import { DAYS } from '@/utils/constants'
+
+
+/**
+ * @description Displays and edits the current logged in user
+ * 
+ */
 export default function AvailabilityTable() {
+  //** Get Logged In user from redux */
   const authUser = useSelector(selectCurrentUser) as User
+  //** Get Logged In user availability */
+  const userAvailability = useSelector(selectMemberAvailability) as User['availabilities']
+
+  //**  Hooks */
   const dispatch = useDispatch()
-  const userAvailability = useSelector(selectMemberAvailability)
+
+  //** Function from Redux to update user abailability in the backEnd */
   const [
     updateUserAvailability,
     { isLoading: updateUserIsLoading, isSuccess: updateUserIsSuccess },
   ] = useUpdateUserAvailabilityMutation()
 
+  //** Function from Redux to update the current user from the backend */
   const [establishContext, { isLoading, isSuccess }] =
     useEstablishContextMutation()
-  const [availabilities, setAvailabilities] = useState<User['availabilities']>()
+
+  //** True when user is editing availability */
   const [isEditing, setIsEditing] = useState(false)
 
-  const onAvailabilityChange = (
-    availability: { startTime: string; endTime: string }[],
-    day: string
-  ) => {
-    console.log(' day: ' + day)
-    // availability.forEach((a) => console.log('onAvailabilityChange: ', a))
-    const newAvailabilities = { ...availabilities, [day]: availability }
-    // console.log({ ...availabilities, [day]: availability })
-
-    setAvailabilities(newAvailabilities)
-  }
-
+  //** It sets editing to false and restores the availability to the current logged in user */
   const handleCancel = () => {
     setIsEditing(false)
+    dispatch(setMemberAvailability(authUser.availabilities))
   }
 
+  //** It saves the changes made to the memberAvailability redux state to the backEnd */
   const handleSave = async () => {
+
+    // Verify that the authUser is logged in
     if (!authUser) {
       console.log('[ERROR]: authUser is not defined')
       return false
     }
-    if (!availabilities) {
-      console.log('[ERROR]: availabilities is not defined')
-      return false
-    }
+
+    // Verify that the memberAvailability from redux is define
     if (!userAvailability) {
       console.log('[ERROR]: userAvailabilities is not defined')
       return false
     }
 
-    const data = { data: {}, userId: authUser.id }
-    data.data = { availabilities }
     try {
+      // make sure userId is defined
       if (authUser.id) {
+        // Update user availability with the availability in the memberAvailability redux state
         const payload = await updateUserAvailability({
           id: authUser.id,
         }).unwrap()
+
         console.log('Success!! Payload: ', payload)
+        // This is to update the logged in user with the data in the backend (since we just changed it)
         establishContext(authUser.id as string)
+        // Set editing to false to exit editing state and go to display state
         setIsEditing(false)
       } else {
         console.error('[ERROR]: authUser.id is not defined')
@@ -102,29 +105,31 @@ export default function AvailabilityTable() {
     }
   }
 
+  //** Watch authUser for changes */
   useEffect(() => {
+    // Make sure authUser and authUser's availability are defined
     if (authUser && authUser.availabilities) {
-      let availabilities = { ...authUser.availabilities }
 
-      Object.keys(availabilities).map((dayKey) => {
-        availabilities[dayKey] = [...availabilities[dayKey]].sort(
+      // make a copy of the current user availabilities in order to mute it
+      const availabilitiesCopy = { ...authUser.availabilities }
+
+      // Sort each day's availability by startTime
+      Object.keys(availabilitiesCopy).map((dayKey) => {
+        // Make a copy of the day array and sort it
+        availabilitiesCopy[dayKey] = [...availabilitiesCopy[dayKey]].sort(
           (
             a: { startTime: string; endTime: string },
             b: { startTime: string; endTime: string }
           ) => parseInt(a.startTime) - parseInt(b.startTime)
         )
       })
-      dispatch(setMemberAvailability(availabilities))
-    }
-  }, [authUser, isEditing])
 
-  useEffect(() => {
-    if (authUser && authUser.availabilities && !isEditing) {
-      console.log('User Availabilities: ' + authUser.availabilities)
-      // const stableAvailabilities = authUser.availabilities.map(day => )
-      setAvailabilities(authUser.availabilities)
+      // Update the memberAvailability state from redux
+      dispatch(setMemberAvailability(availabilitiesCopy))
     }
-  }, [authUser, isEditing])
+  }, [authUser, dispatch])
+
+  
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -178,23 +183,14 @@ export default function AvailabilityTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {availabilities
-                ? days.map((day) => {
-                    console.log('key: ' + day)
+              {userAvailability
+                ? DAYS.map((day) => {
                     return (
                       <AvailabilityItem
                         key={uuid()}
-                        //   dayAvailability={
-                        //       availabilities &&
-                        //       availabilities[day as keyof typeof availabilities]
-                        //           ? availabilities[
-                        //                 day as keyof typeof availabilities
-                        //             ]
-                        //           : []
-                        //   }
                         day={day}
                         isEditing={isEditing}
-                        onAvailabilityChange={onAvailabilityChange}
+                        
                       />
                     )
                   })
