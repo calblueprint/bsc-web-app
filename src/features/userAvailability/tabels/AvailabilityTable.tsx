@@ -111,7 +111,12 @@ export default function AvailabilityTable() {
     if (authUser && authUser.availabilities) {
     
       // make a copy of the current user availabilities in order to mute it
-      const availabilitiesCopy = {...userAvailability ,...authUser.availabilities }
+      let availabilitiesCopy = {...userAvailability ,...authUser.availabilities }
+      for (const day in DAYS) {
+        if (!availabilitiesCopy[day]) {
+          availabilitiesCopy = {...availabilitiesCopy, [day]:[]}
+        }
+      }
 
       // Sort each day's availability by startTime
       Object.keys(availabilitiesCopy).map((dayKey) => {
