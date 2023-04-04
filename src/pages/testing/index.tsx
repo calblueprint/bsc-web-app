@@ -1,6 +1,6 @@
 // use this to test your stuff
 
 const index = () => {
-  return <div>index</div>
+  return <div>inex</div>
 }
 export default index
