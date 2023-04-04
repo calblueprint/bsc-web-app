@@ -1,129 +1,108 @@
+//** Hooks */
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+//** Materials UI Components */
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
-import TextField from '@mui/material/TextField'
-import { capitalizeFirstLetter } from '../../../utils/utils'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
-import dayjs from 'dayjs'
 import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import Box from '@mui/material/Box'
 import { Table, TableBody, Typography } from '@mui/material'
-import uuid from 'react-uuid'
-import { useDispatch, useSelector } from 'react-redux'
+
+//** Custom Functions */
+import { capitalizeFirstLetter, generateTimeOptions, generateTimeOptionsIndex, isTimeOverlap } from '../../../utils/utils'
+
+//** Redux state selectors and setters */
 import {
   selectMemberAvailability,
   setMemberAvailabilityDay,
-} from '../usersSlice'
+} from '../../userAvailability/userAvailabilitySlice'
 import { User } from '@/types/schema'
 
+
+//** Custom Types */
 type AvailabilitiesProps = {
-  // dayAvailability: { startTime: string; endTime: string }[]
   day: string
   isEditing: boolean
-  onAvailabilityChange: (
-    availability: { startTime: string; endTime: string }[],
-    day: string
-  ) => void
+  
 }
 
-const generateTimeOptions = () => {
-  // const options = []
-  let options = {}
-  for (let i = 0; i < 24; i++) {
-    for (let j = 0; j < 60; j += 30) {
-      const timeValue = dayjs().hour(i).minute(j).format('h:mm A')
-      const timeKey = dayjs().hour(i).minute(j).format('HHmm')
-      // console.log(timeKey, timeValue)
-      options = { ...options, [timeKey]: timeValue }
-      // options.push(time)
-    }
-  }
 
-  options = { ...options, ['2359']: '11:59 PM' }
-  return options
-}
-
-const generateTimeOptionsIndex = () => {
-  let options = []
-  for (let i = 0; i < 24; i++) {
-    for (let j = 0; j < 60; j += 30) {
-      const timeKey = dayjs().hour(i).minute(j).format('HHmm')
-      // console.log(timeKey, timeValue)
-      options.push(timeKey)
-      // options.push(time)
-    }
-  }
-  options.push('2359')
-  return options
-}
-
+/**
+ * 
+ * @param day:string name of the weekday for the availability so edit/display
+ * 
+ * @param isEditing:boolean True if user is editing the availability
+ * 
+ * @returns React.FC that either displays the availability or a form to edit the availability
+ */
 const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
-  // dayAvailability,
   day,
   isEditing,
-  onAvailabilityChange,
 }) => {
-  const [editedAvailability, setEditedAvailability] = useState<
-    { startTime: string; endTime: string }[]
-  >([])
-
-  const [dayAvailability, setDayAvailability] = useState<
-    { startTime: string; endTime: string }[]
-  >([])
+  
+  //** Get the availability from redux state. This should be updated when the user navegates to the availability tab */
+  const userAvailability = useSelector(selectMemberAvailability) as User['availabilities']
 
   const timeOtions = generateTimeOptions()
   const timeIndex = generateTimeOptionsIndex()
 
-  //** get the dispatch hook to dispatch the availability update state */
+  //** Hooks */
   const dispatch = useDispatch()
 
-  //** Get the availability from redux state. This should be updated when the user navegates to the availability tab */
-  const availability = useSelector(selectMemberAvailability)
 
-  function handleSelectChange(
-    event: SelectChangeEvent<string>,
-    child: React.ReactNode
-  ) {
-    const newValue = event.target.value
-  }
+  /**
+   * @description: This function updates the memberAvailability in the redux state but
+   *               not in the backend
+   * 
+   * @param id -> Contains day and index of array item to edit e.g. (id = 'monday-3). This tells me 
+   *               I need to edit day array with index 3. if index >= dayArray.length a new item is added
+   * 
+   * @param startTime -> The selected startTime for the time block
+   * 
+   * @param endTime -> The selected endTime for the time block
+   */
   const handleTimeChange = (id: string, startTime: string, endTime: string) => {
-    console.log(id, startTime, endTime)
+    // console.log(id, startTime, endTime)
+    // Extract day and index from id
     const weekDay = id.split('-')[0]
     const index = parseInt(id.split('-')[1], 10)
 
+    // Create a copy of the userAvailability[day] array, so it can be mutated
     const newEditedAvailability = [
-      ...availability[day as keyof typeof availability],
+      ...userAvailability[weekDay as keyof typeof userAvailability],
     ] as Array<{
       startTime: string
       endTime: string
     }> // create a new copy of the array
 
-    if (dayAvailability.length > index) {
+    // Choose to edit or add a new time block
+    if (newEditedAvailability.length > index) {
       newEditedAvailability[index] = { startTime, endTime }
     } else {
       newEditedAvailability.push({ startTime, endTime })
     }
 
+    // Update time block for memberAvailability in redux state
     dispatch(
-      setMemberAvailabilityDay({ day, availabilityDay: newEditedAvailability })
+      setMemberAvailabilityDay({ day:weekDay, availabilityDay: newEditedAvailability })
     )
-
-    // setEditedAvailability(newEditedAvailability) // update the state with the new copy of the array
-    // onAvailabilityChange(newEditedAvailability, day)
   }
 
   const handleAddTimeBlock = () => {
     const newEditedAvailability = [
-      ...availability[day as keyof typeof availability],
+      ...userAvailability[day as keyof typeof userAvailability],
     ] as Array<{
       startTime: string
       endTime: string
     }>
+
     newEditedAvailability.push({
       startTime: timeIndex[10],
       endTime: timeIndex[11],
@@ -133,11 +112,7 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
     )
   }
 
-  useEffect(() => {
-    if (availability) {
-      setDayAvailability(availability[day as keyof typeof availability])
-    }
-  }, [availability])
+ 
 
   return (
     <React.Fragment>
@@ -149,8 +124,8 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
         <TableCell component="th" scope="row" align={'left'}>
           <Table>
             <TableBody>
-              {availability && availability[day as keyof typeof availability]
-                ? availability[day as keyof typeof availability].map(
+              {userAvailability && userAvailability[day as keyof typeof userAvailability]
+                ? userAvailability[day as keyof typeof userAvailability].map(
                     ({ startTime, endTime }, index) => {
                       return (
                         <AvailabilityForm
@@ -159,7 +134,7 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
                           endTime={endTime}
                           id={day + '-' + index}
                           isEditing={isEditing}
-                          onTimeChange={handleTimeChange}
+                          // onTimeChange={handleTimeChange}
                         />
                       )
                     }
@@ -187,7 +162,7 @@ type AvailabilityFormProps = {
   endTime: string
   id: string
   isEditing: boolean
-  onTimeChange: (id: string, startTime: string, endTime: string) => void
+  // onTimeChange: (id: string, startTime: string, endTime: string) => void
 }
 
 type TimeOptions = {
@@ -199,21 +174,66 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
   endTime,
   id,
   isEditing,
-  onTimeChange,
+  // onTimeChange,
 }) => {
   const timeOptions: TimeOptions = generateTimeOptions()
   const timeOptionsIndex: string[] = generateTimeOptionsIndex()
   const [editedStartTime, setEditedStartTime] = useState(startTime)
   const [editedEndTime, setEditedEndTime] = useState(endTime)
-  const availability = useSelector(selectMemberAvailability)
+  const userAvailability = useSelector(selectMemberAvailability) as  User['availabilities']
   const dispatch = useDispatch()
+
+  const isInvalidRange = parseInt(startTime) >= parseInt(endTime)
+  const isOverLap = isTimeOverlap(startTime, endTime, parseInt(id.split('-')[1]), userAvailability[id.split('-')[0] as keyof typeof userAvailability ])
+  // console.log(isOverLap, userAvailability[id.split('-')[0] as keyof typeof userAvailability ])
+  console.log(id)
+  /**
+   * @description: This function updates the memberAvailability in the redux state but
+   *               not in the backend
+   * 
+   * @param id -> Contains day and index of array item to edit e.g. (id = 'monday-3). This tells me 
+   *               I need to edit day array with index 3. if index >= dayArray.length a new item is added
+   * 
+   * @param startTime -> The selected startTime for the time block
+   * 
+   * @param endTime -> The selected endTime for the time block
+   */
+  const handleTimeChange = ( startTime: string, endTime: string) => {
+    // console.log(id, startTime, endTime)
+    // Extract day and index from id
+    const weekDay = id.split('-')[0]
+    const index = parseInt(id.split('-')[1], 10)
+    console.log('weekDay: ' ,weekDay, index)
+
+    // Create a copy of the userAvailability[day] array, so it can be mutated
+    const newEditedAvailability = [
+      ...userAvailability[weekDay as keyof typeof userAvailability],
+    ] as Array<{
+      startTime: string
+      endTime: string
+    }> // create a new copy of the array
+
+    // Choose to edit or add a new time block
+    if (newEditedAvailability.length > index) {
+      newEditedAvailability[index] = { startTime, endTime }
+    } else {
+      newEditedAvailability.push({ startTime, endTime })
+    }
+
+    // Update time block for memberAvailability in redux state
+
+    dispatch(
+      setMemberAvailabilityDay({ day:weekDay, availabilityDay: newEditedAvailability })
+    )
+  }
+
 
   const handleDeleteTimeBlock = () => {
     const weekDay = id.split('-')[0]
     const index = parseInt(id.split('-')[1], 10)
 
     const dayAvailability = [
-      ...availability[weekDay as keyof typeof availability],
+      ...userAvailability[weekDay as keyof typeof userAvailability],
     ]
     dayAvailability.splice(index, 1)
     dispatch(
@@ -242,7 +262,7 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
                 value={editedStartTime}
                 onChange={(event) => {
                   setEditedStartTime(event.target.value)
-                  onTimeChange(id, event.target.value, editedEndTime)
+                  handleTimeChange(event.target.value, editedEndTime)
                 }}
                 label="Start Time"
                 MenuProps={{
@@ -279,7 +299,7 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
                 value={editedEndTime}
                 onChange={(event) => {
                   setEditedEndTime(event.target.value)
-                  onTimeChange(id, editedStartTime, event.target.value)
+                  handleTimeChange( editedStartTime, event.target.value)
                 }}
                 label="End Time"
                 MenuProps={{
@@ -311,6 +331,12 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
             <DeleteIcon />
           </IconButton>
         </Box>
+        {isOverLap? <Typography color="error" variant="caption">
+            The time block overlaps.
+          </Typography>:null}
+       {isInvalidRange? <Typography color="error" variant="caption">
+            Invalid time range.
+          </Typography>: null}
       </TableCell>
     </TableRow>
   )

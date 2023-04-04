@@ -1,4 +1,6 @@
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
+import dayjs from 'dayjs'
+
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -91,3 +93,89 @@ export function capitalizeFirstLetter(word: string) {
   if (!word || word.length < 2) return word
   return word.charAt(0).toUpperCase() + word.slice(1)
 }
+
+
+/**
+ * @description: Generates times in intervals of 30min 
+ * 
+ * @returns: options object -> [key]: value where the key is a string in military time such as: KEY= '0230' gives VALUE='2:30PM'
+ */
+export const generateTimeOptions = () => {
+  // const options = []
+  let options = {}
+  for (let i = 0; i < 24; i++) {
+    for (let j = 0; j < 60; j += 30) {
+      const timeValue = dayjs().hour(i).minute(j).format('h:mm A')
+      const timeKey = dayjs().hour(i).minute(j).format('HHmm')
+      // console.log(timeKey, timeValue)
+      options = { ...options, [timeKey]: timeValue }
+      // options.push(time)
+    }
+  }
+
+  options = { ...options, ['2359']: '11:59 PM' }
+  return options
+}
+
+/**
+ * @description: Array with all excepted military time key values for the 
+ *                object returned by the generateTimeOptions() function
+ * 
+ * @returns: options array with all the posible times in military time
+ */
+export const generateTimeOptionsIndex = () => {
+  let options = []
+  for (let i = 0; i < 24; i++) {
+    for (let j = 0; j < 60; j += 30) {
+      const timeKey = dayjs().hour(i).minute(j).format('HHmm')
+      // console.log(timeKey, timeValue)
+      options.push(timeKey)
+      // options.push(time)
+    }
+  }
+  options.push('2359')
+  return options
+}
+
+export const isTimeOverlap = (
+  startTime: string,
+  endTime: string,
+  index: number,
+  availabilities: Array<{ startTime: string; endTime: string }>
+): boolean => {
+  if(availabilities.length === 1) {
+    return false
+  }
+
+  for (let i = 0; i < availabilities.length; i++) {
+    if (i === index){
+      continue
+    }
+    const timeBlock = availabilities[i]
+    if (
+      (parseInt(startTime) >= parseInt(timeBlock.startTime) &&
+        parseInt(startTime) < parseInt(timeBlock.endTime)) ||
+      (parseInt(endTime) > parseInt(timeBlock.startTime) &&
+        parseInt(endTime) <= parseInt(timeBlock.endTime)) ||
+      (parseInt(startTime) < parseInt(timeBlock.startTime) &&
+        parseInt(endTime) > parseInt(timeBlock.endTime))
+    ) {
+      return true;
+    }
+  }
+
+  // for (const timeBlock of availabilities) {
+  //   if (
+  //     (parseInt(startTime) >= parseInt(timeBlock.startTime) &&
+  //       parseInt(startTime) < parseInt(timeBlock.endTime)) ||
+  //     (parseInt(endTime) > parseInt(timeBlock.startTime) &&
+  //       parseInt(endTime) <= parseInt(timeBlock.endTime)) ||
+  //     (parseInt(startTime) < parseInt(timeBlock.startTime) &&
+  //       parseInt(endTime) > parseInt(timeBlock.endTime))
+  //   ) {
+  //     return true;
+  //   }
+  // }
+
+  return false;
+};
