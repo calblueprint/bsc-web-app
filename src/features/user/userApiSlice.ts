@@ -4,7 +4,7 @@ import { apiSlice } from '../../store/api/apiSlice'
 import { RootState, store } from '../../store/store'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '../auth/authSlice'
-import { selectMemberAvailability } from './usersSlice'
+// import { selectMemberAvailability } from './usersSlice'
 import { useEstablishContextMutation } from '../auth/authApiSlice'
 
 const usersAdapter = createEntityAdapter<User>({})
@@ -66,43 +66,43 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         { type: 'User', id: arg.userId },
       ],
     }),
-    updateUserAvailability: builder.mutation<User, { id: string }>({
-      query: (arg) => {
-        const { id } = arg
-        // Access the Redux state and get the availability data
-        const state = store.getState() as RootState
-        const availabilities = selectMemberAvailability(state)
+    // updateUserAvailability: builder.mutation<User, { id: string }>({
+    //   query: (arg) => {
+    //     const { id } = arg
+    //     // Access the Redux state and get the availability data
+    //     const state = store.getState() as RootState
+    //     const availabilities = selectMemberAvailability(state)
 
-        return {
-          url: `/users/${id}`,
-          method: 'PATCH',
-          // Include the availability data in the body
-          body: { availabilities },
-        }
-      },
+    //     return {
+    //       url: `/users/${id}`,
+    //       method: 'PATCH',
+    //       // Include the availability data in the body
+    //       body: { availabilities },
+    //     }
+    //   },
 
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        try {
-          const result = await queryFulfilled
-          // console.log('[Refreshed]: Query Fulfilled: ', result)
-          if (!result.data) {
-            console.log('User and House object are empty')
-            return
-          }
-          console.log(result.data)
-          // console.log(
-          //   '[Refreshed]: Query Fulfilled:  --user: ',
-          //   user,
-          //   '  --house: ',
-          //   house
-          // )
+    //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+    //     try {
+    //       const result = await queryFulfilled
+    //       // console.log('[Refreshed]: Query Fulfilled: ', result)
+    //       if (!result.data) {
+    //         console.log('User and House object are empty')
+    //         return
+    //       }
+    //       console.log(result.data)
+    //       // console.log(
+    //       //   '[Refreshed]: Query Fulfilled:  --user: ',
+    //       //   user,
+    //       //   '  --house: ',
+    //       //   house
+    //       // )
 
-          // return { data: arg }
-        } catch (error) {
-          console.log(error)
-        }
-      },
-    }),
+    //       // return { data: arg }
+    //     } catch (error) {
+    //       console.log(error)
+    //     }
+    //   },
+    // }),
     // deleteUser: builder.mutation({
     //   query: ({ id }) => ({
     //     url: '/users',
@@ -118,7 +118,7 @@ export const {
   useGetUsersQuery,
   useAddNewUserMutation,
   useUpdateUserMutation,
-  useUpdateUserAvailabilityMutation,
+  // useUpdateUserAvailabilityMutation,
   //   useDeleteUserMutation,
 } = usersApiSlice
 

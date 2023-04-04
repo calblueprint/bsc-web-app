@@ -21,14 +21,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import AvailabilityItem from '../items/AvailabilityItem'
 
 //** Redux state imports */
-import { selectMemberAvailability, setMemberAvailability } from '../usersSlice'
+import { selectMemberAvailability, setMemberAvailability } from '../../userAvailability/userAvailabilitySlice'
 import { selectCurrentUser } from '@/features/auth/authSlice'
 
 //** Redux Api imports */
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
 import {
   useUpdateUserAvailabilityMutation,
-} from '../userApiSlice'
+} from '../../userAvailability/userAvailabilityApiSlice'
 
 //** Typescript types */
 import { User } from '@/types/schema'
@@ -109,7 +109,7 @@ export default function AvailabilityTable() {
   useEffect(() => {
     // Make sure authUser and authUser's availability are defined
     if (authUser && authUser.availabilities) {
-
+    
       // make a copy of the current user availabilities in order to mute it
       const availabilitiesCopy = { ...authUser.availabilities }
 
@@ -128,6 +128,14 @@ export default function AvailabilityTable() {
       dispatch(setMemberAvailability(availabilitiesCopy))
     }
   }, [authUser, dispatch])
+
+  useEffect (()=> {
+    console.log('authUserChecking')
+    if (!authUser.availabilities) {
+      handleSave()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[authUser])
 
   
   return (

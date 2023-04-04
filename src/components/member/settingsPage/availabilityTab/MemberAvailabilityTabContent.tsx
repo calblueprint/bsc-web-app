@@ -1,4 +1,4 @@
-import AvailabilityTable from '@/features/user/tabels/AvailabilityTable'
+import AvailabilityTable from '@/features/userAvailability/tabels/AvailabilityTable'
 
 const MemberAvailabilityTabContent = () => {
   return <AvailabilityTable />

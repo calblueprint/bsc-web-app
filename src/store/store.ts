@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import counterReducer from './slices/counterSlice'
 import authReducer from '../features/auth/authSlice'
 import usersReducer from '../features/user/usersSlice'
+import userAvailabilityReducer from '../features/userAvailability/userAvailabilitySlice'
 import { apiSlice } from './api/apiSlice'
 // import authReducer from './slices/authSlice'
 
@@ -11,6 +12,7 @@ export const store = configureStore({
     counter: counterReducer,
     auth: authReducer,
     users: usersReducer,
+    userAvailability: userAvailabilityReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),
