@@ -248,7 +248,7 @@ export default function AvailabilityTable() {
                       />
                     )
                   })
-                : null}
+                :null}
             </TableBody>
           </Table>
         </TableContainer>
