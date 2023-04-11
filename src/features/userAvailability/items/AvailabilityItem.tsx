@@ -324,10 +324,11 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
           </IconButton>
         </Box>
         {isOverLap? <Typography color="error" variant="caption">
-            The time block overlaps.
+            {`The time block overlaps. `}
           </Typography>:null}
+        
        {isInvalidRange? <Typography color="error" variant="caption">
-            Invalid time range.
+            {`Invalid time range.`}
           </Typography>: null}
       </TableCell>
     </TableRow>

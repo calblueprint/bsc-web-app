@@ -132,14 +132,16 @@ export default function AvailabilityTable() {
     }
   }
 
+  //** if true it opens the Succes message window */
   const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
+  //** if true it opens the Error message window */
   const [openErrorMsg, setOpenErrorMsg] = React.useState(false)
 
+  //** Handles closing both success and error windows. */
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpenSuccessMsg(false);
     setOpenErrorMsg(false)
   };
@@ -251,7 +253,7 @@ export default function AvailabilityTable() {
           </Table>
         </TableContainer>
       </Paper>
-      <Stack spacing={2} sx={{ width: '100%' }}>
+      {/* <Stack spacing={2} sx={{ width: '100%' }}> */}
      
       <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical:'top', horizontal:'center' }}>
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
@@ -262,7 +264,7 @@ export default function AvailabilityTable() {
         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>To save availability please fix time blocks!</Alert>
       </Snackbar>
      
-    </Stack>
+    {/* </Stack> */}
     </Box>
   )
 }
