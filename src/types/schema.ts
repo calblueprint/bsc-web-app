@@ -77,6 +77,8 @@ export type Shift = {
   verification: boolean
   // Category of work that the shift belongs to
   category: string
+  // User preferences
+  preferences: {preferredBy:Array<string>, dislikedBy:Array<string>}
 }
 
 // TODO: add date, verifiedAt, and unverifiedBy attributes
