@@ -16,7 +16,12 @@ import Box from '@mui/material/Box'
 import { Table, TableBody, Typography } from '@mui/material'
 
 //** Custom Functions */
-import { capitalizeFirstLetter, generateTimeOptions, generateTimeOptionsIndex, isTimeOverlap } from '../../../utils/utils'
+import {
+  capitalizeFirstLetter,
+  generateTimeOptions,
+  generateTimeOptionsIndex,
+  isTimeOverlap,
+} from '../../../utils/utils'
 
 //** Redux state selectors and setters */
 import {
@@ -31,30 +36,28 @@ import {
 } from '../../userAvailability/userAvailabilitySlice'
 import { User } from '@/types/schema'
 
-
 //** Custom Types */
 type AvailabilitiesProps = {
   day: string
   isEditing: boolean
-  
 }
 
-
 /**
- * 
+ *
  * @param day:string name of the weekday for the availability so edit/display
- * 
+ *
  * @param isEditing:boolean True if user is editing the availability
- * 
+ *
  * @returns React.FC that either displays the availability or a form to edit the availability
  */
 const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
   day,
   isEditing,
 }) => {
-  
   //** Get the availability from redux state. This should be updated when the user navegates to the availability tab */
-  const userAvailability = useSelector(selectMemberAvailability) as User['availabilities']
+  const userAvailability = useSelector(
+    selectMemberAvailability
+  ) as User['availabilities']
 
   //** array of indexes to access the timeOptions object */
   const timeIndex = generateTimeOptionsIndex()
@@ -74,13 +77,13 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
     const len = newEditedAvailability.length
     let blockTimeIndex = timeIndex.indexOf('0600')
     if (len > 0) {
-      const lastBlockTime = newEditedAvailability[len-1].endTime
+      const lastBlockTime = newEditedAvailability[len - 1].endTime
       blockTimeIndex = timeIndex.indexOf(lastBlockTime)
     }
     if (blockTimeIndex > timeIndex.length - 5) {
       blockTimeIndex = timeIndex.length - 5
-    } else 
-  
+    }
+
     // console.log('getTime: ' + timeIndex[blockTimeIndex])
 
     newEditedAvailability.push({
@@ -92,8 +95,6 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
     )
   }
 
- 
-
   return (
     <React.Fragment>
       <TableRow sx={{ borderBottom: 'none' }}>
@@ -104,7 +105,8 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
         <TableCell component="th" scope="row" align={'left'}>
           <Table>
             <TableBody>
-              {userAvailability && userAvailability[day as keyof typeof userAvailability]
+              {userAvailability &&
+              userAvailability[day as keyof typeof userAvailability]
                 ? userAvailability[day as keyof typeof userAvailability].map(
                     ({ startTime, endTime }, index) => {
                       return (
@@ -149,11 +151,10 @@ type TimeOptions = {
   [key: string]: string
 }
 
-
 /**
- * @description 
- * @param param0 
- * @returns 
+ * @description
+ * @param param0
+ * @returns
  */
 const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
   startTime,
@@ -166,34 +167,39 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
   const timeOptionsIndex: string[] = generateTimeOptionsIndex()
   const [editedStartTime, setEditedStartTime] = useState(startTime)
   const [editedEndTime, setEditedEndTime] = useState(endTime)
-  const userAvailability = useSelector(selectMemberAvailability) as  User['availabilities']
+  const userAvailability = useSelector(
+    selectMemberAvailability
+  ) as User['availabilities']
   const dispatch = useDispatch()
 
   const isInvalidRange = parseInt(startTime) >= parseInt(endTime)
-  const isOverLap = isTimeOverlap(startTime, endTime, parseInt(id.split('-')[1]), userAvailability[id.split('-')[0] as keyof typeof userAvailability ])
-  
+  const isOverLap = isTimeOverlap(
+    startTime,
+    endTime,
+    parseInt(id.split('-')[1]),
+    userAvailability[id.split('-')[0] as keyof typeof userAvailability]
+  )
 
   useEffect(() => {
     if (isInvalidRange || isOverLap) {
       dispatch(setIsAvailabilityError(true))
     }
-    dispatch(setIsInvalid({[id]:isInvalidRange}))
-    dispatch(setIsOverlap({[id]:isOverLap}))
-  },[isInvalidRange, isOverLap, dispatch, id])
+    dispatch(setIsInvalid({ [id]: isInvalidRange }))
+    dispatch(setIsOverlap({ [id]: isOverLap }))
+  }, [isInvalidRange, isOverLap, dispatch, id])
 
- 
   /**
    * @description: This function updates the memberAvailability in the redux state but
    *               not in the backend
-   * 
-   * @param id -> Contains day and index of array item to edit e.g. (id = 'monday-3). This tells me 
+   *
+   * @param id -> Contains day and index of array item to edit e.g. (id = 'monday-3). This tells me
    *               I need to edit day array with index 3. if index >= dayArray.length a new item is added
-   * 
+   *
    * @param startTime -> The selected startTime for the time block
-   * 
+   *
    * @param endTime -> The selected endTime for the time block
    */
-  const handleTimeChange = ( startTime: string, endTime: string) => {
+  const handleTimeChange = (startTime: string, endTime: string) => {
     // console.log(id, startTime, endTime)
     // Extract day and index from id
     const weekDay = id.split('-')[0]
@@ -218,10 +224,12 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
     // dispatch(setResetStateError({}))
     // Update time block for memberAvailability in redux state
     dispatch(
-      setMemberAvailabilityDay({ day:weekDay, availabilityDay: newEditedAvailability })
+      setMemberAvailabilityDay({
+        day: weekDay,
+        availabilityDay: newEditedAvailability,
+      })
     )
   }
-
 
   const handleDeleteTimeBlock = () => {
     const weekDay = id.split('-')[0]
@@ -295,7 +303,7 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
                 value={editedEndTime}
                 onChange={(event) => {
                   setEditedEndTime(event.target.value)
-                  handleTimeChange( editedStartTime, event.target.value)
+                  handleTimeChange(editedStartTime, event.target.value)
                 }}
                 label="End Time"
                 MenuProps={{
@@ -327,13 +335,17 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
             <DeleteIcon />
           </IconButton>
         </Box>
-        {isOverLap? <Typography color="error" variant="caption">
+        {isOverLap ? (
+          <Typography color="error" variant="caption">
             {`The time block overlaps. `}
-          </Typography>:null}
-        
-       {isInvalidRange? <Typography color="error" variant="caption">
+          </Typography>
+        ) : null}
+
+        {isInvalidRange ? (
+          <Typography color="error" variant="caption">
             {`Invalid time range.`}
-          </Typography>: null}
+          </Typography>
+        ) : null}
       </TableCell>
     </TableRow>
   )
