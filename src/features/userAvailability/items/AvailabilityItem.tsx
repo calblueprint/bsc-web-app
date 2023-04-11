@@ -71,9 +71,21 @@ const AvailabilityItem: React.FC<AvailabilitiesProps> = ({
       endTime: string
     }>
 
+    const len = newEditedAvailability.length
+    let blockTimeIndex = timeIndex.indexOf('0600')
+    if (len > 0) {
+      const lastBlockTime = newEditedAvailability[len-1].endTime
+      blockTimeIndex = timeIndex.indexOf(lastBlockTime)
+    }
+    if (blockTimeIndex > timeIndex.length - 5) {
+      blockTimeIndex = timeIndex.length - 5
+    } else 
+  
+    // console.log('getTime: ' + timeIndex[blockTimeIndex])
+
     newEditedAvailability.push({
-      startTime: timeIndex[10],
-      endTime: timeIndex[11],
+      startTime: timeIndex[blockTimeIndex + 2],
+      endTime: timeIndex[blockTimeIndex + 4],
     })
     dispatch(
       setMemberAvailabilityDay({ day, availabilityDay: newEditedAvailability })
@@ -167,17 +179,9 @@ const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
     }
     dispatch(setIsInvalid({[id]:isInvalidRange}))
     dispatch(setIsOverlap({[id]:isOverLap}))
-    console.log('RUNNING')
-    // return ()=> {
-    //   console.log("sending delete command id: " + id)
-    //   dispatch(setDeleteInvalid(id))
-    //   dispatch(setDeleteOverlap(id))
-
-    // }
   },[isInvalidRange, isOverLap, dispatch, id])
 
-  // console.log(isOverLap, userAvailability[id.split('-')[0] as keyof typeof userAvailability ])
-  // console.log(id)
+ 
   /**
    * @description: This function updates the memberAvailability in the redux state but
    *               not in the backend
