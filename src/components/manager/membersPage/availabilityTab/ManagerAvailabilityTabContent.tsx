@@ -1,4 +1,14 @@
+import { ActionMsgBox } from '@/sprintFiles/ActionMsgBox/ActionMsgBox'
+
 const ManagerAvailabilityTabContent = () => {
-  return <div>ManagerAvailabilityTabContent</div>
+  return (
+    <div>
+      <ActionMsgBox
+        messageButton="button text"
+        messagePopUp="popup text"
+        type="error"
+      />
+    </div>
+  )
 }
 export default ManagerAvailabilityTabContent

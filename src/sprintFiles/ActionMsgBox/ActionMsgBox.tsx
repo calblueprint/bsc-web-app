@@ -1,15 +1,27 @@
-import React from 'react'
-import { Button, Slide, Snackbar } from '@mui/material'
-import Icon from '../../assets/Icon'
+import * as React from 'react'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert'
+import { Slide } from '@mui/material'
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 type ActionMsgBoxProps = {
   messagePopUp: string
   messageButton: string
+  type: AlertColor | undefined
 }
 
 export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
   messagePopUp,
   messageButton,
+  type, //success, info, error, warning (undefined will do nothing)
 }: ActionMsgBoxProps) => {
   const [open, setOpen] = React.useState(false)
 
@@ -18,7 +30,6 @@ export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
   }
 
   const handleClose = () => {
-    console.log("closing")
     setOpen(false)
   }
 
@@ -26,16 +37,16 @@ export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
     <div>
       <Button onClick={handleClick}>{messageButton}</Button>
       <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
         open={open}
-        autoHideDuration={1000}
-        TransitionComponent={(props) => <Slide {...props} direction="left" />}
-        message={messagePopUp}
+        autoHideDuration={3000}
         onClose={handleClose}
-      />
+        // TransitionComponent={(props) => <Slide {...props} direction="left" />}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert onClose={handleClose} severity={type}>
+          {messagePopUp}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }
