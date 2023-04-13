@@ -9,13 +9,21 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
 ) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+  return (
+    <MuiAlert
+      sx={{ backgroundColor: 'aqua' }}
+      elevation={6}
+      ref={ref}
+      variant="filled"
+      {...props}
+    />
+  )
 })
 
 type ActionMsgBoxProps = {
   messagePopUp: string
   messageButton: string
-  type: AlertColor | undefined
+  type?: AlertColor | undefined
 }
 
 export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
@@ -24,7 +32,7 @@ export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
   type, //success, info, error, warning (undefined will do nothing)
 }: ActionMsgBoxProps) => {
   const [open, setOpen] = React.useState(false)
-
+  console.log('type', type)
   const handleClick = () => {
     setOpen(true)
   }
@@ -32,6 +40,12 @@ export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
   const handleClose = () => {
     setOpen(false)
   }
+
+  const alert = (
+    <Alert onClose={handleClose} severity={type}>
+      {messagePopUp}
+    </Alert>
+  )
 
   return (
     <div>
@@ -42,6 +56,7 @@ export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
         onClose={handleClose}
         // TransitionComponent={(props) => <Slide {...props} direction="left" />}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        // message={messagePopUp}
       >
         <Alert onClose={handleClose} severity={type}>
           {messagePopUp}

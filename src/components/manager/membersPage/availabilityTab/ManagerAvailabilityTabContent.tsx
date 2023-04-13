@@ -6,7 +6,7 @@ const ManagerAvailabilityTabContent = () => {
       <ActionMsgBox
         messageButton="button text"
         messagePopUp="popup text"
-        type="error"
+        //type="error"
       />
     </div>
   )
