@@ -112,7 +112,26 @@ export default function PrefrencesItem(props: {
     event: React.MouseEvent<HTMLElement>,
     newAlignment: string,
     id: string
-  ) => {}
+  ) => {
+    console.log('id: ' + id, ' preference: ' + newAlignment)
+    if (!shiftPreferences) {
+      console.log('ERROR: No preference')
+      return
+    }
+
+    let { newPreference, savedPreference, hasChanged } = shiftPreferences[id]
+    newPreference = newAlignment
+    if (savedPreference === newAlignment) {
+      hasChanged = false
+    } else {
+      hasChanged = true
+    }
+
+    setShiftPreference({
+      ...shiftPreferences,
+      [id]: { savedPreference, newPreference, hasChanged },
+    })
+  }
 
   //** if true it opens the Succes message window */
   const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false)
