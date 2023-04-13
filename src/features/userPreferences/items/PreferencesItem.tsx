@@ -16,10 +16,10 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import { Dictionary, EntityId } from '@reduxjs/toolkit'
-import { House, Shift } from '@/types/schema'
+import { House, Shift, ShiftPreferences, userPreferences } from '@/types/schema'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   selectCurrentHouse,
   selectCurrentUser,
@@ -28,6 +28,11 @@ import { useEffect } from 'react'
 import { useUpdateShiftMutation } from '@/features/shift/shiftApiSlice'
 import { Snackbar, Alert } from '@mui/material'
 import { validatePreferences } from '@/utils/utils'
+import {
+  selectUserPreferences,
+  setShiftPreferences,
+  setSingleShiftPreferences,
+} from '../userPreferencesSlice'
 
 function createData(
   name: string,
@@ -75,19 +80,29 @@ export default function PrefrencesItem(props: {
     'No Preference' | 'Mix Preference' | 'Prefere All' | 'Dislike All'
   >('No Preference')
 
-  const [shiftPreferences, setShiftPreference] = React.useState<{
-    [key: string]: {
-      newPreference: string | null
-      savedPreference: string | null
-      hasChanged: boolean
-    }
-  }>()
+  // const [shiftPreferences, setShiftPreference] = React.useState<{
+  //   [key: string]: {
+  //     newPreference: string | null
+  //     savedPreference: string | null
+  //     hasChanged: boolean
+  //   }
+  // }>()
+
+  const shiftPreferences: ShiftPreferences = useSelector(selectUserPreferences)[
+    category
+  ]
+
+  const dispatch = useDispatch()
 
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
     newAlignment: string
   ) => {
     console.log(newAlignment)
+    if (!shiftPreferences) {
+      console.error('ERROR: No user preferences')
+      return
+    }
     const shiftPreferencesCopy = JSON.parse(JSON.stringify(shiftPreferences))
 
     console.log(shiftPreferencesCopy)
@@ -103,7 +118,11 @@ export default function PrefrencesItem(props: {
     }
     console.log(shiftPreferencesCopy)
 
-    setShiftPreference(shiftPreferencesCopy)
+    dispatch(
+      setShiftPreferences({ allPreferences: shiftPreferencesCopy, category })
+    )
+
+    // setShiftPreference(shiftPreferencesCopy)
 
     setAlignment(newAlignment)
   }
@@ -127,10 +146,14 @@ export default function PrefrencesItem(props: {
       hasChanged = true
     }
 
-    setShiftPreference({
-      ...shiftPreferences,
-      [id]: { savedPreference, newPreference, hasChanged },
-    })
+    const preference = { [id]: { savedPreference, newPreference, hasChanged } }
+
+    dispatch(setSingleShiftPreferences({ preference, category }))
+
+    // setShiftPreference({
+    //   ...shiftPreferences,
+    //   [id]: { savedPreference, newPreference, hasChanged },
+    // })
   }
 
   //** if true it opens the Succes message window */
@@ -197,10 +220,12 @@ export default function PrefrencesItem(props: {
           },
         }
       })
-
-      setShiftPreference(obj)
+      const allPreferences = { ...obj }
+      dispatch(setShiftPreferences({ allPreferences, category }))
+      console.log('Loaded shift preferences ->', allPreferences)
+      // setShiftPreference(obj)
     }
-  }, [shiftsIds, authUserId, shiftEntities])
+  }, [shiftsIds, authUserId, shiftEntities, dispatch])
 
   const content = (
     <React.Fragment>
@@ -252,8 +277,8 @@ export default function PrefrencesItem(props: {
         <Box>
           <Table aria-label="shifts" sx={{ margin: '0' }}>
             <TableBody>
-              {shiftPreferences
-                ? Object.keys(shiftPreferences).map((id) => {
+              {shiftPreferences && Object.keys(shiftPreferences).length !== 0
+                ? shiftsIds.map((id) => {
                     const { newPreference, hasChanged } = shiftPreferences[id]
                     return (
                       <TableRow key={id}>

@@ -78,7 +78,7 @@ export type Shift = {
   // Category of work that the shift belongs to
   category: string
   // User preferences
-  preferences: {preferredBy:Array<string>, dislikedBy:Array<string>}
+  preferences: { preferredBy: Array<string>; dislikedBy: Array<string> }
 }
 
 // TODO: add date, verifiedAt, and unverifiedBy attributes
@@ -139,4 +139,14 @@ export type RowOfCSV = {
   lastName: string
   houseID: string
   accountCreated: boolean
+}
+
+export type userPreferences = 'prefere' | 'dislike' | null
+
+export type ShiftPreferences = {
+  [key: string]: {
+    newPreference: string | null
+    savedPreference: string | null
+    hasChanged: boolean
+  }
 }
