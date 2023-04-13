@@ -110,32 +110,29 @@ const filterUsersByEligibility = (ids: EntityId[], entityState: EntityState<User
 
 const sortUsersByNeededHoursAndPreference = (ids: EntityId[], entityState: EntityState<User>, shiftObject: Shift) => {
     const idToObjectDictionary: Dictionary<User> = entityState.entities;
-    const sorted = ids.sort((uid1, uid2) => {
-        const user1 = idToObjectDictionary[uid1];
-        const user2 = idToObjectDictionary[uid2];
+    const likedList = shiftObject.preferences.preferredBy;
+    const dislikedList = shiftObject.preferences.dislikedBy;
+    const sorted = ids.sort((id1, id2) => {
+        const user1 = idToObjectDictionary[id1];
+        const user2 = idToObjectDictionary[id2];
         if (user1 === undefined || user2 === undefined) {
           return 0;
         }
         // First sort on preferences
-        const user1Preferences: User['preferences'] = user1.preferences
-        const user2Preferences: User['preferences'] = user2.preferences
-        // 1 if 1 is average
-        let user1Pref = 1
-        let user2Pref = 1
-        if (shiftID in user1Preferences) {
-          const curr = user1Preferences[shiftID]
-          if (curr !== undefined) {
-            user1Pref = curr
-          }
+        let user1Preference = 1;
+        let user2Preference = 1;
+        if (id1 in likedList) {
+            user1Preference = 2;
+        } else if (id1 in dislikedList) {
+            user1Preference = 0;
         }
-        if (shiftID in user2Preferences) {
-          const curr = user2Preferences[shiftID]
-          if (curr !== undefined) {
-            user2Pref = curr
-          }
+        if (id2 in likedList) {
+            user2Preference = 2;
+        } else if (id2 in dislikedList) {
+            user2Preference = 0;
         }
-        if (user2Pref - user1Pref != 0) {
-            return user2Pref - user1Pref;
+        if (user2Preference - user1Preference != 0) {
+            return user2Preference - user1Preference;
         }
         // Second sort on hours assignable leftr, prioritizing people with higher preferences (user2 - user1)
         const user1HoursLeft = HOURS_REQUIRED - user1.hoursAssigned
@@ -143,4 +140,11 @@ const sortUsersByNeededHoursAndPreference = (ids: EntityId[], entityState: Entit
         return user2HoursLeft - user1HoursLeft;
     })
     return sorted;
+}
+
+const createListOfUsersForShift = (shiftObject: Shift, entityState: EntityState<User>, days: string[]) => { 
+    const availableIDs = filterUsersByAvailability(shiftObject, days, entityState);
+    const availableAndEligibleIDs = filterUsersByEligibility(availableIDs, entityState, shiftObject.hours, shiftObject.shiftID);
+    const sortedAvailableAndEligibleIDs = sortUsersByNeededHoursAndPreference(availableAndEligibleIDs, entityState, shiftObject);
+    return sortedAvailableAndEligibleIDs;
 }
