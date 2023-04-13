@@ -1,11 +1,6 @@
 import SettingsInfo from '@/sprintFiles/SettingsInfo/SettingsInfo'
 
 const MemberSettingsInformationTabContent = () => {
-  return (
-    <div>
-      <div>MemberSettingsInformationTabContent</div>
-      <SettingsInfo />
-    </div>
-  )
+  return <div>MemberSettingsInformationTabContent</div>
 }
 export default MemberSettingsInformationTabContent
