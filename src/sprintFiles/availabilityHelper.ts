@@ -147,6 +147,8 @@ export const createListOfUsersForShift = (shiftObject: Shift, entityState: Entit
     return sortedAvailableAndEligibleIDs;
 }
 
+// TESTING
+
 const {
     data: dataUsers,
     isLoading,
