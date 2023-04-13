@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '@/features/auth/authSlice'
 import { Typography } from '@mui/material'
 
-const index = () => {
+const TestingPage = () => {
   const authUser = useSelector(selectCurrentUser)
   console.log(authUser)
 
@@ -16,4 +16,4 @@ const index = () => {
     </React.Fragment>
   )
 }
-export default index
+export default TestingPage
