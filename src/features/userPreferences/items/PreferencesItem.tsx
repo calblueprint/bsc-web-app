@@ -138,6 +138,8 @@ export default function PrefrencesItem(props: {
       return
     }
 
+    console.log('id: ' + shiftPreferences[id].newPreference, ' preference')
+
     let { newPreference, savedPreference, hasChanged } = shiftPreferences[id]
     newPreference = newAlignment
     if (savedPreference === newAlignment) {
@@ -279,6 +281,7 @@ export default function PrefrencesItem(props: {
             <TableBody>
               {shiftPreferences && Object.keys(shiftPreferences).length !== 0
                 ? shiftsIds.map((id) => {
+                    // console.log('newPreference: ', shiftPreferences[id])
                     const { newPreference, hasChanged } = shiftPreferences[id]
                     return (
                       <TableRow key={id}>
