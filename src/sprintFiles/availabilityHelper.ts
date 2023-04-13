@@ -2,29 +2,21 @@ import { Dictionary, EntityId, EntityState } from "@reduxjs/toolkit";
 import {Shift, User} from "../types/schema";
 import { number } from "yup";
 import dayjs, { Dayjs } from "dayjs";
+import { HOURS_REQUIRED, NEUTRAL_PREFERENCE, LIKED_PREFERENCE, DISLIKED_PREFERENCE } from "@/utils/constants";
+import { useGetUsersQuery } from "@/features/user/userApiSlice";
+import { useGetShiftsQuery } from "@/features/shift/shiftApiSlice";
 
-
-// NEXT FUNCTION
-// stores the number of hours that the user still has to complete
-// const assignableHours = HOURS_REQUIRED - userObject.hoursAssigned;
-// // if they have no hours left to complete, or their number of hours left to complete < the number of hours of the shift, continue
-// if (assignableHours <= 0) {
-//   continue
-// }
-const HOURS_REQUIRED = 5;
 // TODO: DOESN'T WORK IF SOMEONE IS ALREADY ASSIGNED DURING THEIR AVAILABILITY PERIOD TO A DIFFERENT SHIFT
 const filterUsersByAvailability = (shiftObject: Shift, days: string[], entityState: EntityState<User>) => {
   const numHours = Math.floor(shiftObject.hours);
   const numMinutes = (shiftObject.hours - numHours) * 60;
-  // represented as dayjs object
   const shiftStart: Dayjs = dayjs(shiftObject.timeWindow.startTime, 'HHmm')
   const shiftEnd: Dayjs = dayjs(shiftObject.timeWindow.endTime, 'HHmm')
   const shiftID = shiftObject.shiftID;
-  // Convert the hours of the shift into units of time. Assumes any non-whole hour numbers are 30 minute intervals.
-  // ex. 1.5 -> converted to 130 (used for differences if someone is available between 1030 and 1200, they should be shown)
   let totalUsersInHouse: EntityId[] = entityState.ids;
   let availableUserIDs: EntityId[] = [];
   let idToObjectDictionary: Dictionary<User> = entityState.entities;
+  // iterate thru all users in the house
   for (let i = 0; i < totalUsersInHouse.length; i++) {
     const userID = totalUsersInHouse[i];
     const userObject = idToObjectDictionary[userID];
@@ -36,13 +28,13 @@ const filterUsersByAvailability = (shiftObject: Shift, days: string[], entitySta
         availableUserIDs.push(userID)
         continue;
     }
-    
     const currAvailabilities: { [key: string]: { startTime: string; endTime: string }[] } = userObject.availabilities;
     if (currAvailabilities === undefined) {
         continue;
     }
-    // flag to determine if user id has been added to the list of available user ids already
+    // flag to determine if user id has been added to the list of available user ids already so that we only add a user id to the list once
     let isAdded = false;
+    // iterate thru all days for a user
     for (let j = 0; j < days.length; j++) {
         const day = days[j];
         if (!(day in currAvailabilities)) {
@@ -52,26 +44,31 @@ const filterUsersByAvailability = (shiftObject: Shift, days: string[], entitySta
         if (perDayAvailability === undefined) {
             continue;
         }
+        // iterate thru all availabilities per day for a user
+        // TODO: CHECK IF THEYRE ASSIGNED TO A DIFFERENT SHIFT DURING THE AVAILABILITY WINDOW
         for (let k = 0; k < perDayAvailability.length; k++) {
             const currInterval = perDayAvailability[k];
+            // start of the user availability window
             let userStart: Dayjs = dayjs(currInterval.startTime, 'HHmm')
+            // end of the user availability window
             let userEnd: Dayjs = dayjs(currInterval.endTime, 'HHmm')
             // if user's availability window ends before the start of the shift, can continue
-            if (userEnd <= shiftStart) {
+            if (userEnd.isBefore(shiftStart)) {
                 continue;
             }
-            // take max start
+            // calculatedStart = either the start of the shift or the start of the user's availability, whichever comes later
             let calculatedStart: Dayjs = shiftStart;
             if (userStart.isAfter(shiftStart)) {
                 calculatedStart = userStart;
             }
-            // must be able to add 1.5 hours or smth
+            // add the number of hours required to complete to the calculatedStart
             const calculatedEnd = calculatedStart.add(numHours, 'hour').add(numMinutes, 'minute');
-            // take min end
+            // calculatedEndRequirement = either the end of the shift or the end of the user's availability, whichever comes earlier
             let calculatedEndRequirement: Dayjs = shiftEnd;
             if (userEnd.isBefore(shiftEnd)) {
                 calculatedEndRequirement = userEnd;
             }
+            // only add the user id if the calculated end of when they would finish the shift is before the end of the shift or the end of their availability, whichever comes first
             if (calculatedEnd.isBefore(calculatedEndRequirement)) {
                 availableUserIDs.push(userID);
                 isAdded = true;
@@ -95,11 +92,12 @@ const filterUsersByEligibility = (ids: EntityId[], entityState: EntityState<User
         if (userObject === undefined) {
             continue;
         }
-        // persist the assigned user
+        // put the assigned user in eligibleIDs, regardless
         if (userObject.assignedScheduledShifts !== undefined && userObject.assignedScheduledShifts.includes(shiftID)) {
             eligibleIDs.push(id)
             continue;
         }
+        // push them on the list if the hours they need >= creditHours
         const assignableHours: number = HOURS_REQUIRED - userObject.hoursAssigned;
         if (assignableHours >= creditHours) {
             eligibleIDs.push(id);
@@ -119,17 +117,17 @@ const sortUsersByNeededHoursAndPreference = (ids: EntityId[], entityState: Entit
           return 0;
         }
         // First sort on preferences
-        let user1Preference = 1;
-        let user2Preference = 1;
+        let user1Preference = NEUTRAL_PREFERENCE;
         if (id1 in likedList) {
-            user1Preference = 2;
+            user1Preference = LIKED_PREFERENCE;
         } else if (id1 in dislikedList) {
-            user1Preference = 0;
+            user1Preference = DISLIKED_PREFERENCE;
         }
+        let user2Preference = NEUTRAL_PREFERENCE;
         if (id2 in likedList) {
-            user2Preference = 2;
+            user2Preference = LIKED_PREFERENCE;
         } else if (id2 in dislikedList) {
-            user2Preference = 0;
+            user2Preference = DISLIKED_PREFERENCE;
         }
         if (user2Preference - user1Preference != 0) {
             return user2Preference - user1Preference;
@@ -142,9 +140,49 @@ const sortUsersByNeededHoursAndPreference = (ids: EntityId[], entityState: Entit
     return sorted;
 }
 
-const createListOfUsersForShift = (shiftObject: Shift, entityState: EntityState<User>, days: string[]) => { 
+export const createListOfUsersForShift = (shiftObject: Shift, entityState: EntityState<User>, days: string[]) => { 
     const availableIDs = filterUsersByAvailability(shiftObject, days, entityState);
     const availableAndEligibleIDs = filterUsersByEligibility(availableIDs, entityState, shiftObject.hours, shiftObject.shiftID);
     const sortedAvailableAndEligibleIDs = sortUsersByNeededHoursAndPreference(availableAndEligibleIDs, entityState, shiftObject);
     return sortedAvailableAndEligibleIDs;
 }
+
+const {
+    data: dataUsers,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+} = useGetUsersQuery({})
+
+let testShiftObject = {
+    name: "Clean the house",
+    shiftID: "4iWhGXXz65H0aPfaF3RJ",
+    description: "Clean house pls ggreg sucks", 
+    possibleDays: ["Monday", "Tuesday", "Wednesday"],
+    timeWindow: {
+        startTime: "1930",
+        endTime: "2300"
+    },
+    timeWindowDisplay: "",
+    assignedDay: "",
+    assignedUser: "maybe populate this with user id",
+    hours: 1.5,
+    verificationBuffer: 1,
+    verification: false,
+    category: "hehe",
+    preferences: {
+        preferredBy: ["user id 1"],
+        dislikedBy: ["user id 2"]
+    }
+}
+
+let testDays = ["Monday"];
+console.log(dataUsers);
+if (dataUsers !== undefined) {
+    console.log(createListOfUsersForShift(testShiftObject, dataUsers, testDays));
+}
+
+// console.log(dayjs('1900', 'HHmm').format('HHmm'))
+// const num = 1900
+// console.log(dayjs(num.toString(), 'HHmm'))

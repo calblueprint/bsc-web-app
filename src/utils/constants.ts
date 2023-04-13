@@ -110,3 +110,8 @@ export const DAYS = [
   'friday',
   'saturday',
 ]
+
+export const HOURS_REQUIRED = 5;
+export const NEUTRAL_PREFERENCE = 1;
+export const LIKED_PREFERENCE = 2;
+export const DISLIKED_PREFERENCE = 0;
