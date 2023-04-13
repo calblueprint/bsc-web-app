@@ -1,5 +1,7 @@
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
+import {User} from '../types/schema'
+import { DAYS } from './constants'
 
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -179,3 +181,25 @@ export const isTimeOverlap = (
 
   return false;
 };
+
+export const validateAvailability = (availability: User['availabilities'])=> {
+  const availabilities: User['availabilities'] = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: [],
+  }
+  if (!availability) {
+    return availabilities
+  }
+
+  const verifiedAvailability = DAYS.forEach(day=> {
+    if(availability[day]) {
+      availabilities[day] = availability[day]
+    }
+  })
+  return availabilities
+}
