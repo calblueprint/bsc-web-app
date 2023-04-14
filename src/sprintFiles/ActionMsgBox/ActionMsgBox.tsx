@@ -1,6 +1,4 @@
 import * as React from 'react'
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert'
 import { AlertTitle, Slide } from '@mui/material'
@@ -22,41 +20,35 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 })
 
 type ActionMsgBoxProps = {
-  messagePopUp: string
-  messageButton: string
+  messageTop: string
+  messageBottom: string
   iconType: IconType
+  setOpen: (value: React.SetStateAction<boolean>) => void
+  open: boolean
 }
 
 export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
-  messagePopUp,
-  messageButton,
+  messageTop,
+  messageBottom,
   iconType,
+  setOpen,
+  open,
 }: ActionMsgBoxProps) => {
-  const [open, setOpen] = React.useState(false)
-  //console.log('type', type)
-  const handleClick = () => {
-    setOpen(true)
-  }
-
   const handleClose = () => {
     setOpen(false)
   }
 
-  const alert = <Alert onClose={handleClose}>{messagePopUp}</Alert>
-
   return (
     <div>
-      <Button onClick={handleClick}>{messageButton}</Button>
       <Snackbar
         open={open}
         autoHideDuration={2000}
         onClose={handleClose}
-        // TransitionComponent={(props) => <Slide {...props} direction="left" />}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Alert icon={<Icon type={iconType} />}>
-          <AlertTitle>Success</AlertTitle>
-          This is a success alert
+          <AlertTitle>{messageTop}</AlertTitle>
+          {messageBottom}
         </Alert>
       </Snackbar>
     </div>

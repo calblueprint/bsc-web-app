@@ -1,4 +1,5 @@
 import React from 'react'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 /**
  * Returns an icon component
@@ -20,8 +21,12 @@ export type IconType =
   | 'leftArrow'
   | 'rightArrow'
   | 'navMembers'
+  | 'CheckCircleIcon'
 
 const IconSvgs: Record<IconType, React.ReactElement> = {
+  CheckCircleIcon: (
+    <CheckCircleIcon/>
+  ),
   close: (
     <svg
       width="31"
