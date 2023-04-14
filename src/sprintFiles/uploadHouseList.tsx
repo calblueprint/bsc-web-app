@@ -140,7 +140,7 @@ const UploadHouseList = () => {
                     Upload a CSV File
                     <CloseIcon sx={{float: 'right',marginRight:3, fontSize:40,  "&:hover": {cursor: 'pointer'}}} onClick={handleClose}/>
                 </Typography>
-                {(!fileHolder && progress != 100) ? 
+                {(!fileHolder ) ? 
                     <Box>
                         
                         <Button component="label" sx={uploadStyle}>
