@@ -23,7 +23,8 @@ export const AuthState = ({ children }: Props) => {
   const [isProcessing, setIsProcessing] = useState(true)
 
   useEffect(() => {
-    // console.log('*****AuthState Component ran')
+    console.log('*****AuthState Component ran')
+    console.log(auth)
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {

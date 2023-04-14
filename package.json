@@ -27,6 +27,7 @@
     "formik": "^2.2.9",
     "material-ui-popup-state": "^5.0.8",
     "next": "13.2.4",
+    "papaparse": "^5.4.1",
     "prettier": "^2.8.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",

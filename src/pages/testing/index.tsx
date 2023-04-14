@@ -1,6 +1,9 @@
 // use this to test your stuff
+import UploadHouseList from '../../sprintFiles/uploadHouseList'
 
 const index = () => {
-  return <div>inex</div>
+  return (
+    <UploadHouseList/>
+  ) 
 }
 export default index
