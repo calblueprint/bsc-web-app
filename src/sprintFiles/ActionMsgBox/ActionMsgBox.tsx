@@ -11,7 +11,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 ) {
   return (
     <MuiAlert
-      sx={{ backgroundColor: 'aqua' }}
+      //sx={{ backgroundColor: 'aqua' }}
       elevation={6}
       ref={ref}
       variant="filled"

@@ -4,9 +4,9 @@ const ManagerAvailabilityTabContent = () => {
   return (
     <div>
       <ActionMsgBox
-        messageButton="button text"
-        messagePopUp="popup text"
-        //type="error"
+        messageButton="add member"
+        messagePopUp="member added"
+        type="error"
       />
     </div>
   )
