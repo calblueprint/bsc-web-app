@@ -1,5 +1,6 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import Table from '@mui/material/Table'
@@ -19,84 +20,193 @@ import {
   selectCurrentUser,
   selectCurrentHouse,
 } from '@/features/auth/authSlice'
-import { House, Shift, User } from '@/types/schema'
-import { useSelector } from 'react-redux'
+import { House, Shift, ShiftPreferences, User } from '@/types/schema'
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import uuid from 'react-uuid'
-import { Dictionary } from '@reduxjs/toolkit'
-
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-  price: number
-) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
-  }
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-]
+import { Dictionary, EntityId } from '@reduxjs/toolkit'
+import Stack from '@mui/material/Stack'
+import {
+  selectUserPreferences,
+  setShiftPreferences,
+} from '../userPreferencesSlice'
+import { validatePreferences } from '@/utils/utils'
 
 export default function PreferencesTable() {
   const authUser = useSelector(selectCurrentUser) as User
   const authHouse = useSelector(selectCurrentHouse) as House
   const { data: AllShifts, isLoading } = useGetShiftsQuery(authHouse.id)
+  const [isEditing, setIsEditing] = React.useState(false)
 
   const [houseCategories, setHouseCategories] = useState<
     { [key: string]: Array<string> } | undefined
   >(undefined)
 
+  const [authUserId, setAuthUserId] = React.useState('')
+
+  const shiftCategoryPreferences = useSelector(selectUserPreferences)
+  const dispatch = useDispatch()
+
+  // useEffect(() => {
+  //   if (AllShifts) {
+  //     let categoriesPreferences: { [key: string]: ShiftPreferences } = {}
+  //     const ids = AllShifts.ids
+  //     const entities = AllShifts.entities
+  //     let obj = {}
+  //     ids.forEach((id) => {
+  //       const category = entities[id]?.category
+  //       const preferences = validatePreferences(
+  //         entities[id]?.preferences as Shift['preferences']
+  //       )
+  //       const isDislike = preferences.dislikedBy.includes(authUserId)
+  //       const isPrefere = preferences.preferredBy.includes(authUserId)
+  //       const choise = isPrefere ? 'prefere' : isDislike ? 'dislike' : null
+  //       obj = {
+  //         ...obj,
+  //         [id]: {
+  //           savedPreference: choise,
+  //           newPreference: choise,
+  //           hasChanged: false,
+  //         },
+  //       }
+
+  //       if (category) {
+  //         if (category in categoriesPreferences) {
+  //           let foundCategory = categoriesPreferences[category]
+  //           let shiftPreferences = {
+  //             [id]: {
+  //               newPreference: entities[id]?.,
+  //               savedPreference: '',
+  //               hasChanged: false,
+  //             },
+  //           }
+  //           categories[category as keyof typeof categories].push(id as string)
+  //         } else {
+  //           categories[category] = [id as string]
+  //         }
+  //       } else {
+  //         if ('Uncategorized' in categories) {
+  //           categories['Uncategorized'].push(id as string)
+  //         } else {
+  //           categories['Uncategorized'] = [id as string]
+  //         }
+  //       }
+  //     })
+  //     console.log(categories)
+  //     setHouseCategories({ ...categories })
+  //   }
+  // }, [AllShifts])
+
+  const createHouseCategories = (
+    ids: EntityId[],
+    entities: Dictionary<Shift>
+  ) => {
+    const categories: { [key: string]: Array<string> } | undefined = {}
+    if (!ids.length || !entities) {
+      return undefined
+    }
+    ids.forEach((id) => {
+      const category = entities[id]?.category
+      if (category) {
+        if (category in categories) {
+          categories[category as keyof typeof categories].push(id as string)
+        } else {
+          categories[category] = [id as string]
+        }
+      } else {
+        if ('Uncategorized' in categories) {
+          categories['Uncategorized'].push(id as string)
+        } else {
+          categories['Uncategorized'] = [id as string]
+        }
+      }
+    })
+
+    return categories
+  }
+
   useEffect(() => {
     if (AllShifts) {
-      const categories: { [key: string]: Array<string> } | undefined = {}
       const ids = AllShifts.ids
       const entities = AllShifts.entities
-      ids.forEach((id) => {
-        const category = entities[id]?.category
-        if (category) {
-          if (category in categories) {
-            categories[category as keyof typeof categories].push(id as string)
-          } else {
-            categories[category] = [id as string]
-          }
-        } else {
-          if ('Uncategorized' in categories) {
-            categories['Uncategorized'].push(id as string)
-          } else {
-            categories['Uncategorized'] = [id as string]
-          }
+      const categories: { [key: string]: Array<string> } | undefined =
+        createHouseCategories(AllShifts.ids, AllShifts.entities)
+
+      if (!categories) {
+        console.error('No categories')
+        return
+      }
+      Object.keys(categories).forEach((category) => {
+        const shiftsIds = categories[category]
+        if (shiftsIds) {
+          let obj = {}
+          shiftsIds.map((shiftId) => {
+            const preferences = validatePreferences(
+              entities[shiftId]?.preferences as Shift['preferences']
+            )
+            const isDislike = preferences.dislikedBy.includes(authUserId)
+            const isPrefere = preferences.preferredBy.includes(authUserId)
+            const choise = isPrefere ? 'prefere' : isDislike ? 'dislike' : null
+            obj = {
+              ...obj,
+              [shiftId]: {
+                savedPreference: choise,
+                newPreference: choise,
+                hasChanged: false,
+              },
+            }
+          })
+          const allPreferences = { ...obj }
+          dispatch(setShiftPreferences({ allPreferences, category }))
+          // console.log('Loaded shift preferences ->', allPreferences)
+          // setShiftPreference(obj)
         }
       })
+
       console.log(categories)
       setHouseCategories({ ...categories })
     }
   }, [AllShifts])
+
+  const handleEdit = () => {
+    setIsEditing(true)
+  }
+  const handleCancel = () => {
+    setIsEditing(false)
+  }
+  const handleSave = () => {
+    // if (shiftCategoryPreferences) {
+    //   for (const category in shiftCategoryPreferences) {
+    //     console.log(category)
+    //   }
+    // }
+  }
+
+  const editButtons = (
+    <Stack direction={'row'} alignItems={'end'}>
+      <Box sx={{ flexGrow: 3 }} />
+      {isEditing ? (
+        <React.Fragment>
+          <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
+            <Button onClick={handleCancel} variant="outlined">
+              Cancel
+            </Button>
+          </Box>
+          <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
+            <Button onClick={handleSave} variant="contained">
+              Save
+            </Button>
+          </Box>
+        </React.Fragment>
+      ) : (
+        <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
+          <Button onClick={handleEdit} variant="contained">
+            Edit Preferences
+          </Button>
+        </Box>
+      )}
+    </Stack>
+  )
 
   const table = houseCategories
     ? Object.keys(houseCategories).map((category) => {
@@ -106,10 +216,16 @@ export default function PreferencesTable() {
               shiftsIds={houseCategories[category]}
               category={category}
               shiftEntities={AllShifts?.entities as Dictionary<Shift>}
+              isEditing={isEditing}
             />
           </Box>
         )
       })
     : null
-  return <React.Fragment>{table}</React.Fragment>
+  return (
+    <React.Fragment>
+      {editButtons}
+      {table}
+    </React.Fragment>
+  )
 }

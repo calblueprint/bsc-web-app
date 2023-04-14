@@ -34,48 +34,19 @@ import {
   setSingleShiftPreferences,
 } from '../userPreferencesSlice'
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-  price: number
-) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
-  }
-}
-
 export default function PrefrencesItem(props: {
   shiftsIds: Array<string>
   category: string
   shiftEntities: Dictionary<Shift>
+  isEditing: boolean
 }) {
   const authUser = useSelector(selectCurrentUser)
   const authHouse = useSelector(selectCurrentHouse) as House
-  const { shiftsIds, category, shiftEntities } = props
+  const { shiftsIds, category, shiftEntities, isEditing } = props
   const [open, setOpen] = React.useState(false)
   const [authUserId, setAuthUserId] = React.useState('')
   const [alignment, setAlignment] = React.useState<string | null>(null)
-  const [isEditing, setIsEditing] = React.useState(true)
+  // const [isEditing, setIsEditing] = React.useState(false)
   const [mainPreference, setMainPreference] = React.useState<
     'No Preference' | 'Mix Preference' | 'Prefere All' | 'Dislike All'
   >('No Preference')
@@ -199,35 +170,35 @@ export default function PrefrencesItem(props: {
         setMainPreference('Mix Preference')
         setAlignment(null)
       }
-      console.log('updated Main Preference')
+      // console.log('updated Main Preference')
     }
   }, [shiftPreferences])
 
-  useEffect(() => {
-    if (shiftsIds) {
-      let obj = {}
-      const getPreference = shiftsIds.map((shiftId) => {
-        const preferences = validatePreferences(
-          shiftEntities[shiftId]?.preferences as Shift['preferences']
-        )
-        const isDislike = preferences.dislikedBy.includes(authUserId)
-        const isPrefere = preferences.preferredBy.includes(authUserId)
-        const choise = isPrefere ? 'prefere' : isDislike ? 'dislike' : null
-        obj = {
-          ...obj,
-          [shiftId]: {
-            savedPreference: choise,
-            newPreference: choise,
-            hasChanged: false,
-          },
-        }
-      })
-      const allPreferences = { ...obj }
-      dispatch(setShiftPreferences({ allPreferences, category }))
-      console.log('Loaded shift preferences ->', allPreferences)
-      // setShiftPreference(obj)
-    }
-  }, [shiftsIds, authUserId, shiftEntities, dispatch])
+  // useEffect(() => {
+  //   if (shiftsIds) {
+  //     let obj = {}
+  //     const getPreference = shiftsIds.map((shiftId) => {
+  //       const preferences = validatePreferences(
+  //         shiftEntities[shiftId]?.preferences as Shift['preferences']
+  //       )
+  //       const isDislike = preferences.dislikedBy.includes(authUserId)
+  //       const isPrefere = preferences.preferredBy.includes(authUserId)
+  //       const choise = isPrefere ? 'prefere' : isDislike ? 'dislike' : null
+  //       obj = {
+  //         ...obj,
+  //         [shiftId]: {
+  //           savedPreference: choise,
+  //           newPreference: choise,
+  //           hasChanged: false,
+  //         },
+  //       }
+  //     })
+  //     const allPreferences = { ...obj }
+  //     dispatch(setShiftPreferences({ allPreferences, category }))
+  //     // console.log('Loaded shift preferences ->', allPreferences)
+  //     // setShiftPreference(obj)
+  //   }
+  // }, [shiftsIds, authUserId, shiftEntities, dispatch, category])
 
   const content = (
     <React.Fragment>
@@ -280,69 +251,15 @@ export default function PrefrencesItem(props: {
           <Table aria-label="shifts" sx={{ margin: '0' }}>
             <TableBody>
               {shiftPreferences && Object.keys(shiftPreferences).length !== 0
-                ? shiftsIds.map((id) => {
+                ? Object.keys(shiftPreferences).map((id) => {
                     // console.log('newPreference: ', shiftPreferences[id])
                     const { newPreference, hasChanged } = shiftPreferences[id]
-                    return (
-                      <TableRow key={id}>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          sx={{ textTransform: 'capitalize' }}
-                        >
-                          {shiftEntities[id]?.name}
-                        </TableCell>
-                        <TableCell align="right" sx={{ padding: 0, margin: 0 }}>
-                          <ToggleButtonGroup
-                            color="primary"
-                            size="small"
-                            value={newPreference}
-                            sx={{ marginRight: 2 }}
-                            exclusive
-                            onChange={(event, value) =>
-                              handleSingleChange(event, value, id)
-                            }
-                            aria-label="Platform"
-                          >
-                            <ToggleButton value="prefere">Prefere</ToggleButton>
-                            <ToggleButton value="dislike">Dislike</ToggleButton>
-                          </ToggleButtonGroup>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })
-                : null}
-              {/* {shiftsIds.map((id) => {
-                const isValidShift = shiftEntities[id] ? true : false
-                const preferences = shiftEntities[id]?.preferences
-                let preferenceValue = null
-                if (
-                  preferences &&
-                  preferences.preferredBy &&
-                  preferences.dislikedBy
-                ) {
-                  if (preferences.preferredBy.includes(authUserId)) {
-                    preferenceValue = 'prefere'
-                  } else if (preferences.dislikedBy.includes(authUserId)) {
-                    preferenceValue = 'disliked'
-                  }
-                } else {
-                  console.log('Newtral Shift')
-                }
-                return isValidShift ? (
-                  <TableRow key={id}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ textTransform: 'capitalize' }}
-                    >
-                      {shiftEntities[id]?.name}
-                    </TableCell>
-                    <TableCell align="right" sx={{ padding: 0, margin: 0 }}>
+
+                    const buttonGroup = (
                       <ToggleButtonGroup
                         color="primary"
                         size="small"
-                        value={preferenceValue}
+                        value={newPreference}
                         sx={{ marginRight: 2 }}
                         exclusive
                         onChange={(event, value) =>
@@ -353,10 +270,74 @@ export default function PrefrencesItem(props: {
                         <ToggleButton value="prefere">Prefere</ToggleButton>
                         <ToggleButton value="dislike">Dislike</ToggleButton>
                       </ToggleButtonGroup>
-                    </TableCell>
-                  </TableRow>
-                ) : null
-              })} */}
+                    )
+
+                    const prefereDisplay = (
+                      <Typography
+                        textTransform={'capitalize'}
+                        marginRight={2}
+                        sx={{
+                          backgroundColor: 'green',
+                          color: 'white',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {'Prefere'}
+                      </Typography>
+                    )
+
+                    const dislikeDisplay = (
+                      <Typography
+                        textTransform={'capitalize'}
+                        marginRight={2}
+                        sx={{
+                          backgroundColor: 'red',
+                          color: 'white',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {'Dislike'}
+                      </Typography>
+                    )
+
+                    const nullDisplay = (
+                      <Typography
+                        textTransform={'capitalize'}
+                        marginRight={2}
+                        sx={{
+                          backgroundColor: 'gray',
+                          color: 'white',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {'No Preference'}
+                      </Typography>
+                    )
+                    let displayContent = null
+                    if (newPreference === 'prefere') {
+                      displayContent = prefereDisplay
+                    } else if (newPreference === 'dislike') {
+                      displayContent = dislikeDisplay
+                    } else if (newPreference === null) {
+                      displayContent = nullDisplay
+                    }
+
+                    return (
+                      <TableRow key={id}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          sx={{ textTransform: 'capitalize' }}
+                        >
+                          {shiftEntities[id]?.name}
+                        </TableCell>
+                        <TableCell align="right" sx={{ padding: 0, margin: 0 }}>
+                          {isEditing ? buttonGroup : displayContent}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
+                : null}
             </TableBody>
           </Table>
         </Box>

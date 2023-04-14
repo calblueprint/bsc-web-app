@@ -15,7 +15,7 @@ const userPreferencesSlice = createSlice({
     setShiftPreferences: (state, action) => {
       const { allPreferences, category } = action.payload
       const newShiftPreferences = { [category]: allPreferences }
-      console.log('Redux setShiftPreferences: ', allPreferences)
+      //   console.log('Redux setShiftPreferences: ', allPreferences)
       state.shiftPreferences = {
         ...state.shiftPreferences,
         ...newShiftPreferences,
@@ -23,14 +23,14 @@ const userPreferencesSlice = createSlice({
     },
     setSingleShiftPreferences: (state, action) => {
       const { preference, category } = action.payload
-      console.log('Redux setSingleShiftPreferences: ', preference)
+      //   console.log('Redux setSingleShiftPreferences: ', preference)
       const p = { ...state.shiftPreferences[category] }
       const newPref = { ...state.shiftPreferences[category], ...preference }
-      console.log(
-        'Redux newPre: ',
-        JSON.stringify(state.shiftPreferences[category])
-      )
-      console.log('Redux newPre: ', newPref)
+      //   console.log(
+      //     'Redux newPre: ',
+      //     JSON.stringify(state.shiftPreferences[category])
+      //   )
+      //   console.log('Redux newPre: ', newPref)
       const newShiftPreferences = { [category]: newPref }
       state.shiftPreferences = {
         ...state.shiftPreferences,
