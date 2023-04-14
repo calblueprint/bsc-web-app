@@ -6,7 +6,7 @@ const ManagerAvailabilityTabContent = () => {
       <ActionMsgBox
         messageButton="add member"
         messagePopUp="member added"
-        type="error"
+        iconType="navMembers"
       />
     </div>
   )
