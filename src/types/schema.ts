@@ -50,6 +50,15 @@ export type User = {
   runningTotalPenatlyHours: number
 }
 
+export type AuthorizedUser = {
+  applicationID: string
+  email: string
+  firstName: string
+  lastName: string
+  houseID: string
+  accountCreated: boolean
+}
+
 export type Shift = {
   // optional id attribute for table stuff
   id?: string
