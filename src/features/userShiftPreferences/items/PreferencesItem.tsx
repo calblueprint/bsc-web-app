@@ -200,6 +200,12 @@ export default function PrefrencesItem(props: {
   //   }
   // }, [shiftsIds, authUserId, shiftEntities, dispatch, category])
 
+  useEffect(() => {
+    if (shiftsIds) {
+      console.log('ShiftIds has changed ---------------------')
+    }
+  }, [shiftsIds])
+
   const content = (
     <React.Fragment>
       <Box display={'flex'}>

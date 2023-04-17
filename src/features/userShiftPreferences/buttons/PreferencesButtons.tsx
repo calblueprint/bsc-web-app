@@ -70,6 +70,8 @@ export default function PreferencesButtons() {
   const dispatch = useDispatch()
   const { data: allShifts } = useGetShiftsQuery(authHouse?.id as string)
 
+  const [savingPreferences, setSavingPreferences] = useState(false)
+
   const [updateShift, { isLoading, isSuccess, isError }] =
     useUpdateShiftMutation()
 
@@ -85,7 +87,7 @@ export default function PreferencesButtons() {
   // Callback to handle cancel button click
   const handleCancel = useCallback(() => {
     dispatch(setIsEditingPreferences({ isEditing: false }))
-    dispatch(setResetPreferences({ resetPreferences: true }))
+    // dispatch(setResetPreferences({ resetPreferences: true }))
     setUpdatedShifts({})
   }, [dispatch])
 
@@ -93,9 +95,12 @@ export default function PreferencesButtons() {
   const handleSave = useCallback(async () => {
     if (shiftPreferences) {
       console.log('+++++Saving ShiftPreferences: ', shiftPreferences)
+      setSavingPreferences(true)
       await updateShiftPreferences()
-      dispatch(setResetPreferences({ resetPreferences: true }))
       dispatch(setIsEditingPreferences({ isEditing: false }))
+      setSavingPreferences(false)
+
+      dispatch(setResetPreferences({ resetPreferences: true }))
     }
   }, [shiftPreferences])
 
@@ -170,8 +175,13 @@ export default function PreferencesButtons() {
 
       // const newPreference = shiftPreferences[category][shiftId]
     }
-    dispatch(setIsUpdatingPreferences({ isUpdating: false }))
   }, [allShifts, authHouse, authUser, shiftPreferences, updateShift])
+
+  useEffect(() => {
+    if (!savingPreferences && isSuccess) {
+      dispatch(setIsUpdatingPreferences({ isUpdating: false }))
+    }
+  }, [savingPreferences])
 
   // Effect to log updated shifts
   useEffect(() => {
