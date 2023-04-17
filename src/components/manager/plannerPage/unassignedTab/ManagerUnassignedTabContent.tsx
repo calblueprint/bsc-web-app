@@ -14,6 +14,8 @@ import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
 import { Days, House } from '@/types/schema'
+import { ShiftAssignmentCard } from '@/sprintFiles/ShiftAssignmentCard'
+import EditShiftCard from '@/features/shift/cards/EditShiftCard'
 
 const filterOptions: Days[] = [
   'All',
@@ -34,6 +36,15 @@ const ManagerUnassignedTabContent = () => {
   const [dayFilter, setDayFilter] = useState<Days>('All')
   const [filteredShiftIds, setFilteredShiftIds] = useState<EntityId[]>([])
 
+  //** Modal stuff */
+  const [open, setOpen] = useState(false)
+  //** State variables that pass the selected item's info from the table to the modal */
+  const [selectedShiftId, setSelectedShiftId] = useState<EntityId>()
+  //** end Modal stuff */
+
+  const [openEditShift, setOpenEditShift] = useState<boolean>(false)
+  const [editShiftId, setEditShiftId] = useState<string>('')
+
   const handleSearchChange = (value: string) => {
     // console.log('search: ' + value)
     setSearchQuery(value)
@@ -47,6 +58,30 @@ const ManagerUnassignedTabContent = () => {
   const handleFilterChange = (selectedFilter: Days) => {
     console.log('Selected filter:', selectedFilter)
     setDayFilter(selectedFilter)
+  }
+
+  const handleEditShift = (shiftId: string) => {
+    setEditShiftId(shiftId)
+    setOpenEditShift(true)
+    handleClose()
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  //** this function handles passing the info from selected item from table to the modal that pops open */
+  const handleRowClick = (
+    event: React.MouseEvent<unknown>,
+    shiftId: EntityId
+  ) => {
+    // console.log('event: ', event, 'shift: ', shiftId)
+    setSelectedShiftId(shiftId)
+    handleOpen()
   }
 
   useEffect(() => {
@@ -110,8 +145,21 @@ const ManagerUnassignedTabContent = () => {
         <UnassignedShiftsTable
           shiftIds={filteredShiftIds}
           shiftEntities={shiftData?.entities}
+          handleRowClick={handleRowClick}
         />
       ) : null}
+      <ShiftAssignmentCard
+        shiftId={selectedShiftId}
+        selectedDay={dayFilter}
+        handleClose={handleClose}
+        handleEditShift={handleEditShift}
+        open={open}
+      />
+      <EditShiftCard
+        shiftId={editShiftId}
+        setOpen={setOpenEditShift}
+        open={openEditShift}
+      />
     </React.Fragment>
   )
 }

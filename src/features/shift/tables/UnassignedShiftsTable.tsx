@@ -43,18 +43,20 @@ const shiftHeadCells: HeadCell<
 const UnassignedShiftsTable = ({
   shiftIds,
   shiftEntities,
+  handleRowClick,
 }: {
   shiftIds: EntityId[]
   shiftEntities: Dictionary<Shift>
+  handleRowClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
 }) => {
   const [filteredShiftIds, setFilteredShiftIds] = useState<EntityId[]>([])
 
-  const handleRowClick = (
-    event: React.MouseEvent<unknown, MouseEvent>,
-    entityId: EntityId
-  ) => {
-    console.log(entityId)
-  }
+  // const handleRowClick = (
+  //   event: React.MouseEvent<unknown, MouseEvent>,
+  //   entityId: EntityId
+  // ) => {
+  //   console.log(entityId)
+  // }
 
   useEffect(() => {
     console.log('changed ids in unassigned table')
