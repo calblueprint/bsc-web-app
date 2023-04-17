@@ -36,6 +36,7 @@ import {
 } from '../userShiftPreferencesSlice'
 import { validatePreferences } from '@/utils/utils'
 import PreferencesButtons from '../buttons/PreferencesButtons'
+import Loading from '@/components/shared/Loading'
 
 export default function PreferencesTable() {
   const authUser = useSelector(selectCurrentUser) as User
@@ -161,8 +162,13 @@ export default function PreferencesTable() {
     <React.Fragment>
       <PreferencesButtons />
       {isUpdating ? (
-        <Box>
-          <Typography variant="h2">Is Updating Preferences</Typography>
+        <Box display={'flex'} flexDirection={'row'}>
+          <Box>
+            <Typography variant="h4">Updating Preferences...</Typography>
+          </Box>
+          <Box>
+            <Loading />
+          </Box>
         </Box>
       ) : (
         table
