@@ -6,10 +6,13 @@ import PreferencesTable from './tables/PreferencesTable'
 
 const shiftPreferences: { [key: string]: ShiftPreferences } = {}
 
-const userPreferencesSlice = createSlice({
-  name: 'userPreferences',
+const userShiftPreferencesSlice = createSlice({
+  name: 'userShiftPreferences',
   initialState: {
     shiftPreferences,
+    isEditingPreferences: false,
+    resetPreferences: true,
+    isUpdatingPreferences: false,
   },
   reducers: {
     setShiftPreferences: (state, action) => {
@@ -37,13 +40,37 @@ const userPreferencesSlice = createSlice({
         ...newShiftPreferences,
       }
     },
+    setIsEditingPreferences: (state, action) => {
+      console.log(action.payload.isEditing)
+      state.isEditingPreferences = action.payload.isEditing
+    },
+    setResetPreferences: (state, action) => {
+      state.resetPreferences = action.payload.resetPreferences
+    },
+    setIsUpdatingPreferences: (state, action) => {
+      state.isUpdatingPreferences = action.payload.isUpdating
+    },
   },
 })
 
-export const { setShiftPreferences, setSingleShiftPreferences } =
-  userPreferencesSlice.actions
+export const {
+  setShiftPreferences,
+  setSingleShiftPreferences,
+  setIsEditingPreferences,
+  setResetPreferences,
+  setIsUpdatingPreferences,
+} = userShiftPreferencesSlice.actions
 
-export const selectUserPreferences = (state: RootState) =>
-  state.userPreferences.shiftPreferences
+export const selectUserShiftPreferences = (state: RootState) =>
+  state.userShiftPreferences.shiftPreferences
 
-export default userPreferencesSlice.reducer
+export const selectIsEditingPreferences = (state: RootState) =>
+  state.userShiftPreferences.isEditingPreferences
+
+export const selectResetPreferences = (state: RootState) =>
+  state.userShiftPreferences.resetPreferences
+
+export const selectIsUpdatingPreferences = (state: RootState) =>
+  state.userShiftPreferences.isUpdatingPreferences
+
+export default userShiftPreferencesSlice.reducer

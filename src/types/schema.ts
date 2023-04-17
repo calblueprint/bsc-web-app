@@ -1,6 +1,6 @@
 export type User = {
   // this id is to help the standard table generalize the id attribute
-  id?: string
+  id: string
   // ID of the user (not stored in Firebase, attached to user)
   userID: string
   // Roles of the user
@@ -52,7 +52,7 @@ export type User = {
 
 export type Shift = {
   // optional id attribute for table stuff
-  id?: string
+  id: string
   // Name of the shift
   name: string //! Form Item
   // ID of the shift (not stored in Firebase, attached to shift)

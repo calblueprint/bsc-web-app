@@ -29,10 +29,10 @@ import { useUpdateShiftMutation } from '@/features/shift/shiftApiSlice'
 import { Snackbar, Alert } from '@mui/material'
 import { validatePreferences } from '@/utils/utils'
 import {
-  selectUserPreferences,
+  selectUserShiftPreferences,
   setShiftPreferences,
   setSingleShiftPreferences,
-} from '../userPreferencesSlice'
+} from '../userShiftPreferencesSlice'
 
 export default function PrefrencesItem(props: {
   shiftsIds: Array<string>
@@ -59,9 +59,9 @@ export default function PrefrencesItem(props: {
   //   }
   // }>()
 
-  const shiftPreferences: ShiftPreferences = useSelector(selectUserPreferences)[
-    category
-  ]
+  const shiftPreferences: ShiftPreferences = useSelector(
+    selectUserShiftPreferences
+  )[category]
 
   const dispatch = useDispatch()
 

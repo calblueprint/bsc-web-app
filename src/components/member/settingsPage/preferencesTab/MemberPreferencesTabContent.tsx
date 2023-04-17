@@ -1,5 +1,5 @@
-import PreferencesTable from "@/features/userPreferences/tables/PreferencesTable"
+import PreferencesTable from '@/features/userShiftPreferences/tables/PreferencesTable'
 const MemberPreferencesTabContent = () => {
-  return <PreferencesTable/>
+  return <PreferencesTable />
 }
 export default MemberPreferencesTabContent

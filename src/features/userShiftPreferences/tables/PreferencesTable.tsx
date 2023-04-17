@@ -27,16 +27,21 @@ import uuid from 'react-uuid'
 import { Dictionary, EntityId } from '@reduxjs/toolkit'
 import Stack from '@mui/material/Stack'
 import {
-  selectUserPreferences,
+  selectIsEditingPreferences,
+  selectIsUpdatingPreferences,
+  selectResetPreferences,
+  selectUserShiftPreferences,
+  setResetPreferences,
   setShiftPreferences,
-} from '../userPreferencesSlice'
+} from '../userShiftPreferencesSlice'
 import { validatePreferences } from '@/utils/utils'
+import PreferencesButtons from '../buttons/PreferencesButtons'
 
 export default function PreferencesTable() {
   const authUser = useSelector(selectCurrentUser) as User
   const authHouse = useSelector(selectCurrentHouse) as House
+  const isUpdating = useSelector(selectIsUpdatingPreferences)
   const { data: AllShifts, isLoading } = useGetShiftsQuery(authHouse.id)
-  const [isEditing, setIsEditing] = React.useState(false)
 
   const [houseCategories, setHouseCategories] = useState<
     { [key: string]: Array<string> } | undefined
@@ -44,58 +49,11 @@ export default function PreferencesTable() {
 
   const [authUserId, setAuthUserId] = React.useState('')
 
-  const shiftCategoryPreferences = useSelector(selectUserPreferences)
+  const resetPreferences = useSelector(selectResetPreferences)
+  const isEditing = useSelector(selectIsEditingPreferences)
+
+  // const shiftCategoryPreferences = useSelector(selectUserPreferences)
   const dispatch = useDispatch()
-
-  // useEffect(() => {
-  //   if (AllShifts) {
-  //     let categoriesPreferences: { [key: string]: ShiftPreferences } = {}
-  //     const ids = AllShifts.ids
-  //     const entities = AllShifts.entities
-  //     let obj = {}
-  //     ids.forEach((id) => {
-  //       const category = entities[id]?.category
-  //       const preferences = validatePreferences(
-  //         entities[id]?.preferences as Shift['preferences']
-  //       )
-  //       const isDislike = preferences.dislikedBy.includes(authUserId)
-  //       const isPrefere = preferences.preferredBy.includes(authUserId)
-  //       const choise = isPrefere ? 'prefere' : isDislike ? 'dislike' : null
-  //       obj = {
-  //         ...obj,
-  //         [id]: {
-  //           savedPreference: choise,
-  //           newPreference: choise,
-  //           hasChanged: false,
-  //         },
-  //       }
-
-  //       if (category) {
-  //         if (category in categoriesPreferences) {
-  //           let foundCategory = categoriesPreferences[category]
-  //           let shiftPreferences = {
-  //             [id]: {
-  //               newPreference: entities[id]?.,
-  //               savedPreference: '',
-  //               hasChanged: false,
-  //             },
-  //           }
-  //           categories[category as keyof typeof categories].push(id as string)
-  //         } else {
-  //           categories[category] = [id as string]
-  //         }
-  //       } else {
-  //         if ('Uncategorized' in categories) {
-  //           categories['Uncategorized'].push(id as string)
-  //         } else {
-  //           categories['Uncategorized'] = [id as string]
-  //         }
-  //       }
-  //     })
-  //     console.log(categories)
-  //     setHouseCategories({ ...categories })
-  //   }
-  // }, [AllShifts])
 
   const createHouseCategories = (
     ids: EntityId[],
@@ -127,6 +85,16 @@ export default function PreferencesTable() {
 
   useEffect(() => {
     if (AllShifts) {
+      const ids = AllShifts.ids
+      const entities = AllShifts.entities
+      const categories: { [key: string]: Array<string> } | undefined =
+        createHouseCategories(AllShifts.ids, AllShifts.entities)
+      setHouseCategories({ ...categories })
+    }
+  }, [AllShifts])
+
+  useEffect(() => {
+    if (AllShifts && resetPreferences && authUserId) {
       const ids = AllShifts.ids
       const entities = AllShifts.entities
       const categories: { [key: string]: Array<string> } | undefined =
@@ -164,49 +132,16 @@ export default function PreferencesTable() {
       })
 
       console.log(categories)
-      setHouseCategories({ ...categories })
+
+      dispatch(setResetPreferences(false))
     }
-  }, [AllShifts])
+  }, [AllShifts, authUserId, dispatch, resetPreferences])
 
-  const handleEdit = () => {
-    setIsEditing(true)
-  }
-  const handleCancel = () => {
-    setIsEditing(false)
-  }
-  const handleSave = () => {
-    // if (shiftCategoryPreferences) {
-    //   for (const category in shiftCategoryPreferences) {
-    //     console.log(category)
-    //   }
-    // }
-  }
-
-  const editButtons = (
-    <Stack direction={'row'} alignItems={'end'}>
-      <Box sx={{ flexGrow: 3 }} />
-      {isEditing ? (
-        <React.Fragment>
-          <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
-            <Button onClick={handleCancel} variant="outlined">
-              Cancel
-            </Button>
-          </Box>
-          <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
-            <Button onClick={handleSave} variant="contained">
-              Save
-            </Button>
-          </Box>
-        </React.Fragment>
-      ) : (
-        <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
-          <Button onClick={handleEdit} variant="contained">
-            Edit Preferences
-          </Button>
-        </Box>
-      )}
-    </Stack>
-  )
+  useEffect(() => {
+    if (authUser) {
+      setAuthUserId(authUser.id as string)
+    }
+  }, [authUser])
 
   const table = houseCategories
     ? Object.keys(houseCategories).map((category) => {
@@ -224,8 +159,14 @@ export default function PreferencesTable() {
     : null
   return (
     <React.Fragment>
-      {editButtons}
-      {table}
+      <PreferencesButtons />
+      {isUpdating ? (
+        <Box>
+          <Typography variant="h2">Is Updating Preferences</Typography>
+        </Box>
+      ) : (
+        table
+      )}
     </React.Fragment>
   )
 }
