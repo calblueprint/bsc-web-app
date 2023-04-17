@@ -1,8 +1,7 @@
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import {User} from '../types/schema'
+import { Shift, User } from '../types/schema'
 import { DAYS } from './constants'
-
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -96,10 +95,9 @@ export function capitalizeFirstLetter(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
-
 /**
- * @description: Generates times in intervals of 30min 
- * 
+ * @description: Generates times in intervals of 30min
+ *
  * @returns: options object -> [key]: value where the key is a string in military time such as: KEY= '0230' gives VALUE='2:30PM'
  */
 export const generateTimeOptions = () => {
@@ -120,9 +118,9 @@ export const generateTimeOptions = () => {
 }
 
 /**
- * @description: Array with all excepted military time key values for the 
+ * @description: Array with all excepted military time key values for the
  *                object returned by the generateTimeOptions() function
- * 
+ *
  * @returns: options array with all the posible times in military time
  */
 export const generateTimeOptionsIndex = () => {
@@ -145,12 +143,12 @@ export const isTimeOverlap = (
   index: number,
   availabilities: Array<{ startTime: string; endTime: string }>
 ): boolean => {
-  if(availabilities.length === 1) {
+  if (availabilities.length === 1) {
     return false
   }
 
   for (let i = 0; i < availabilities.length; i++) {
-    if (i === index){
+    if (i === index) {
       continue
     }
     const timeBlock = availabilities[i]
@@ -162,7 +160,7 @@ export const isTimeOverlap = (
       (parseInt(startTime) < parseInt(timeBlock.startTime) &&
         parseInt(endTime) > parseInt(timeBlock.endTime))
     ) {
-      return true;
+      return true
     }
   }
 
@@ -179,10 +177,10 @@ export const isTimeOverlap = (
   //   }
   // }
 
-  return false;
-};
+  return false
+}
 
-export const validateAvailability = (availability: User['availabilities'])=> {
+export const validateAvailability = (availability: User['availabilities']) => {
   const availabilities: User['availabilities'] = {
     monday: [],
     tuesday: [],
@@ -196,10 +194,18 @@ export const validateAvailability = (availability: User['availabilities'])=> {
     return availabilities
   }
 
-  const verifiedAvailability = DAYS.forEach(day=> {
-    if(availability[day]) {
+  const verifiedAvailability = DAYS.forEach((day) => {
+    if (availability[day]) {
       availabilities[day] = availability[day]
     }
   })
   return availabilities
+}
+
+export const validatePreferences = (preferences: Shift['preferences']) => {
+  let verifiedPreferences = { preferences: { preferredBy: [], dislikedBy: [] } }
+  if (!preferences) {
+    return { ...verifiedPreferences.preferences }
+  }
+  return { ...verifiedPreferences.preferences, ...preferences }
 }
