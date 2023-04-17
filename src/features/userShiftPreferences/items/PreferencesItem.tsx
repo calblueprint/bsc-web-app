@@ -282,7 +282,7 @@ export default function PrefrencesItem(props: {
                           textAlign: 'center',
                         }}
                       >
-                        {'Prefere'}
+                        {'Prefer'}
                       </Typography>
                     )
 
