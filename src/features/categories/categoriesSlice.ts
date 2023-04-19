@@ -2,11 +2,15 @@ import { RootState } from '@/store/store'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 
 const isCategoryOpen: { [key: string]: boolean } = {}
+const shiftsCategory: { [key: string]: Array<string> } = {}
+const houseCategories: Array<string> = ['Uncategorized']
 
 const categoriesSlice = createSlice({
   name: 'categories',
   initialState: {
     isCategoryOpen,
+    houseCategories,
+    shiftsCategory,
   },
   reducers: {
     setIsCategoryOpen: (state, action) => {
@@ -15,10 +19,48 @@ const categoriesSlice = createSlice({
         ...action.payload.isCategoryOpen,
       }
     },
+    setShiftCategories: (state, action) => {
+      state.shiftsCategory = {
+        ...state.shiftsCategory,
+        ...action.payload.shiftCategories,
+      }
+    },
+    setHouseCategories: (state, action) => {
+      state.houseCategories = action.payload.houseCategories
+    },
+    addHouseCategories: (state, action) => {
+      state.houseCategories = [
+        ...state.houseCategories,
+        ...action.payload.houseCategories,
+      ]
+    },
+    deleteHouseCategories: (state, action) => {
+      const index = state.houseCategories.indexOf(action.payload.category)
+      state.houseCategories = state.houseCategories.splice(index, 1)
+    },
   },
 })
 
-export const { setIsCategoryOpen } = categoriesSlice.actions
+export const {
+  setIsCategoryOpen,
+  setShiftCategories,
+  setHouseCategories,
+  addHouseCategories,
+  deleteHouseCategories,
+} = categoriesSlice.actions
+
+export const selectHouseCategories = (state: RootState) =>
+  state.categories.houseCategories
+
+export const selectShiftCategoriesByCategory = (
+  state: RootState,
+  category: string
+) => state.categories.shiftsCategory[category]
+
+export const selectShiftsCategory = createSelector(
+  [selectShiftCategoriesByCategory],
+  (shiftIds) => shiftIds
+)
 
 export const selectIsCategoryOpenByCategory = (
   state: RootState,
