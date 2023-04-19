@@ -108,7 +108,8 @@ export type House = {
   id: string
   name: string
   houseID: string
-  categories: Record<string, string[]>
+  // categories: Record<string, string[]>
+  categories: string[]
   address: string
   schedule: Record<string, string[]>
   userPINs: Record<string, string>
