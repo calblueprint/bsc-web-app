@@ -1,51 +1,48 @@
 import { RootState } from '@/store/store'
 import { ShiftPreferences, User } from '@/types/schema'
-import { validatePreferences } from '@/utils/utils'
-import { createSlice } from '@reduxjs/toolkit'
+import { createHouseCategories, validatePreferences } from '@/utils/utils'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import PreferencesTable from './tables/PreferencesTable'
 
-const shiftPreferences: { [key: string]: ShiftPreferences } = {}
+const shiftPreferences: {
+  [key: string]: { preferredBy: []; dislikedBy: []; isActive: true }
+} = {}
+
+const shiftsByCategory: { [key: string]: Array<string> } = {}
+
+const categoryCollapse: { [key: string]: boolean } = {}
 
 const userShiftPreferencesSlice = createSlice({
   name: 'userShiftPreferences',
   initialState: {
     shiftPreferences,
+    shiftsByCategory,
+    categoryCollapse,
     isEditingPreferences: false,
-    resetPreferences: true,
     isUpdatingPreferences: false,
   },
   reducers: {
     setShiftPreferences: (state, action) => {
-      const { allPreferences, category } = action.payload
-      const newShiftPreferences = { [category]: allPreferences }
-      //   console.log('Redux setShiftPreferences: ', allPreferences)
       state.shiftPreferences = {
         ...state.shiftPreferences,
-        ...newShiftPreferences,
+        ...action.payload.preferences,
       }
     },
-    setSingleShiftPreferences: (state, action) => {
-      const { preference, category } = action.payload
-      //   console.log('Redux setSingleShiftPreferences: ', preference)
-      const p = { ...state.shiftPreferences[category] }
-      const newPref = { ...state.shiftPreferences[category], ...preference }
-      //   console.log(
-      //     'Redux newPre: ',
-      //     JSON.stringify(state.shiftPreferences[category])
-      //   )
-      //   console.log('Redux newPre: ', newPref)
-      const newShiftPreferences = { [category]: newPref }
-      state.shiftPreferences = {
-        ...state.shiftPreferences,
-        ...newShiftPreferences,
+    setShiftsByCategories: (state, action) => {
+      state.shiftsByCategory = {
+        ...state.shiftsByCategory,
+        ...action.payload.houseCategories,
+      }
+    },
+    setCategoryCollapse: (state, action) => {
+      state.categoryCollapse = {
+        ...state.categoryCollapse,
+        ...action.payload.collapseOpen,
       }
     },
     setIsEditingPreferences: (state, action) => {
-      console.log(action.payload.isEditing)
+      // console.log(action.payload.isEditing)
       state.isEditingPreferences = action.payload.isEditing
-    },
-    setResetPreferences: (state, action) => {
-      state.resetPreferences = action.payload.resetPreferences
     },
     setIsUpdatingPreferences: (state, action) => {
       state.isUpdatingPreferences = action.payload.isUpdating
@@ -55,9 +52,9 @@ const userShiftPreferencesSlice = createSlice({
 
 export const {
   setShiftPreferences,
-  setSingleShiftPreferences,
+  setShiftsByCategories,
+  setCategoryCollapse,
   setIsEditingPreferences,
-  setResetPreferences,
   setIsUpdatingPreferences,
 } = userShiftPreferencesSlice.actions
 
@@ -67,10 +64,35 @@ export const selectUserShiftPreferences = (state: RootState) =>
 export const selectIsEditingPreferences = (state: RootState) =>
   state.userShiftPreferences.isEditingPreferences
 
-export const selectResetPreferences = (state: RootState) =>
-  state.userShiftPreferences.resetPreferences
-
 export const selectIsUpdatingPreferences = (state: RootState) =>
   state.userShiftPreferences.isUpdatingPreferences
+
+export const selectShiftByCategory = (state: RootState, category: string) =>
+  state.userShiftPreferences.shiftsByCategory[category]
+
+export const selectCatogoryCollapse = (state: RootState, category: string) =>
+  state.userShiftPreferences.categoryCollapse[category]
+
+export const selectCatogoryCollapseByCategory = createSelector(
+  [selectCatogoryCollapse],
+  (isOpen) => isOpen
+)
+
+export const selectShiftsByCategoryPreferences = createSelector(
+  [selectUserShiftPreferences, selectShiftByCategory],
+  (preferences, categoryIds) => {
+    let obj: {
+      [key: string]: {
+        preferredBy: Array<string>
+        dislikedBy: Array<string>
+        isActive: boolean
+      }
+    } = {}
+    categoryIds.map((id) => {
+      obj = { ...obj, [id]: preferences[id] }
+    })
+    return obj
+  }
+)
 
 export default userShiftPreferencesSlice.reducer

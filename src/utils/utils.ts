@@ -1,6 +1,6 @@
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import { Shift, User } from '../types/schema'
+import { House, Shift, User } from '../types/schema'
 import { DAYS } from './constants'
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -208,4 +208,38 @@ export const validatePreferences = (preferences: Shift['preferences']) => {
     return { ...verifiedPreferences.preferences }
   }
   return { ...verifiedPreferences.preferences, ...preferences }
+}
+
+/**
+ * @description Creates house categories given the ids and entities of all the shifts
+ * @param ids holds the ids of all the shifts
+ * @param entities holds the entities of all the shifts
+ * @returns returns an map of of categories to array of shiftIds
+ */
+export const createHouseCategories = (
+  ids: EntityId[],
+  entities: Dictionary<Shift>
+) => {
+  const categories: { [key: string]: Array<string> } | undefined = {}
+  if (!ids.length || !entities) {
+    return undefined
+  }
+  ids.forEach((id) => {
+    const category = entities[id]?.category
+    if (category) {
+      if (category in categories) {
+        categories[category as keyof typeof categories].push(id as string)
+      } else {
+        categories[category] = [id as string]
+      }
+    } else {
+      if ('Uncategorized' in categories) {
+        categories['Uncategorized'].push(id as string)
+      } else {
+        categories['Uncategorized'] = [id as string]
+      }
+    }
+  })
+
+  return categories
 }

@@ -5,8 +5,6 @@ import IconButton from '@mui/material/IconButton'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
@@ -16,7 +14,13 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import { Dictionary, EntityId } from '@reduxjs/toolkit'
-import { House, Shift, ShiftPreferences, userPreferences } from '@/types/schema'
+import {
+  House,
+  Shift,
+  ShiftPreferences,
+  User,
+  userPreferences,
+} from '@/types/schema'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,181 +28,204 @@ import {
   selectCurrentHouse,
   selectCurrentUser,
 } from '@/features/auth/authSlice'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useUpdateShiftMutation } from '@/features/shift/shiftApiSlice'
 import { Snackbar, Alert } from '@mui/material'
 import { validatePreferences } from '@/utils/utils'
 import {
+  selectCatogoryCollapseByCategory,
+  selectIsEditingPreferences,
+  selectShiftsByCategoryPreferences,
   selectUserShiftPreferences,
+  setCategoryCollapse,
   setShiftPreferences,
-  setSingleShiftPreferences,
 } from '../userShiftPreferencesSlice'
+import { RootState } from '@/store/store'
 
 export default function PrefrencesItem(props: {
-  shiftsIds: Array<string>
   category: string
+  shiftsIds: Array<string>
   shiftEntities: Dictionary<Shift>
-  isEditing: boolean
 }) {
-  const authUser = useSelector(selectCurrentUser)
-  const authHouse = useSelector(selectCurrentHouse) as House
-  const { shiftsIds, category, shiftEntities, isEditing } = props
-  const [open, setOpen] = React.useState(false)
-  const [authUserId, setAuthUserId] = React.useState('')
-  const [alignment, setAlignment] = React.useState<string | null>(null)
-  // const [isEditing, setIsEditing] = React.useState(false)
-  const [mainPreference, setMainPreference] = React.useState<
-    'No Preference' | 'Mix Preference' | 'Prefere All' | 'Dislike All'
-  >('No Preference')
+  //** Get component props */
+  const { shiftsIds, category, shiftEntities } = props
 
-  // const [shiftPreferences, setShiftPreference] = React.useState<{
-  //   [key: string]: {
-  //     newPreference: string | null
-  //     savedPreference: string | null
-  //     hasChanged: boolean
-  //   }
-  // }>()
+  //** Get authorized user from redux */
+  const authUser = useSelector(selectCurrentUser) as User
+  //** Select preferences from the given category  */
+  const categoryPreferences = useSelector((state: RootState) =>
+    selectShiftsByCategoryPreferences(state, category)
+  )
+  //** Select booleans for the category Collaps */
+  const catogoryCollapseOpen = useSelector((state: RootState) =>
+    selectCatogoryCollapseByCategory(state, category)
+  )
+  //** Get the boolean for editing preferences */
+  const isEditing = useSelector(selectIsEditingPreferences)
+  //** This holds the state of whole category which is mix/preferAll/dislikeAll */
+  const [categoryState, setCategoryState] = useState<string | null>(null)
+  //** Holds the value for displaying for the category state */
+  const [categoryDisplay, setCategoryDisplay] = useState<string>()
+  //** Array of all the choises for the shifts in the category */
+  const [choisesObj, setChoisesObj] = useState<{
+    [key: string]: string | null
+  }>({})
+  //** opens and closes success message */
+  const [openSuccessMsg, setOpenSuccessMsg] = useState(false)
+  //** opens and closes error message */
+  const [openErrorMsg, setOpenErrorMsg] = useState(false)
 
-  const shiftPreferences: ShiftPreferences = useSelector(
-    selectUserShiftPreferences
-  )[category]
-
+  //** Dispatcher for redux actions */
   const dispatch = useDispatch()
 
+  //** handles the change when all the shift in a category are changed at onece */
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: string
+    newChoise: string
   ) => {
-    console.log(newAlignment)
-    if (!shiftPreferences) {
+    // console.log(newChoise)
+    if (!categoryPreferences) {
       console.error('ERROR: No user preferences')
       return
     }
-    const shiftPreferencesCopy = JSON.parse(JSON.stringify(shiftPreferences))
+    let shiftPreferencesCopy: House['preferences'] = { ...categoryPreferences }
+    shiftsIds.forEach((id) => {
+      const { preferredBy, dislikedBy, isActive } = setChoice(
+        shiftPreferencesCopy[id],
+        newChoise
+      )
+      shiftPreferencesCopy = {
+        ...shiftPreferencesCopy,
+        [id]: { preferredBy, dislikedBy, isActive },
+      }
+    })
 
-    console.log(shiftPreferencesCopy)
-    if (shiftPreferences) {
-      shiftsIds.map((shiftId) => {
-        if (shiftPreferencesCopy[shiftId].savedPreference === newAlignment) {
-          shiftPreferencesCopy[shiftId].hasChanged = false
-        } else {
-          shiftPreferencesCopy[shiftId].hasChanged = true
-        }
-        shiftPreferencesCopy[shiftId].newPreference = newAlignment
-      })
-    }
-    console.log(shiftPreferencesCopy)
+    // console.log(shiftPreferencesCopy)
 
-    dispatch(
-      setShiftPreferences({ allPreferences: shiftPreferencesCopy, category })
-    )
+    dispatch(setShiftPreferences({ preferences: shiftPreferencesCopy }))
 
-    // setShiftPreference(shiftPreferencesCopy)
+    const newChoises = { ...choisesObj }
+    Object.keys(choisesObj).forEach((key) => {
+      newChoises[key] = newChoise
+    })
 
-    setAlignment(newAlignment)
+    setChoisesObj({ ...newChoises })
+
+    setCategoryState(newChoise)
   }
 
+  //** Handles the changing a single shift preference */
   const handleSingleChange = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: string,
-    id: string
+    newChoice: string,
+    shiftId: string
   ) => {
-    console.log('id: ' + id, ' preference: ' + newAlignment)
-    if (!shiftPreferences) {
-      console.log('ERROR: No preference')
-      return
-    }
-
-    console.log('id: ' + shiftPreferences[id].newPreference, ' preference')
-
-    let { newPreference, savedPreference, hasChanged } = shiftPreferences[id]
-    newPreference = newAlignment
-    if (savedPreference === newAlignment) {
-      hasChanged = false
-    } else {
-      hasChanged = true
-    }
-
-    const preference = { [id]: { savedPreference, newPreference, hasChanged } }
-
-    dispatch(setSingleShiftPreferences({ preference, category }))
-
-    // setShiftPreference({
-    //   ...shiftPreferences,
-    //   [id]: { savedPreference, newPreference, hasChanged },
-    // })
+    if (choisesObj[shiftId] === newChoice) return
+    dispatch(
+      setShiftPreferences({
+        preferences: {
+          [shiftId]: setChoice(categoryPreferences[shiftId], newChoice),
+        },
+      })
+    )
+    setChoisesObj((prev) => ({ ...prev, [shiftId]: newChoice }))
   }
 
-  //** if true it opens the Succes message window */
-  const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false)
-  //** if true it opens the Error message window */
-  const [openErrorMsg, setOpenErrorMsg] = React.useState(false)
-
-  //** Handles closing both success and error windows. */
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpenSuccessMsg(false)
+  const handleCloseMsg = () => {
     setOpenErrorMsg(false)
+    setOpenSuccessMsg(false)
   }
 
-  useEffect(() => {
-    if (authUser) {
-      setAuthUserId(authUser.id as string)
-    }
-  }, [authUser])
+  //** gets the preference from a shift preference object */
+  const getChoice = (preference: {
+    dislikedBy: Array<string>
+    preferredBy: Array<string>
+    isActive: boolean
+  }) => {
+    const dislikedBy = [...preference.dislikedBy]
+    const preferredBy = [...preference.preferredBy]
+    if (dislikedBy.indexOf(authUser.id) !== -1) return 'dislike'
+    if (preferredBy.indexOf(authUser.id) !== -1) return 'prefer'
+    return null
+  }
 
+  //** sets the object of a shift preference with the given preference */
+  const setChoice = (
+    preference: {
+      dislikedBy: Array<string>
+      preferredBy: Array<string>
+      isActive: boolean
+    },
+    newChoise: string
+  ) => {
+    const dislikedBy = [...preference.dislikedBy]
+    const preferredBy = [...preference.preferredBy]
+    const isPreferred = preferredBy.indexOf(authUser.id)
+    const isDisliked = dislikedBy.indexOf(authUser.id)
+    if (newChoise === 'prefer') {
+      if (isDisliked !== -1) {
+        dislikedBy.splice(isDisliked, 1)
+      }
+      if (isPreferred === -1) {
+        preferredBy.push(authUser.id)
+      }
+    } else if (newChoise === 'dislike') {
+      if (isPreferred !== -1) {
+        preferredBy.splice(isPreferred, 1)
+      }
+      if (isDisliked === -1) {
+        dislikedBy.push(authUser.id)
+      }
+    } else if (newChoise === null) {
+      if (isDisliked !== -1) {
+        dislikedBy.splice(isDisliked, 1)
+      }
+      if (isPreferred !== -1) {
+        preferredBy.splice(isPreferred, 1)
+      }
+    }
+    return { dislikedBy, preferredBy, isActive: preference.isActive }
+  }
+
+  //** Updates Choises Object when isEditing changes  */
   useEffect(() => {
-    if (shiftPreferences) {
-      const arr = Object.values(shiftPreferences).map(
-        (obj) => obj.newPreference
-      )
+    // console.log('categoryPreferences:  ', categoryPreferences)
+    if (categoryPreferences) {
+      let choises = {}
+      Object.keys(categoryPreferences).forEach((key) => {
+        choises = { ...choises, [key]: getChoice(categoryPreferences[key]) }
+      })
+      setChoisesObj({ ...choises })
+      // console.log('categoryChoises changed: ', choises)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing])
+
+  //** sets the Category collaps object in redux. is close to start */
+  useEffect(() => {
+    dispatch(setCategoryCollapse({ [category]: false }))
+  }, [category, dispatch])
+
+  //** Updates the categories display when the choises object changes */
+  useEffect(() => {
+    if (choisesObj) {
+      const arr = Object.values(choisesObj)
       if (arr.every((value) => value === null)) {
-        setMainPreference('No Preference')
-        setAlignment(null)
-      } else if (arr.every((value) => value === 'prefere')) {
-        setMainPreference('Prefere All')
-        setAlignment('prefere')
+        setCategoryDisplay('No Preference')
+        setCategoryState(null)
+      } else if (arr.every((value) => value === 'prefer')) {
+        setCategoryDisplay('Prefer All')
+        setCategoryState('prefer')
       } else if (arr.every((value) => value === 'dislike')) {
-        setMainPreference('Dislike All')
-        setAlignment('dislike')
+        setCategoryDisplay('Dislike All')
+        setCategoryState('dislike')
       } else {
-        setMainPreference('Mix Preference')
-        setAlignment(null)
+        setCategoryDisplay('Mix Preference')
+        setCategoryState(null)
       }
       // console.log('updated Main Preference')
     }
-  }, [shiftPreferences])
-
-  // useEffect(() => {
-  //   if (shiftsIds) {
-  //     let obj = {}
-  //     const getPreference = shiftsIds.map((shiftId) => {
-  //       const preferences = validatePreferences(
-  //         shiftEntities[shiftId]?.preferences as Shift['preferences']
-  //       )
-  //       const isDislike = preferences.dislikedBy.includes(authUserId)
-  //       const isPrefere = preferences.preferredBy.includes(authUserId)
-  //       const choise = isPrefere ? 'prefere' : isDislike ? 'dislike' : null
-  //       obj = {
-  //         ...obj,
-  //         [shiftId]: {
-  //           savedPreference: choise,
-  //           newPreference: choise,
-  //           hasChanged: false,
-  //         },
-  //       }
-  //     })
-  //     const allPreferences = { ...obj }
-  //     dispatch(setShiftPreferences({ allPreferences, category }))
-  //     // console.log('Loaded shift preferences ->', allPreferences)
-  //     // setShiftPreference(obj)
-  //   }
-  // }, [shiftsIds, authUserId, shiftEntities, dispatch, category])
+  }, [choisesObj])
 
   const content = (
     <React.Fragment>
@@ -207,9 +234,19 @@ export default function PrefrencesItem(props: {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}
+            onClick={() =>
+              dispatch(
+                setCategoryCollapse({
+                  collapseOpen: { [category]: !catogoryCollapseOpen },
+                })
+              )
+            }
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {catogoryCollapseOpen ? (
+              <KeyboardArrowUpIcon />
+            ) : (
+              <KeyboardArrowDownIcon />
+            )}
           </IconButton>
           <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
             {category}
@@ -225,12 +262,12 @@ export default function PrefrencesItem(props: {
           >
             <ToggleButtonGroup
               color="primary"
-              value={alignment}
+              value={categoryState}
               exclusive
               onChange={(event, value) => handleChange(event, value)}
               aria-label="Platform"
             >
-              <ToggleButton value="prefere">Prefer All</ToggleButton>
+              <ToggleButton value="prefer">Prefer All</ToggleButton>
               <ToggleButton value="dislike">Dislike All</ToggleButton>
             </ToggleButtonGroup>
           </Box>
@@ -241,25 +278,25 @@ export default function PrefrencesItem(props: {
             // paddingBottom={1}
             marginRight={3}
           >
-            <Typography variant="h6">{mainPreference}</Typography>
+            <Typography variant="h6">{categoryDisplay}</Typography>
           </Box>
         )}
       </Box>
       <Divider />
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={catogoryCollapseOpen} timeout="auto" unmountOnExit>
         <Box>
           <Table aria-label="shifts" sx={{ margin: '0' }}>
             <TableBody>
-              {shiftPreferences && Object.keys(shiftPreferences).length !== 0
-                ? Object.keys(shiftPreferences).map((id) => {
-                    // console.log('newPreference: ', shiftPreferences[id])
-                    const { newPreference, hasChanged } = shiftPreferences[id]
+              {categoryPreferences &&
+              Object.keys(categoryPreferences).length !== 0
+                ? Object.keys(categoryPreferences).map((id) => {
+                    const choice = getChoice(categoryPreferences[id])
 
                     const buttonGroup = (
                       <ToggleButtonGroup
                         color="primary"
                         size="small"
-                        value={newPreference}
+                        value={choice}
                         sx={{ marginRight: 2 }}
                         exclusive
                         onChange={(event, value) =>
@@ -267,7 +304,7 @@ export default function PrefrencesItem(props: {
                         }
                         aria-label="Platform"
                       >
-                        <ToggleButton value="prefere">Prefer</ToggleButton>
+                        <ToggleButton value="prefer">Prefere</ToggleButton>
                         <ToggleButton value="dislike">Dislike</ToggleButton>
                       </ToggleButtonGroup>
                     )
@@ -282,7 +319,7 @@ export default function PrefrencesItem(props: {
                           textAlign: 'center',
                         }}
                       >
-                        {'Prefer'}
+                        {choice}
                       </Typography>
                     )
 
@@ -296,7 +333,7 @@ export default function PrefrencesItem(props: {
                           textAlign: 'center',
                         }}
                       >
-                        {'Dislike'}
+                        {choice}
                       </Typography>
                     )
 
@@ -314,11 +351,11 @@ export default function PrefrencesItem(props: {
                       </Typography>
                     )
                     let displayContent = null
-                    if (newPreference === 'prefere') {
+                    if (choice === 'prefer') {
                       displayContent = prefereDisplay
-                    } else if (newPreference === 'dislike') {
+                    } else if (choice === 'dislike') {
                       displayContent = dislikeDisplay
-                    } else if (newPreference === null) {
+                    } else if (choice === null) {
                       displayContent = nullDisplay
                     }
 
@@ -345,27 +382,29 @@ export default function PrefrencesItem(props: {
       <Snackbar
         open={openSuccessMsg}
         autoHideDuration={6000}
-        onClose={handleClose}
+        onClose={handleCloseMsg}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleCloseMsg}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
           All Preferences updated!
         </Alert>
       </Snackbar>
       <Snackbar
         open={openErrorMsg}
         autoHideDuration={6000}
-        onClose={handleClose}
+        onClose={handleCloseMsg}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+        <Alert onClose={handleCloseMsg} severity="error" sx={{ width: '100%' }}>
           Could not save preferences!
         </Alert>
       </Snackbar>
     </React.Fragment>
   )
-
-  const display = <React.Fragment></React.Fragment>
 
   return content
 }
