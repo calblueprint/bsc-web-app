@@ -304,11 +304,7 @@ export default function PrefrencesItem(props: {
                         }
                         aria-label="Platform"
                       >
-<<<<<<< HEAD
                         <ToggleButton value="prefer">Prefer</ToggleButton>
-=======
-                        <ToggleButton value="prefer">Prefere</ToggleButton>
->>>>>>> 3577670748f0e35cb1f46ed51e92231dba962ef3
                         <ToggleButton value="dislike">Dislike</ToggleButton>
                       </ToggleButtonGroup>
                     )
