@@ -5,11 +5,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   selectIsEditingPreferences,
-  selectResetPreferences,
   selectUserShiftPreferences,
   setIsEditingPreferences,
   setIsUpdatingPreferences,
-  setResetPreferences,
   setShiftPreferences,
 } from '../userShiftPreferencesSlice'
 import {
@@ -22,8 +20,10 @@ import {
 } from '@/features/auth/authSlice'
 import { House, Shift } from '@/types/schema'
 import { validatePreferences } from '@/utils/utils'
+import { Snackbar, Alert } from '@mui/material'
+import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
+import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
 
-// EditButtons component to display the buttons for editing preferences.
 interface EditButtonsProps {
   isEditing: boolean
   handleCancel: () => void
@@ -31,6 +31,15 @@ interface EditButtonsProps {
   handleEdit: () => void
 }
 
+/**
+ *
+ * @param isEditing set to true when user can change preferences
+ * @param handleCancel handles clicking the cancel button
+ * @param handleSave handles clicking the save button
+ * @param handleEdit handles clicking the edit button
+ *
+ * @returns returns buttun elements for preference
+ */
 const EditButtons: React.FC<EditButtonsProps> = ({
   isEditing,
   handleCancel,
@@ -62,152 +71,125 @@ const EditButtons: React.FC<EditButtonsProps> = ({
   </Box>
 )
 
+/**
+ * @description Hold the button preference as well as the button logic
+ * @returns Returns and button group component
+ */
 export default function PreferencesButtons() {
-  const authUser = useSelector(selectCurrentUser)
-  const authHouse = useSelector(selectCurrentHouse)
-  const shiftPreferences = useSelector(selectUserShiftPreferences)
+  //** Get the editing state from redux */
   const isEditing = useSelector(selectIsEditingPreferences)
+  //** Get authorized house from redux state */
+  const authHouse = useSelector(selectCurrentHouse)
+  //** Get authorized user form mredux state */
+  const authUser = useSelector(selectCurrentUser)
+  //** Get shift preferences from the redux state */
+  const shiftPreferences = useSelector(selectUserShiftPreferences)
+  //** dispatch hook for redux actions */
   const dispatch = useDispatch()
-  const { data: allShifts } = useGetShiftsQuery(authHouse?.id as string)
 
-  const [savingPreferences, setSavingPreferences] = useState(false)
+  //** opens and closes success message */
+  const [openSuccessMsg, setOpenSuccessMsg] = useState(false)
+  //** opens and closes error message */
+  const [openErrorMsg, setOpenErrorMsg] = useState(false)
 
-  const [updateShift, { isLoading, isSuccess, isError }] =
-    useUpdateShiftMutation()
+  //** Update house mutation api to update house */
+  const [updateHouses, { isLoading, isSuccess, isError }] =
+    useUpdateHousesMutation()
 
-  const [updatedShifts, setUpdatedShifts] = useState<{
-    [key: string]: Shift['preferences']
-  }>({})
+  //** User context function to update current user house and user information */
+  const [establishContext, {}] = useEstablishContextMutation()
 
-  // Callback to handle edit button click
-  const handleEdit = useCallback(() => {
+  //**  Callback to handle edit button click */
+  const handleEdit = () => {
     dispatch(setIsEditingPreferences({ isEditing: true }))
-  }, [dispatch])
+  }
 
   // Callback to handle cancel button click
-  const handleCancel = useCallback(() => {
+  const handleCancel = () => {
     dispatch(setIsEditingPreferences({ isEditing: false }))
-    // dispatch(setResetPreferences({ resetPreferences: true }))
-    setUpdatedShifts({})
-  }, [dispatch])
+    dispatch(setShiftPreferences({ preferences: authHouse?.preferences }))
+  }
 
   // Callback to handle save button click
-  const handleSave = useCallback(async () => {
+  const handleSave = async () => {
     if (shiftPreferences) {
-      console.log('+++++Saving ShiftPreferences: ', shiftPreferences)
-      setSavingPreferences(true)
+      // console.log('+++++Saving ShiftPreferences: ', shiftPreferences)
       await updateShiftPreferences()
       dispatch(setIsEditingPreferences({ isEditing: false }))
-      setSavingPreferences(false)
-
-      dispatch(setResetPreferences({ resetPreferences: true }))
     }
-  }, [shiftPreferences])
+  }
+
+  //** Closes snackbar messages */
+  const handleCloseMsg = () => {
+    setOpenErrorMsg(false)
+    setOpenSuccessMsg(false)
+  }
 
   // Callback to update shift preferences
-  const updateShiftPreferences = useCallback(async () => {
+  const updateShiftPreferences = async () => {
     // Rest of the code remains unchanged
     dispatch(setIsUpdatingPreferences({ isUpdating: true }))
-    if (allShifts) {
-      let updatedPreferences: {
-        [key: string]: Shift['preferences']
-      } = {}
-      for (const category in shiftPreferences) {
-        // console.log('______Category', category)
-        for (const shiftId in shiftPreferences[category]) {
-          const { hasChanged, newPreference, savedPreference } =
-            shiftPreferences[category][shiftId]
-          if (hasChanged) {
-            //remove the old preference
-            const oldPreferences = validatePreferences(
-              allShifts.entities[shiftId]?.preferences as Shift['preferences']
-            )
-
-            if (savedPreference === 'prefere') {
-              oldPreferences.preferredBy = oldPreferences.preferredBy.filter(
-                (id) => id !== authUser?.id
-              )
-            } else if (savedPreference === 'dislike') {
-              oldPreferences.dislikedBy = oldPreferences.dislikedBy.filter(
-                (id) => id !== authUser?.id
-              )
-            }
-            if (newPreference === 'prefere') {
-              oldPreferences.preferredBy = [
-                ...oldPreferences.preferredBy,
-                authUser?.id as string,
-              ]
-            } else if (newPreference === 'dislike') {
-              oldPreferences.dislikedBy = [
-                ...oldPreferences.dislikedBy,
-                authUser?.id as string,
-              ]
-            }
-            updatedPreferences = {
-              ...updatedPreferences,
-              [shiftId]: oldPreferences,
-            }
-            setUpdatedShifts((prev) => ({
-              ...prev,
-              [shiftId]: oldPreferences,
-            }))
-          }
-        }
-      }
-
+    if (!authHouse) {
       console.log(
-        '[in Save function]: updatedPrerefences:   ',
-        updatedPreferences
+        '[ERROR]: (updateShiftPreferences) -- authHouse is not defined'
       )
-      try {
-        for (const key in updatedPreferences) {
-          const data = {
-            data: { preferences: updatedPreferences[key] },
-            houseId: authHouse?.id as string,
-            shiftId: key,
-          }
-          const res = await updateShift(data)
-          // console.log('firebase response: ', res)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-
-      // const newPreference = shiftPreferences[category][shiftId]
+      return false
     }
-  }, [allShifts, authHouse, authUser, shiftPreferences, updateShift])
+    if (!authUser) {
+      console.log(
+        '[ERROR]: (updateShiftPreferences) -- authUser is not defined'
+      )
+      return false
+    }
 
-  useEffect(() => {
-    if (!savingPreferences && isSuccess) {
+    try {
+      const data = {
+        data: { preferences: shiftPreferences },
+        houseId: authHouse.id,
+      }
+      await updateHouses(data).unwrap()
+      await establishContext(authUser.id).unwrap()
+      setOpenSuccessMsg(true)
+    } catch (error) {
+      console.log(error)
+      setOpenErrorMsg(true)
+    } finally {
       dispatch(setIsUpdatingPreferences({ isUpdating: false }))
     }
-  }, [savingPreferences])
-
-  // Effect to log updated shifts
-  useEffect(() => {
-    if (updatedShifts) {
-      console.log('updatedShifts:   ', updatedShifts)
-    }
-  }, [updatedShifts])
-
-  useEffect(() => {
-    if (updatedShifts) {
-      console.log('updatedShifts:   ', updatedShifts)
-    }
-  }, [updatedShifts])
-
-  useEffect(() => {
-    if (isEditing) {
-      console.log('isEditing is true')
-    }
-  }, [isEditing])
+  }
 
   return (
-    <EditButtons
-      isEditing={isEditing}
-      handleCancel={handleCancel}
-      handleSave={handleSave}
-      handleEdit={handleEdit}
-    />
+    <React.Fragment>
+      <EditButtons
+        isEditing={isEditing}
+        handleCancel={handleCancel}
+        handleSave={handleSave}
+        handleEdit={handleEdit}
+      />
+      <Snackbar
+        open={openSuccessMsg}
+        autoHideDuration={6000}
+        onClose={handleCloseMsg}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseMsg}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          All Preferences updated!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={openErrorMsg}
+        autoHideDuration={6000}
+        onClose={handleCloseMsg}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseMsg} severity="error" sx={{ width: '100%' }}>
+          Could not save preferences!
+        </Alert>
+      </Snackbar>
+    </React.Fragment>
   )
 }

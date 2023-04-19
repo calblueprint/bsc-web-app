@@ -1,21 +1,11 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Collapse from '@mui/material/Collapse'
-import IconButton from '@mui/material/IconButton'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+
 import PrefrencesItem from '../items/PreferencesItem'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
-import { useGetHouseQuery } from '@/features/house/houseApiSlice'
+
 import {
   selectCurrentUser,
   selectCurrentHouse,
@@ -25,37 +15,54 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import uuid from 'react-uuid'
 import { Dictionary, EntityId } from '@reduxjs/toolkit'
-import Stack from '@mui/material/Stack'
+
 import {
-  selectIsEditingPreferences,
   selectIsUpdatingPreferences,
-  selectResetPreferences,
-  selectUserShiftPreferences,
-  setResetPreferences,
   setShiftPreferences,
+  setShiftsByCategories,
 } from '../userShiftPreferencesSlice'
 import { validatePreferences } from '@/utils/utils'
 import PreferencesButtons from '../buttons/PreferencesButtons'
 import Loading from '@/components/shared/Loading'
+import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
+import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
+import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 
 export default function PreferencesTable() {
+  //** Get the current authorized user */
   const authUser = useSelector(selectCurrentUser) as User
+  //** Get the authUser curren house */
   const authHouse = useSelector(selectCurrentHouse) as House
+  //** Get the updating status of the house preferences */
   const isUpdating = useSelector(selectIsUpdatingPreferences)
-  const { data: AllShifts, isLoading } = useGetShiftsQuery(authHouse.id)
+  //** Query the house shifts */
+  const {
+    data: AllShifts,
+    isLoading,
+    isSuccess,
+  } = useGetShiftsQuery(authHouse.id)
+  //** Mutate current house */
+  const [updateHouses, {}] = useUpdateHousesMutation()
+  const [establishContext, {}] = useEstablishContextMutation()
 
+  //** Boolean that is set to true when authHouse needs to be updated in the backEnd */
+  const [updateAuthHousePreferences, setUpdateAuthHousePreferences] =
+    useState(false)
+
+  //** holds all the categories that exist */
   const [houseCategories, setHouseCategories] = useState<
     { [key: string]: Array<string> } | undefined
   >(undefined)
 
-  const [authUserId, setAuthUserId] = React.useState('')
-
-  const resetPreferences = useSelector(selectResetPreferences)
-  const isEditing = useSelector(selectIsEditingPreferences)
-
-  // const shiftCategoryPreferences = useSelector(selectUserPreferences)
+  //** redux action dispatcher */
   const dispatch = useDispatch()
 
+  /**
+   * @description Creates house categories given the ids and entities of all the shifts
+   * @param ids holds the ids of all the shifts
+   * @param entities holds the entities of all the shifts
+   * @returns returns an map of of categories to array of shiftIds
+   */
   const createHouseCategories = (
     ids: EntityId[],
     entities: Dictionary<Shift>
@@ -84,65 +91,81 @@ export default function PreferencesTable() {
     return categories
   }
 
+  //** Update the house preferences property to the backEnd */
+  const updateHousePreference = async (preferences: House['preferences']) => {
+    if (!preferences) {
+      console.log('[updateHousePreference]:[ERROR] No preferences')
+      return false
+    }
+    const data = { data: { preferences }, houseId: authHouse.id }
+    try {
+      await updateHouses(data).unwrap()
+      await establishContext(authUser.id)
+    } catch (error) {
+      console.log('[updateHousePreference]: error: ' + error)
+    }
+  }
+
+  //** Veryfy that all shifts are in the house preference property */
+  useEffect(() => {
+    if (AllShifts && authUser && authHouse) {
+      let housePreferences: House['preferences'] = {}
+      if (authHouse.preferences) {
+        housePreferences = { ...authHouse.preferences }
+      }
+      let needsUpdate = false
+
+      // this filteredIds are not in the house preference property
+      let filteredIds = AllShifts.ids.filter(
+        (id) => !housePreferences.hasOwnProperty(id)
+      )
+
+      // Check if house preferences has shifts that need to be deleted
+      if (
+        filteredIds.length + Object.keys(housePreferences).length !==
+        AllShifts.ids.length
+      ) {
+        let idsToDelete = Object.keys(housePreferences).filter(
+          (id) => !AllShifts.ids.includes(id)
+        )
+        idsToDelete.forEach((id) => {
+          delete housePreferences[id]
+        })
+        needsUpdate = true
+      }
+
+      // Check if house preference needs to be updated
+      if (filteredIds.length > 0) {
+        needsUpdate = true
+        filteredIds.forEach((id) => {
+          housePreferences = {
+            ...housePreferences,
+            [id]: { preferredBy: [], dislikedBy: [], isActive: true },
+          }
+        })
+      }
+
+      if (needsUpdate) {
+        // console.log('Updating house preference...')
+        updateHousePreference(housePreferences)
+      }
+      dispatch(setShiftPreferences({ preferences: housePreferences }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser, AllShifts, dispatch])
+
+  //** Create house Categories and updates when AllShifts changes */
   useEffect(() => {
     if (AllShifts) {
       const ids = AllShifts.ids
       const entities = AllShifts.entities
       const categories: { [key: string]: Array<string> } | undefined =
-        createHouseCategories(AllShifts.ids, AllShifts.entities)
+        createHouseCategories(ids, entities)
       setHouseCategories({ ...categories })
+      dispatch(setShiftsByCategories({ houseCategories: categories }))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [AllShifts])
-
-  useEffect(() => {
-    if (AllShifts && resetPreferences && authUserId) {
-      const ids = AllShifts.ids
-      const entities = AllShifts.entities
-      const categories: { [key: string]: Array<string> } | undefined =
-        createHouseCategories(AllShifts.ids, AllShifts.entities)
-
-      if (!categories) {
-        console.error('No categories')
-        return
-      }
-      Object.keys(categories).forEach((category) => {
-        const shiftsIds = categories[category]
-        if (shiftsIds) {
-          let obj = {}
-          shiftsIds.map((shiftId) => {
-            const preferences = validatePreferences(
-              entities[shiftId]?.preferences as Shift['preferences']
-            )
-            const isDislike = preferences.dislikedBy.includes(authUserId)
-            const isPrefere = preferences.preferredBy.includes(authUserId)
-            const choise = isPrefere ? 'prefere' : isDislike ? 'dislike' : null
-            obj = {
-              ...obj,
-              [shiftId]: {
-                savedPreference: choise,
-                newPreference: choise,
-                hasChanged: false,
-              },
-            }
-          })
-          const allPreferences = { ...obj }
-          dispatch(setShiftPreferences({ allPreferences, category }))
-          // console.log('Loaded shift preferences ->', allPreferences)
-          // setShiftPreference(obj)
-        }
-      })
-
-      console.log(categories)
-
-      dispatch(setResetPreferences(false))
-    }
-  }, [AllShifts, authUserId, dispatch, resetPreferences])
-
-  useEffect(() => {
-    if (authUser) {
-      setAuthUserId(authUser.id as string)
-    }
-  }, [authUser])
 
   const table = houseCategories
     ? Object.keys(houseCategories).map((category) => {
@@ -152,7 +175,6 @@ export default function PreferencesTable() {
               shiftsIds={houseCategories[category]}
               category={category}
               shiftEntities={AllShifts?.entities as Dictionary<Shift>}
-              isEditing={isEditing}
             />
           </Box>
         )
