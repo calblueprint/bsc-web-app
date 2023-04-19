@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { Dictionary, EntityId } from '@reduxjs/toolkit'
 import ShiftInfoHeader from './ShiftInfoHeader'
 import SelectedUserComponent from './SelectedUserComponent'
-import AvailableUsersTable from './AvailableUsersTable'
+import AvailableUsersTable from './AvailableUsersTableV2'
 import { Days, House, User } from '@/types/schema'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 import { useSelector } from 'react-redux'
@@ -78,8 +78,13 @@ export const ShiftAssignmentCard = ({
             />
             {userData ? (
               <AvailableUsersTable
-                userIds={filteredUserIds}
-                userEntities={userData?.entities}
+                day={selectedDay}
+                houseID={authHouse.id}
+                shiftID={shiftId as string}
+                handleAssignedUserId={handleAssignedUserId}
+                handleEditShift={handleEditShift}
+                handleClose={handleClose}
+                unselect={unselect}
               />
             ) : null}
           </DialogContent>
