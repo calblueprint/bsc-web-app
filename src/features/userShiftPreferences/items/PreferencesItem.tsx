@@ -230,7 +230,7 @@ export default function PrefrencesItem(props: {
               onChange={(event, value) => handleChange(event, value)}
               aria-label="Platform"
             >
-              <ToggleButton value="prefere">Prefer All</ToggleButton>
+              <ToggleButton value="prefer">Prefer All</ToggleButton>
               <ToggleButton value="dislike">Dislike All</ToggleButton>
             </ToggleButtonGroup>
           </Box>
@@ -267,7 +267,7 @@ export default function PrefrencesItem(props: {
                         }
                         aria-label="Platform"
                       >
-                        <ToggleButton value="prefere">Prefer</ToggleButton>
+                        <ToggleButton value="prefer">Prefer</ToggleButton>
                         <ToggleButton value="dislike">Dislike</ToggleButton>
                       </ToggleButtonGroup>
                     )
