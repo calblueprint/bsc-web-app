@@ -1,6 +1,6 @@
 export type User = {
   // this id is to help the standard table generalize the id attribute
-  id?: string
+  id: string
   // ID of the user (not stored in Firebase, attached to user)
   userID: string
   // Roles of the user
@@ -61,7 +61,7 @@ export type AuthorizedUser = {
 
 export type Shift = {
   // optional id attribute for table stuff
-  id?: string
+  id: string
   // Name of the shift
   name: string //! Form Item
   // ID of the shift (not stored in Firebase, attached to shift)
@@ -112,6 +112,13 @@ export type House = {
   address: string
   schedule: Record<string, string[]>
   userPINs: Record<string, string>
+  preferences: {
+    [key: string]: {
+      preferredBy: Array<string>
+      dislikedBy: Array<string>
+      isActive: boolean
+    }
+  }
 }
 
 // export enum Days {
@@ -148,4 +155,14 @@ export type RowOfCSV = {
   lastName: string
   houseID: string
   accountCreated: boolean
+}
+
+export type userPreferences = 'prefer' | 'dislike' | null
+
+export type ShiftPreferences = {
+  [key: string]: {
+    newPreference: string | null
+    savedPreference: string | null
+    hasChanged: boolean
+  }
 }
