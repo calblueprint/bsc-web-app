@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   selectHouseCategories,
   setHouseCategories,
+  setHouseId,
   setIsCategoryOpen,
   setShiftCategories,
 } from '../categoriesSlice'
@@ -67,23 +68,12 @@ const CategoriesTable = () => {
         updateHouseCategories(['Uncategorized'])
       } else {
         dispatch(setHouseCategories({ houseCategories: authHouse.categories }))
+        dispatch(setHouseId({ houseId: authHouse.id }))
       }
     }
   }, [authHouse])
 
-  //** Create the categories collaps booleans for each category */
-  //   useEffect(() => {
-  //     if (authHouse && authHouse.categories && authHouse.categories.length) {
-  //       console.log('Updating categories collaps booleans')
-  //       let categoryOpen = {}
-  //       authHouse.categories.forEach((listItem) => {
-  //         categoryOpen = { ...categoryOpen, [listItem]: false }
-  //       })
-  //       dispatch(setIsCategoryOpen({ isCategoryOpen: categoryOpen }))
-  //     }
-  //   }, [])
-
-  //** Create categories arrays for and save it to redux */
+  //** Create categories array and save it to redux */
   useEffect(() => {
     if (shiftsData && houseCategories && houseCategories.length) {
       const ids = shiftsData.ids
@@ -96,7 +86,7 @@ const CategoriesTable = () => {
       ids.map((id) => {
         const shiftCategory = entities[id]?.category
         if (!shiftCategory) {
-          console.log('Uncategorized ', shiftCategory)
+          //   console.log('Uncategorized ', shiftCategory)
 
           shiftsCategories['Uncategorized'].push(id as string)
         } else if (shiftsCategories.hasOwnProperty(shiftCategory)) {

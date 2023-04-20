@@ -37,6 +37,13 @@ let theme = createTheme({
       letterSpacing: 0.5,
       font: 'Inter',
     },
+    h3: {
+      fontWeight: 500,
+      fontSize: 24,
+      letterSpacing: 0.5,
+      font: 'Inter',
+      fontStyle: 'normal',
+    },
     subtitle1: {
       fontWeight: 500,
       font: 'Inter',

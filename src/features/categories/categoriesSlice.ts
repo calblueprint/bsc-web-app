@@ -4,6 +4,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit'
 const isCategoryOpen: { [key: string]: boolean } = {}
 const shiftsCategory: { [key: string]: Array<string> } = {}
 const houseCategories: Array<string> = ['Uncategorized']
+const houseId: string = ''
 
 const categoriesSlice = createSlice({
   name: 'categories',
@@ -11,6 +12,7 @@ const categoriesSlice = createSlice({
     isCategoryOpen,
     houseCategories,
     shiftsCategory,
+    houseId,
   },
   reducers: {
     setIsCategoryOpen: (state, action) => {
@@ -38,6 +40,10 @@ const categoriesSlice = createSlice({
       const index = state.houseCategories.indexOf(action.payload.category)
       state.houseCategories = state.houseCategories.splice(index, 1)
     },
+    setHouseId: (state, action) => {
+      console.log(action.payload.houseId)
+      state.houseId = action.payload.houseId
+    },
   },
 })
 
@@ -47,10 +53,13 @@ export const {
   setHouseCategories,
   addHouseCategories,
   deleteHouseCategories,
+  setHouseId,
 } = categoriesSlice.actions
 
 export const selectHouseCategories = (state: RootState) =>
   state.categories.houseCategories
+
+export const selectHouseId = (state: RootState) => state.categories.houseId
 
 export const selectShiftCategoriesByCategory = (
   state: RootState,

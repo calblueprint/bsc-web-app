@@ -18,6 +18,7 @@ import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import CategoryShiftItem from './CategoryShiftItem'
 import uuid from 'react-uuid'
+import ShiftQuantityDisplay from '@/components/shared/items/ShiftQuantityDisplay'
 
 type CategoryItemProps = {
   category: string
@@ -37,7 +38,7 @@ const CategoryItem = (props: CategoryItemProps) => {
     selectShiftsCategory(state, category)
   )
 
-  //** redux  */
+  //** hook to dispatch redux actions */
   const dispatch = useDispatch()
 
   const item = (
@@ -61,9 +62,17 @@ const CategoryItem = (props: CategoryItemProps) => {
               <KeyboardArrowRightIcon />
             )}
           </IconButton>
-          <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
+          <Typography
+            variant="h3"
+            sx={{
+              textTransform: 'capitalize',
+            }}
+          >
             {category}
           </Typography>
+          <ShiftQuantityDisplay
+            quantity={categoryShifts ? categoryShifts.length : 0}
+          />
         </Box>
         <Box sx={{ flexGrow: 1 }} />
         <Divider />
