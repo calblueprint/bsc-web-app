@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 export type User = {
   // this id is to help the standard table generalize the id attribute
   id?: string
@@ -80,7 +82,24 @@ export type Shift = {
 }
 
 // TODO: add date, verifiedAt, and unverifiedBy attributes
+//TODO : When getting date, verifiedBy, and verifiedAt, unverifiedAt : turn from string->date obj, when setting : turn from date obj -> string.
+// Todo: Get: pull the string, then call JSON.parse on it (cast).  Set: turn it into a string.
 export type ScheduledShift = {
+  id: string
+  shiftID: string
+  date: dayjs.Dayjs
+  assignedUser: string
+  status: string
+  options: string
+  verifiedBy: dayjs.Dayjs
+  verifiedAt: dayjs.Dayjs
+  unverifiedAt: dayjs.Dayjs
+  penaltyHours: number
+  jsonCopy: Shift //TODO : check if this fails
+}
+
+//There's a difference between how objects are stored in Firebase vs in-browser.  Look at note on ScheduledShift type for more info.
+export type fbScheduledShift = {
   id: string
   shiftID: string
   date: string
@@ -91,6 +110,7 @@ export type ScheduledShift = {
   verifiedAt: string
   unverifiedAt: string
   penaltyHours: number
+  jsonCopy: Shift //TODO : check if this fails
 }
 
 export type House = {

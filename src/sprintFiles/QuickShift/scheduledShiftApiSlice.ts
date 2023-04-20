@@ -1,7 +1,8 @@
 import { createSelector, createEntityAdapter, EntityId } from '@reduxjs/toolkit'
-import { ScheduledShift } from '../../types/schema'
+import { fbScheduledShift, ScheduledShift } from '../../types/schema'
 import { apiSlice } from '../../store/api/apiSlice'
 import { RootState } from '../../store/store'
+import dayjs from 'dayjs'
 
 const scheduledShiftsAdapter = createEntityAdapter<ScheduledShift>({})
 
@@ -21,13 +22,26 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
         // },
       }),
       // keepUnusedDataFor: 60,
-      transformResponse: (responseData: ScheduledShift[]) => {
-        const loaddedShifts = responseData.map((entity) => {
-          entity.id = entity.id
-          return entity
+      //Andrei Note: deal with the conversion of fbSched shift to a JS scheduled shift.
+      transformResponse: (responseData: fbScheduledShift[]) => {
+        const loadedShifts = responseData.map((entity) => {
+          let jsSchedShift: ScheduledShift = {
+            id: entity.id,
+            shiftID: entity.shiftID,
+            date: dayjs(entity.date),
+            assignedUser: entity.assignedUser,
+            status: entity.status,
+            options: entity.options,
+            verifiedBy: dayjs(entity.verifiedBy),
+            verifiedAt: dayjs(entity.verifiedAt),
+            unverifiedAt: dayjs(entity.unverifiedAt),
+            penaltyHours: entity.penaltyHours,
+            jsonCopy: entity.jsonCopy,
+          }
+          return jsSchedShift
         })
-        console.debug(loaddedShifts)
-        return scheduledShiftsAdapter.setAll(initialState, loaddedShifts)
+        console.debug(loadedShifts)
+        return scheduledShiftsAdapter.setAll(initialState, loadedShifts)
       },
       providesTags: (result) => {
         if (result?.ids) {
@@ -42,13 +56,17 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewScheduledShift: builder.mutation({
-      query: (data) => ({
-        url: `houses/${data.houseId}/scheduledShifts`,
-        method: 'POST',
-        body: {
-          ...data.data,
-        },
-      }),
+      query: (data) => {
+
+
+        return ({
+          url: `houses/${data.houseId}/scheduledShifts`,
+          method: 'POST',
+          body: {
+            ...data.data, 
+          },
+        })
+      },
       invalidatesTags: [{ type: 'ScheduledShift', id: 'LIST' }],
     }),
     updateScheduledShift: builder.mutation({

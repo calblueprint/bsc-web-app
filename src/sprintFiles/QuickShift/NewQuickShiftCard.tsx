@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@mui/material'
 import { useState } from 'react'
-import ScheduledShiftForm from './ScheduledShiftForm'
+import ScheduledShiftForm from './QuickShiftForm'
 
 //Quick Shift == New Shift card that deals wi
 //TODOS: Look below

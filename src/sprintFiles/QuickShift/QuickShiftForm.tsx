@@ -14,18 +14,26 @@ import { useSelector } from 'react-redux'
 import React from 'react'
 import { RootState } from '../../store/store'
 import { EntityId } from '@reduxjs/toolkit'
-import { Shift } from '../../types/schema'
+import { ScheduledShift, Shift } from '../../types/schema'
 import styles from './ShiftForm.module.css'
 import {
   selectScheduledShiftById,
   useAddNewScheduledShiftMutation,
   useUpdateScheduledShiftMutation,
 } from './scheduledShiftApiSlice'
+import {
+  selectShiftById,
+  useAddNewShiftMutation,
+  useUpdateShiftMutation,
+} from '@/features/shift/shiftApiSlice'
 
 //TODO: NOTE FROM ANDREI - scheduledshift objects are referred to as shifts in this file.  Too many random changes if we rename it to scheduledShifts.
 // TODO: If you have time ig you could change, but sounds like a waste to me.
+//TODO: Greg wants scheduled shift objects to hold a shift copy within themselves.  Have it be saved as string in FB, as Shift in-browser.
 //** Yup allows us to define a schema, transform a value to match, and/or assert the shape of an existing value. */
-//** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. */
+//** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. *
+//Todo: Needs a calendar. QUick shifts have a specific person, specific date.
+//TODO: members panel will become a dropdown
 const ShiftSchema = Yup.object({
   name: Yup.string()
     .typeError('Must be a string')
@@ -63,7 +71,7 @@ const daysList = [
   'thursday',
   'friday',
   'saturday',
-  'unday',
+  'sunday',
 ]
 
 const shiftCategories = [
@@ -188,7 +196,7 @@ const emptyShift = {
   assignedUser: '',
 }
 
-const ScheduledShiftForm = ({
+const QuickShiftForm = ({
   setOpen,
   shiftId,
   isNewShift,
@@ -199,27 +207,27 @@ const ScheduledShiftForm = ({
 }) => {
   //* Get API helpers to create or update a shift
   const [
-    addNewScheduledShift,
+    addNewShift,
     {
       // isLoading: isLoadingNewShift,
       // isSuccess: isSuccessNewShift,
       // isError: isErrorNewShift,
       // error: errorNewShift,
     },
-  ] = useAddNewScheduledShiftMutation()
+  ] = useAddNewShiftMutation()
   const [
-    updateScheduledShift,
+    updateShift,
     {
       // isLoading: isLoadingUpdateShift,
       // isSuccess: isSuccessUpdateShift,
       // isError: isErrorUpdateShift,
       // error: errorUpdateShift,
     },
-  ] = useUpdateScheduledShiftMutation()
+  ] = useUpdateShiftMutation()
 
-  const shift: ScheduledShift = useSelector(
+  const shift: Shift = useSelector(
     (state: RootState) =>
-      selectScheduledShiftById('EUC')(state, shiftId as EntityId) as Shift
+      selectShiftById('EUC')(state, shiftId as EntityId) as Shift
   )
 
   const onSubmit = async (
@@ -272,9 +280,9 @@ const ScheduledShiftForm = ({
     data.shiftId = shiftId ? shiftId : ''
     // console.log('data: ', data)
     if (isNewShift || !shiftId) {
-      result = await addNewScheduledShift(data)
+      result = await addNewShift(data)
     } else {
-      result = await updateScheduledShift(data)
+      result = await updateShift(data)
     }
     if (result) {
       console.log('success with shift: ', result)
@@ -319,18 +327,6 @@ const ScheduledShiftForm = ({
             <div className={styles.formField}>
               <Typography>Shift Name</Typography>
               <TextInput name="name" label="" />
-            </div>
-
-            <div className={styles.formField}>
-              <Typography className={styles.label}>Category</Typography>
-              <SelectInput
-                name="category"
-                label=""
-                labelid="category"
-                id="category"
-                options={shiftCategories}
-                multiselect={false}
-              />
             </div>
             <div className={styles.flex}>
               <div className={styles.formField}>
@@ -405,14 +401,14 @@ const ScheduledShiftForm = ({
                 disabled={isSubmitting}
                 className={styles.submit}
               >
-                {isNewShift || !shiftId ? 'Submit' : 'Update'}
+                Save
               </Button>
               <Button
                 fullWidth
                 variant="outlined"
                 color="primary"
                 onClick={() => setOpen(false)}
-                className={styles.clear}
+                className={styles.submit}
               >
                 Cancel
               </Button>
@@ -424,4 +420,4 @@ const ScheduledShiftForm = ({
   )
 }
 
-export default ScheduledShiftForm
+export default QuickShiftForm
