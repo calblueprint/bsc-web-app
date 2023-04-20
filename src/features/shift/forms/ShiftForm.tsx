@@ -103,21 +103,10 @@ const ShiftForm = ({
 
   //** Get the house categories */
   useEffect(() => {
-    // console.log('currentHouse: ', currentHouse)
-    // console.log('shiftsData: ', shiftsData)
-    if (shiftsData && isShiftsSuccess) {
-      // console.log('shiftsData: ', shiftsData)
-      const categories = [...houseCategories]
-      shiftsData.ids.forEach((id) => {
-        const category = shiftsData.entities[id]?.category
-        if (category && !categories.includes(category)) {
-          categories.push(category)
-        }
-      })
-      // console.log('Categories: ', categories)
-      setHouseCategories(categories)
+    if (currentHouse) {
+      setHouseCategories(currentHouse.categories)
     }
-  }, [shiftsData, isShiftsSuccess, houseCategories])
+  }, [currentHouse])
 
   //* Get API helpers to create or update a shift
   const [

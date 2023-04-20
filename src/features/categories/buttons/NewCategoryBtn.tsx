@@ -9,12 +9,25 @@ import Box from '@mui/material/Box'
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useState } from 'react'
 import TextField from '@mui/material/TextField'
+import { selectCurrentUser } from '@/features/auth/authSlice'
+import { useSelector } from 'react-redux'
+import { selectHouseCategories, selectHouseId } from '../categoriesSlice'
+import { User } from '@/types/schema'
+import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
+import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
 
 const NewCategoryBtn = () => {
+  const authUser = useSelector(selectCurrentUser) as User
+  const houseId = useSelector(selectHouseId)
+  const houseCategories = useSelector(selectHouseCategories)
+
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState(false)
   const [helperText, setHelperText] = useState('')
+
+  const [updateHouses, {}] = useUpdateHousesMutation()
+  const [establishContext, {}] = useEstablishContextMutation()
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
@@ -22,6 +35,10 @@ const NewCategoryBtn = () => {
 
   const handleClose = () => {
     setOpen(false)
+    resetForm()
+  }
+
+  const resetForm = () => {
     setInputValue('')
     setError(false)
     setHelperText('')
@@ -38,7 +55,7 @@ const NewCategoryBtn = () => {
     }
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (error) {
       console.log('ERROR')
       return
@@ -46,6 +63,23 @@ const NewCategoryBtn = () => {
     if (!inputValue) {
       return
     }
+    if (!houseCategories || houseCategories.length === 0) {
+      console.log('HouseCategories is undefined of empty: ', houseCategories)
+      return
+    }
+
+    try {
+      const data = {
+        data: { categories: [...houseCategories, inputValue] },
+        houseId: houseId,
+      }
+      await updateHouses(data)
+      await establishContext(authUser.id)
+    } catch (error) {
+      console.log(error)
+    }
+    resetForm()
+    setOpen(false)
     console.log('save')
   }
 
