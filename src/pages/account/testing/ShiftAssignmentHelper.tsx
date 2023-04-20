@@ -13,6 +13,7 @@ const ShiftAssignmentHelper = () => {
 
     const testFunction = () => {
         let testShiftObject = {
+            id: "1",
             name: "Clean the house",
             shiftID: "4iWhGXXz65H0aPfaF3RJ",
             description: "Clean house pls ggreg sucks", 
