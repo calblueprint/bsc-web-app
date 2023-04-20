@@ -4,6 +4,15 @@ import dayjs, { Dayjs } from "dayjs";
 import { HOURS_REQUIRED, NEUTRAL_PREFERENCE, LIKED_PREFERENCE, DISLIKED_PREFERENCE } from "@/utils/constants";
 
 // TODO: DOESN'T WORK IF SOMEONE IS ALREADY ASSIGNED DURING THEIR AVAILABILITY PERIOD TO A DIFFERENT SHIFT
+
+/**
+ * Returns a list of user ids that are available to complete the shift
+ *
+ * @param shiftObject - The shift object
+ * @param days - The days that we iterate through
+ * @param entityState - the entity state from redux
+ * @returns A list of user ids that are available to complete the shift
+*/
 const filterUsersByAvailability = (shiftObject: Shift, days: string[], entityState: EntityState<User>) => {
   const numHours = Math.floor(shiftObject.hours);
   const numMinutes = (shiftObject.hours - numHours) * 60;
@@ -80,6 +89,15 @@ const filterUsersByAvailability = (shiftObject: Shift, days: string[], entitySta
   return availableUserIDs;
 }
 
+/**
+ * Returns a list of user ids that are eligible to complete the shift (hours unassigned >= credit hours/already assigned to the shift)
+ *
+ * @param ids - A list of user entity ids
+ * @param entityState - the entity state from redux
+ * @param creditHours - the credit hours for the shift
+ * @param shiftID - the id of the shift
+ * @returns A list of user ids that are eligible to complete the shift
+*/
 const filterUsersByEligibility = (ids: EntityId[], entityState: EntityState<User>, creditHours: number, shiftID: string) => {
     const eligibleIDs: EntityId[] = [];
     const idToObjectDictionary: Dictionary<User> = entityState.entities;
@@ -103,6 +121,14 @@ const filterUsersByEligibility = (ids: EntityId[], entityState: EntityState<User
     return eligibleIDs;
 }
 
+/**
+ * Returns a list of user ids that are sorted, first on whether they prefer the shift and second as a tiebreaker on the number of unassigned hours (higher is higher priority)
+ *
+ * @param shiftObject - The shift object
+ * @param ids - The list of entity ids
+ * @param entityState - the entity state from redux
+ * @returns A sorted list of the entity ids that are passed in
+*/
 const sortUsersByNeededHoursAndPreference = (ids: EntityId[], entityState: EntityState<User>, shiftObject: Shift) => {
     const idToObjectDictionary: Dictionary<User> = entityState.entities;
     const likedList = shiftObject.preferences.preferredBy;
@@ -137,6 +163,14 @@ const sortUsersByNeededHoursAndPreference = (ids: EntityId[], entityState: Entit
     return sorted;
 }
 
+/**
+ * Returns a list of user ids that are available and eligible to complete the shift; returns it in sorted order
+ *
+ * @param shiftObject - The shift object
+ * @param days - The days that we iterate through
+ * @param entityState - the entity state from redux
+ * @returns A list of user ids that are available and eligible to complete the shift; returns it in sorted order
+*/
 export const createListOfUsersForShift = (shiftObject: Shift, entityState: EntityState<User>, days: string[]) => { 
     const availableIDs = filterUsersByAvailability(shiftObject, days, entityState);
     const availableAndEligibleIDs = filterUsersByEligibility(availableIDs, entityState, shiftObject.hours, shiftObject.shiftID);
