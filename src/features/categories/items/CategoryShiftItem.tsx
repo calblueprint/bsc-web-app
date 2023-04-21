@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectHouseId } from '../categoriesSlice'
 import EditShiftCard from '@/features/shift/cards/EditShiftCard'
+import DisplayShiftCard from '@/features/shift/cards/DisplayShiftCard'
 
 type CategoryShiftItemProps = {
   shiftId: string
@@ -38,7 +39,8 @@ const CategoryShiftItem = (props: CategoryShiftItemProps) => {
           {shift ? shift.name : shiftId}
         </TableCell>
       </TableRow>
-      <EditShiftCard shiftId={shiftId} setOpen={setOpen} open={open} />
+      {/* <EditShiftCard shiftId={shiftId} setOpen={setOpen} open={open} /> */}
+      <DisplayShiftCard shiftId={shiftId} setOpen={setOpen} open={open} />
     </React.Fragment>
   )
 }
