@@ -12,7 +12,10 @@ import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 
 const TestingPage = () => {
-  /** Here is an example of how I tested my ShiftInfoHeader component  */
+  /**
+   *  Here is an example of how I tested my ShiftInfoHeader component.
+   *  Feel free to delete whatever here and replace with what you want to test!
+   */
 
   // I query the data that I need to use in my component here, cuz I use
   // the useSelctor in my component, but for that to work, Redux needs to
