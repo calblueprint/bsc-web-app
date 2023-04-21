@@ -4,7 +4,7 @@ import { Button } from '@mui/material'
 const CloseButton = ({ handleClick }: { handleClick: () => void }) => {
   return (
     <Button onClick={() => handleClick()}>
-      <Close color="secondary" />
+      <Close color="primary" />
     </Button>
   )
 }
