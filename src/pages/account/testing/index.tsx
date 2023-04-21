@@ -12,12 +12,15 @@ import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 
 const TestingPage = () => {
+  /** Here is an example of how I tested my ShiftInfoHeader component  */
+
+  // I query the data that I need to use in my component here, cuz I use
+  // the useSelctor in my component, but for that to work, Redux needs to
+  // have cached the data firt
   const { data } = useGetShiftsQuery('EUC')
 
-  // useEffect(() => {
-  //   console.log('Data Ids: ', data?.ids)
-  // }, [data])
-
+  // Notice that I first check that data is not null because it takes a
+  // minute for Firebase and Redux to actually give us the data
   return (
     <React.Fragment>
       <Typography>Test test test</Typography>
