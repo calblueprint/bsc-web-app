@@ -38,7 +38,11 @@ const TimeRangeComponent = (props: TimeRangeComponentProps) => {
 
   const form = (
     <React.Fragment>
-      <Box display={'flex'} flexDirection={'row'}>
+      <Box
+        display={'flex'}
+        flexDirection={'row'}
+        sx={{ marginY: 2, marginRight: 2 }}
+      >
         <TimeSelectField
           fieldId="start-time-select"
           labelId="start-time-label"

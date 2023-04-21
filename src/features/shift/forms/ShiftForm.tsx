@@ -1,5 +1,5 @@
 import { Formik, Form, FormikHelpers } from 'formik'
-import { Stack, Button } from '@mui/material'
+import { Stack, Button, Box } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import * as Yup from 'yup'
 import {
@@ -214,8 +214,8 @@ const ShiftForm = ({
     }
     data.houseId = currentHouse.id
     data.shiftId = shiftId ? shiftId : ''
-    console.log('timeWindow:  ' + timeWindow.endTime)
-    console.log('timeWindowDisplay:  ' + timeWindowDisplay)
+    // console.log('timeWindow:  ' + timeWindow.endTime)
+    // console.log('timeWindowDisplay:  ' + timeWindowDisplay)
     // console.log('data: ', data)
     if (isNewShift || !shiftId) {
       result = await addNewShift(data)
@@ -276,16 +276,20 @@ const ShiftForm = ({
                 multiselect={false}
               />
 
-              <TimeRangeComponent
-                startTimeValue={values.startTime}
-                endTimeValue={values.endTime}
-                setFieldValue={setFieldValue}
-                setError={handleError}
-              />
-
-              <TextInput name="hours" label="Credit Hours For Shift" />
-
-              <TextInput name="verificationBuffer" label="Buffer Hours" />
+              <Box display={'flex'}>
+                <TimeRangeComponent
+                  startTimeValue={values.startTime}
+                  endTimeValue={values.endTime}
+                  setFieldValue={setFieldValue}
+                  setError={handleError}
+                />
+                <Box marginRight={2}>
+                  <TextInput name="hours" label="Credit Hours For Shift" />
+                </Box>
+                <Box>
+                  <TextInput name="verificationBuffer" label="Buffer Hours" />
+                </Box>
+              </Box>
 
               <SelectInput
                 name="possibleDays"
@@ -295,8 +299,9 @@ const ShiftForm = ({
                 options={daysList}
                 multiselect={true}
               />
-
-              <TextInput name="description" label="Description" />
+              <Box marginBottom={2}>
+                <TextInput name="description" label="Description" />
+              </Box>
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Button
                   type="submit"
