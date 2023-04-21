@@ -1,40 +1,45 @@
 import { Box, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { EntityId } from '@reduxjs/toolkit'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectUserById, useGetUsersQuery } from '../features/user/userApiSlice'
 import { RootState } from '@/store/store'
 import { User } from '@/types/schema'
 import CloseButton from './CloseButton'
+import { selectSelectedUserId } from './userAssignmentSlice'
 
-const DisplayAssignedUser = ({ userId }: { userId?: EntityId }) => {
+const DisplaySelectedUser = ({ userId }: { userId?: EntityId }) => {
   const user: User = useSelector(
     (state: RootState) => selectUserById(state, userId as EntityId) as User
   )
 
   if (user) {
-    return <Typography>{user?.firstName}</Typography>
+    return (
+      <Typography>
+        {user.preferredName ? user.preferredName : user.displayName}
+      </Typography>
+    )
   } else {
-    return <Typography>No assigned user</Typography>
+    return <Typography>No selected user</Typography>
   }
 }
 
 const SelectedUserComponent = ({
-  userId,
   handleClick,
 }: {
-  userId?: EntityId
   handleClick: () => void
 }) => {
-  const {} = useGetUsersQuery({})
+  const selectedUserId = useSelector(selectSelectedUserId)
+
+  // const {} = useGetUsersQuery({})
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container bgcolor={'#D1FAE5'}>
         <Grid xs={'auto'} md={'auto'} lg={'auto'}>
-          <DisplayAssignedUser userId={userId} />
+          <DisplaySelectedUser userId={selectedUserId} />
         </Grid>
         <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
-          {userId ? <CloseButton handleClick={handleClick} /> : null}
+          {selectedUserId ? <CloseButton handleClick={handleClick} /> : null}
         </Grid>
       </Grid>
     </Box>

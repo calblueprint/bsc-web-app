@@ -31,27 +31,26 @@ export const ShiftAssignmentCard = ({
   const { data: userData } = useGetUsersQuery(authHouse?.id)
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [dayFilter, setDayFilter] = useState<Days>('All')
-  const [assignedUserId, setAssignedUserID] = useState<EntityId>('')
+  const [selectedUserId, setSelectedUserID] = useState<EntityId>('')
   const [unselect, setUnselect] = useState<boolean>(false)
   const [filteredUserIds, setFilteredUserIds] = useState<EntityId[]>([])
 
-  const handleAssignedUserId = (userId: EntityId) => {
+  const handleSelectedUserId = (userId: EntityId) => {
     // console.log(userId)
-    setAssignedUserID(userId)
+    setSelectedUserID(userId)
     setUnselect(false)
   }
 
-  const handleUnassignedUserId = () => {
+  const handleUnselectedUserId = () => {
+    setSelectedUserID('')
     setUnselect(true)
   }
 
   useEffect(() => {
-    //** Verify that user data exist and the ids and entities parameter is define */
-    if (userData && userData.ids && userData.entities) {
-      let filteredIds = userData.ids
-      setFilteredUserIds(filteredIds)
+    if (unselect) {
+      handleUnselectedUserId()
     }
-  }, [userData])
+  }, [unselect])
 
   let content = null
   if (open) {
@@ -73,15 +72,15 @@ export const ShiftAssignmentCard = ({
           </DialogTitle>
           <DialogContent>
             <SelectedUserComponent
-              userId={assignedUserId}
-              handleClick={handleUnassignedUserId}
+              userId={selectedUserId}
+              handleClick={handleUnselectedUserId}
             />
             {userData ? (
               <AvailableUsersTable
                 day={selectedDay}
                 houseID={authHouse.id}
                 shiftID={shiftId as string}
-                handleAssignedUserId={handleAssignedUserId}
+                handleSelectedUserId={handleSelectedUserId}
                 handleEditShift={handleEditShift}
                 handleClose={handleClose}
                 unselect={unselect}
@@ -93,6 +92,6 @@ export const ShiftAssignmentCard = ({
     )
   }
 
-  // console.log('ASSIGNED USER: ' + assignedUserId)
+  // console.log('SELECTED USER: ' + selectedUserId)
   return content
 }

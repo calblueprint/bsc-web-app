@@ -3,6 +3,7 @@ import counterReducer from './slices/counterSlice'
 import authReducer from '../features/auth/authSlice'
 import usersReducer from '../features/user/usersSlice'
 import userAvailabilityReducer from '../features/userAvailability/userAvailabilitySlice'
+import userAssignmentReducer from '@/sprintFiles/userAssignmentSlice'
 import { apiSlice } from './api/apiSlice'
 // import authReducer from './slices/authSlice'
 
@@ -13,6 +14,7 @@ export const store = configureStore({
     auth: authReducer,
     users: usersReducer,
     userAvailability: userAvailabilityReducer,
+    userAssignment: userAssignmentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),

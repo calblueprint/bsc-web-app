@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 import Button from '@mui/material/Button'
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Grid from '@mui/material/Unstable_Grid2'
 import { Shift, User } from '@/types/schema'
 import { HeadCell } from '@/interfaces/interfaces'
@@ -16,6 +16,7 @@ import {
 } from '@/features/shift/shiftApiSlice'
 import { RootState } from '@/store/store'
 import SortedTable from '@/components/shared/tables/SortedTable'
+import { selectSelectedUserId, setSelectedUserId } from './userAssignmentSlice'
 
 // waiting on sorted table to only allow selecting 1 checkbox at a time
 // pass in something that's been selected
@@ -26,7 +27,7 @@ type AvailableUsersTableProps = {
   houseID: string
   shiftID: string
   unselect: boolean
-  handleAssignedUserId: (userId: string) => void
+  handleSelectedUserId: (userId: string) => void
   handleClose: () => void
   handleEditShift?: (shiftId: string) => void
 }
@@ -87,7 +88,7 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   day,
   houseID,
   shiftID,
-  handleAssignedUserId,
+  handleSelectedUserId,
   handleEditShift,
   handleClose,
   unselect,
@@ -105,9 +106,11 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
       selectShiftById(houseID)(state, shiftID as EntityId) as Shift
   )
 
+  const selectedUserId = useSelector(selectSelectedUserId)
+  const dispatch = useDispatch()
+
   // define state variables
   const [listOfUserIds, setLitsOfUserIds] = useState<EntityId[]>([])
-  const [selectedUserId, setSelectedUserId] = useState(shiftObject.assignedUser)
   const [disableTable, setDisableTable] = useState(
     selectedUserId ? true : false
   )
@@ -143,12 +146,12 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   ] = useUpdateUserMutation()
 
   const handleSelectUser = (event: React.MouseEvent<unknown>, id: EntityId) => {
-    setSelectedUserId(id as string)
+    dispatch(setSelectedUserId({ selectedUserId: id as string }))
     setDisableTable(true)
   }
 
   const handleDeselectUser = () => {
-    setSelectedUserId('')
+    dispatch(setSelectedUserId({ selectedUserId: '' }))
     setDisableTable(false)
   }
 
@@ -160,11 +163,11 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
     }
   }, [isUsersDataSuccess, usersData])
 
-  useEffect(() => {
-    if (unselect) {
-      handleDeselectUser()
-    }
-  }, [unselect])
+  //   useEffect(() => {
+  //     if (unselect) {
+  //       handleDeselectUser()
+  //     }
+  //   }, [unselect])
 
   return (
     <React.Fragment>
