@@ -7,6 +7,7 @@ import {
 import {
     selectHouseById,
     useAddNewHouseMutation,
+    useGetHouseQuery,
     useUpdateHouseMutation
 } from '../features/house/houseApiSlice'
 import { useSelector } from 'react-redux'
@@ -27,8 +28,7 @@ const HouseSchema = Yup.object({
   address: Yup.string().required('Address of house is required'),
 })
 
-const emptyHouse: Partial<House> = {
-  id: '',
+const emptyHouse = {
   name: '',
   houseID: '',
   categories: {},
@@ -44,12 +44,15 @@ const HouseForm = ({
   setOpen: (value: React.SetStateAction<boolean>) => void
   houseId: string,
 }) => {
+
+  const {data} = useGetHouseQuery(houseId)
+
   //** selecting house passed into houseId */
   const house: House = useSelector(
     (state: RootState) =>
       selectHouseById(houseId)(state, houseId as EntityId) as House
   )
-
+  
   //* Get API helpers to create or update a shift
   const [
     addNewHouse,
@@ -60,15 +63,13 @@ const HouseForm = ({
 
   const onSubmit = async (
     values: {
-      id?: string
-      name: string | undefined,
-      houseID: string | undefined,
-      address: string | undefined,
+      name: string,
+      houseID: string,
+      address: string,
     },
     formikBag: FormikHelpers<any>
   ) => {
     const {
-      id, 
       name,
       houseID,
       address,
@@ -78,7 +79,6 @@ const HouseForm = ({
 
     const data = { data: {}}
     data.data = {
-      id, 
       name,
       houseID,
       address,
@@ -102,7 +102,6 @@ const HouseForm = ({
       <Formik
         validationSchema={HouseSchema}
         initialValues={{
-          id: house ? house.id : emptyHouse.id,
           name: house ? house.name : emptyHouse.name,
           houseID: house ? house.houseID : emptyHouse.houseID,
           address: house ? house.address : emptyHouse.address,
