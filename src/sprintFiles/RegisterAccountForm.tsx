@@ -1,5 +1,5 @@
 import { TextInput } from "@/components/shared/forms/CustomFormikFields";
-import { Box, Button, Card, Container, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, Container, Typography } from "@mui/material";
 import { Form, Formik, FormikHelpers } from "formik";
 import * as Yup from 'yup'
 import BscLogo from '../assets/bsclogo.png'
@@ -9,6 +9,9 @@ import { useGetAuthorizedUsersQuery, useUpdateAuthorizedUserMutation } from "@/f
 import { Dictionary, EntityId } from "@reduxjs/toolkit";
 import { AuthorizedUser } from "@/types/schema";
 import { useAddNewUserMutation } from "@/features/user/userApiSlice";
+import AlertComponent from "./AlertComponent";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 const RegisterAccountSchema = Yup.object({
     email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -17,6 +20,8 @@ const RegisterAccountSchema = Yup.object({
 })
 
 const RegisterAccountForm = () => {
+    const router = useRouter()
+    
     const {
         data: dataAuthorizedUsers,
         isLoading,
@@ -24,15 +29,7 @@ const RegisterAccountForm = () => {
         isError,
         error,
     } = useGetAuthorizedUsersQuery({})
-
-    const [
-        addNewUser,
-        {
-
-        }
-    ] = useAddNewUserMutation({})
-
-
+    
     const [
         updateAuthorizedUser,
         {
@@ -43,6 +40,8 @@ const RegisterAccountForm = () => {
         },
     ] = useUpdateAuthorizedUserMutation();
 
+    const [errorMessage, setErrorMessage] = useState("");
+    
     const onSubmit = async (values: {
         email: string, 
         password: string,
@@ -56,7 +55,7 @@ const RegisterAccountForm = () => {
             confirmPassword
         } = values;
         if (password !== confirmPassword) {
-            console.log("Passwords don't match");
+            setErrorMessage("Passwords don't match. Failed to register.");
             return;
         }
         if (dataAuthorizedUsers === undefined) {
@@ -71,9 +70,8 @@ const RegisterAccountForm = () => {
             if (authorizedUser === undefined) {
                 continue;
             }
-            console.log(authorizedUser);
             if (authorizedUser.email === email && authorizedUser.accountCreated) {
-                console.log("Account already created. Failed to register.");
+                setErrorMessage("Account already created. Failed to register");
                 return;
             }
             if (authorizedUser.email === email) {
@@ -101,10 +99,11 @@ const RegisterAccountForm = () => {
                 // } else {
                 //     console.log("success");
                 // }
-                break;
+                router.replace('/account/member');
+                return;
             }
         }
-        console.log("User email not authorized");
+        setErrorMessage("User email not authorized. Failed to register.");
     }
     return (
         <Container
@@ -160,6 +159,10 @@ const RegisterAccountForm = () => {
                 </Formik>
             </Card>
             <Copyright sx={{ mt: 8, mb: 4 }} />
+            {
+                errorMessage !== "" &&
+                <AlertComponent message = {errorMessage} setErrorMessage = {setErrorMessage} />
+            }
         </Container>
     )
 }
