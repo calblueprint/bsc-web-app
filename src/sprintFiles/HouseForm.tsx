@@ -7,7 +7,6 @@ import {
 import {
     selectHouseById,
     useAddNewHouseMutation,
-    useGetHouseQuery,
     useUpdateHouseMutation
 } from '../features/house/houseApiSlice'
 import { useSelector } from 'react-redux'
@@ -45,10 +44,7 @@ const HouseForm = ({
   setOpen: (value: React.SetStateAction<boolean>) => void
   houseId: string,
 }) => {
-  //** to use the selector func below */
-  // const { data } = useGetHouseQuery("")
-
-  //** for editing houses */
+  //** selecting house passed into houseId */
   const house: House = useSelector(
     (state: RootState) =>
       selectHouseById(houseId)(state, houseId as EntityId) as House

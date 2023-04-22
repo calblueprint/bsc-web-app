@@ -25,7 +25,7 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       transformResponse: (responseData: House[]) => {
         // console.log('[transformResponse] responseData: ', responseData)
         const loadedHouses = responseData.map((entity) => {
-          console.log('[loadedHouses] entity: ', entity)
+          // console.log('[loaddedShifts] entity: ', entity)
           entity.id = entity.id
           return entity
         })
@@ -42,9 +42,7 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewHouse: builder.mutation({
-      query: (data: {
-        data: Partial<House>
-      }) => ({
+      query: (data: { data: Partial<House> }) => ({
         url: `houses`,
         method: 'POST',
         body: {
@@ -64,7 +62,9 @@ export const housesApiSlice = apiSlice.injectEndpoints({
           ...data.data,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'House', id: arg.houseId }],
+      invalidatesTags: (result, error, arg) => [
+        { type: 'House', id: arg.houseId },
+      ],
     }),
   }),
 })
