@@ -18,7 +18,9 @@ const RegisterAccountSchema = Yup.object({
     password:  Yup.string().required('Password is required'),
     confirmPassword: Yup.string().required('Password is required')
 })
-
+/**
+ * @returns A register account form
+ */
 const RegisterAccountForm = () => {
     const router = useRouter()
     
@@ -29,7 +31,7 @@ const RegisterAccountForm = () => {
         isError,
         error,
     } = useGetAuthorizedUsersQuery({})
-    
+
     const [
         updateAuthorizedUser,
         {
