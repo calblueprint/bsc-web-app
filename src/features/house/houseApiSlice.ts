@@ -25,7 +25,7 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       transformResponse: (responseData: House[]) => {
         // console.log('[transformResponse] responseData: ', responseData)
         const loadedHouses = responseData.map((entity) => {
-          console.log('[loaddedShifts] entity: ', entity)
+          console.log('[loadedHouses] entity: ', entity)
           entity.id = entity.id
           return entity
         })
@@ -53,7 +53,7 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'House', id: 'LIST' }],
     }),
-    updateHouses: builder.mutation({
+    updateHouse: builder.mutation({
       query: (data: {
         houseId: string, 
         data: Partial<House>
@@ -72,7 +72,7 @@ export const housesApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetHouseQuery,
   useAddNewHouseMutation,
-  useUpdateHousesMutation,
+  useUpdateHouseMutation,
   //   useDeleteShiftMutation,
 } = housesApiSlice
 
