@@ -11,6 +11,7 @@ import { Typography } from '@mui/material'
 import { useGetAuthorizedUsersQuery } from '@/features/authorizedUser/authorizedUserApiSlice'
 import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
+import ScheduleShiftForm from '@/features/scheduledShift/testing/scheduleShiftForm'
 
 const TestingPage = () => {
   const authUser = useSelector(selectCurrentUser)
@@ -45,6 +46,7 @@ const TestingPage = () => {
           handleClose={() => console.log('CLOOOOOSE')}
         />
       ) : null}
+      <ScheduleShiftForm />
     </React.Fragment>
   )
 }
