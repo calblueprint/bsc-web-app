@@ -58,6 +58,7 @@ export type AuthorizedUser = {
   lastName: string
   houseID: string
   accountCreated: boolean
+  id: string
 }
 
 export type Shift = {

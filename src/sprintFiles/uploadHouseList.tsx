@@ -9,14 +9,17 @@ import Modal from '@mui/material/Modal';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
-import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import { useGetAuthorizedUsersQuery, useAddNewAuthorizedUserMutation } from '@/features/authorizedUser/authorizedUserApiSlice';
+import { useGetAuthorizedUsersQuery, useAddNewAuthorizedUserMutation, useUpdateAuthorizedUserMutation } from '@/features/authorizedUser/authorizedUserApiSlice';
 import { AuthorizedUser } from '@/types/schema';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 
 
+let timer = undefined;
 //styling for modal, table, and footer
 const style = {
   position: 'absolute' as 'absolute',
@@ -94,42 +97,77 @@ const UploadHouseList = () => {
     const [file, setFile] = useState<File>()
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false);
+        resetAllStates();
+
+    }
     //for progress bar
     const [progress, setProgress] = useState(0);
     //goes to final import page if true
     const [showConfirmation, setShowConfirmation] = useState<boolean>(false)
     //array holding the members that were previously in the firebase
-    const [previousMembers, setPreviousMembers] = useState()
+    const [previousMembers, setPreviousMembers] = useState<(AuthorizedUser | undefined)[]>()
     //array holding the application numbers of members previously in the firebase
-    const [prevMemNums, setPrevMemNums] = useState<number[] | undefined>([])
+    const [prevMemNums, setPrevMemNums] = useState<string[] | undefined>([])
     //array holding every member who was in csv file
     const [newUsers, setNewUsers] = useState<any>();
     //array holding new members who were not previously in the firebase
     const [usersToAdd, setUsersToAdd] = useState<any>();
     //array holding users who need to be removed from the authorized users
     const [delUsers, setDelUsers] = useState<any>();
-    
+    //array holding all members
+    const [allMembers, setAllMembers] = useState<(AuthorizedUser | undefined)[]>();
+    //array holding the application numbers of all Members
+    const [allMemNums, setAllMemNums] = useState<string[] | undefined>([])
+    const [updateUsers, setUpdateUsers] = useState<(AuthorizedUser | undefined)[]>();
+    const [isExpandedAdd, setIsExpandedAdd] = useState(false)
+    const [isExpandedRemove, setIsExpandedRemove] = useState(false)
     //change to authuser
+    //this gets all authorized users rn anyway
+    //just know that this is for house atm
     const authUsers = useGetAuthorizedUsersQuery('EUC');
     const [addNewAuthorizedUser] = useAddNewAuthorizedUserMutation();
+    const [updatePreviousAuthorizedUser] = useUpdateAuthorizedUserMutation();
+    const allAuthUsers = useGetAuthorizedUsersQuery([]);
 
     
+    const handleAddExpand = () => {
+        setIsExpandedAdd(!isExpandedAdd)
+    }
+    const handleRemoveExpand = () => {
+        setIsExpandedRemove(!isExpandedRemove)
+    }
 
     //every time getAuthorizedUsers changes, it updates both the previous members array
     //and the previous members application id array
     useEffect(() => {
         if (authUsers.data) {
-            setPreviousMembers(Object.values(authUsers.data?.entities))
-            Object.values(authUsers.data?.entities)?.map((member) => {
+            console.log("authusers",authUsers.data.entities)
+            const users = authUsers.data.ids.map(id => authUsers.data?.entities[id])
+            console.log("ysers", users)
+            setPreviousMembers(users)
+            users?.map((member) => {
                 if (member?.applicationID){
+                    //need to change to deep copy
+                    const previousNumbers = prevMemNums
                     setPrevMemNums(prevMemNums => [...prevMemNums, member?.applicationID]);
                 }
                
             })
         }
     }, [authUsers])
-
+    useEffect(() => {
+        if (allAuthUsers.data) {
+            const usersOld = allAuthUsers.data.ids.map(id => allAuthUsers.data?.entities[id])
+            setAllMembers(usersOld)
+            usersOld?.map((member) => {
+                if (member?.applicationID){
+                    setAllMemNums(allMemNums => [...allMemNums, member?.applicationID]);
+                } 
+            })
+        }
+    }, [allAuthUsers])
     //
     // useEffect(()=> {
     //     if (prevMemNums?.length > 0 && previousMembers) {
@@ -148,16 +186,18 @@ const UploadHouseList = () => {
         //checks if fileHolder has a file in it
         
         if (fileHolder) {
-            console.log(fileHolder)
             //i dont htink htis works correctly but its supposed to time how long this useEffect takes lol
-          const timer = setInterval(() => {
+           timer = setInterval(() => {
             setProgress((oldProgress) => {
+                
               
               const diff = Math.random() * 10;
               return Math.min(oldProgress + diff, 100);
             });
-          }, 500);
-      
+          }, 100);
+            // const interval = setInterval(() => {
+            //     setProgress((prev) => prev + 1);
+            // }, 10);
           const userHolder: AuthorizedUser[] = []
           //papaparse parses the csv file passed in and updates the userArr when finished
           Papa.parse(fileHolder, {
@@ -166,7 +206,7 @@ const UploadHouseList = () => {
             download: true,
             step: function (row) {
               
-              console.log("current row", row.data)
+              //console.log("current row", row.data)
               //HELLO LOOK AT ME, UPDATE WITH AUTH STATE HOUSE
               
               if(row.data.houseID != 'EUC'){
@@ -176,11 +216,13 @@ const UploadHouseList = () => {
               userHolder.push(row.data)
             },
             complete: function () {
-                console.log("hurray!")
                 setNewUsers(userHolder)
             },
           })
-        }
+        }else {
+            clearInterval(timer);
+            setProgress(0);
+          }
     }, [fileHolder])
     //
     //
@@ -211,57 +253,114 @@ const UploadHouseList = () => {
     const compareMembers = () => {
         //checks if newUsers & prevMemNums has anything in it
         if (newUsers && prevMemNums?.length){
-            const toBeAdded = []
+            const toBeAdded: AuthorizedUser[] = []
             const oldMemIds = prevMemNums
-            const toBeDeleted = []
+            const toBeDeleted: AuthorizedUser[] = []
+            const toBeUpdated: AuthorizedUser[] = [{
+                firstName: "Shawn",
+                lastName: "Mendes",
+                email: "shawn@gmail.com",
+                applicationID: "101120",
+                accountCreated: false,
+                houseID: 'EUC',
+                id: 'tSHkG0qmlbxNbV4heCQA'
+            }]
+            
             
             //loops throught the uploaded members and checks if they were already in the firebase
-            newUsers.map((newUser) => {
+            newUsers.map((newUser: AuthorizedUser) => {
                 //if applicaiton id is not in firebase, they will be in newUser array
                 //else we take away the application id number from the array
                 //of firebase member id numbers
+                console.log("user", newUser)
                 if (prevMemNums.indexOf(newUser.applicationID) == -1){
-                    toBeAdded.push(newUser)
+                    
+                    if(allMemNums?.indexOf(newUser.applicationID) != -1) {
+                        toBeUpdated.push(newUser)
+                    } else {
+                        toBeAdded.push(newUser)
+                    }
                     
                 } else {
                     oldMemIds.splice(prevMemNums.indexOf(newUser.applicationID), 1)
                 }
             })
+            
             //loops through firebase members and checks if they should be deleted from
             //firebase or not
-            previousMembers.map((prevMem) => {
-                if (oldMemIds.indexOf(prevMem.applicationID) != -1){
+            previousMembers?.map((prevMem) => {
+                if (prevMem) {
+                    if (oldMemIds.indexOf(prevMem.applicationID) != -1){
                     toBeDeleted.push(prevMem)
                 }
+                }
+                
             })
+            console.log("toBeupdate", toBeUpdated)
+            console.log("To be added", toBeAdded)
+            console.log("to be deleted", toBeDeleted)
             setUsersToAdd(toBeAdded)
             setDelUsers(toBeDeleted)
             setShowConfirmation(true)
+            setUpdateUsers(toBeUpdated)
         }
         
     }
+    const resetAllStates = () => {
+        setFileHolder(undefined)
+        setProgress(0)
+        setShowConfirmation(false)
+        setPreviousMembers(undefined)
+        setPrevMemNums([])
+        setAllMemNums([])
+        clearInterval(timer);
+        setNewUsers(undefined)
+        setUsersToAdd(undefined)
+        setDelUsers(undefined)
+        setUpdateUsers(undefined)
+    }
+    
     //change to auth users when you get the chacne
     const updateAuthUsers = () => {
         
         if (usersToAdd) {
-            usersToAdd.map(async (user) => {
+            usersToAdd.map(async (user: AuthorizedUser) => {
                 //fix error handling
                 await addNewAuthorizedUser(user)
-                setFileHolder(undefined)
-                setProgress(0)
-                setShowConfirmation(false)
-                setPreviousMembers(undefined)
-                setPrevMemNums(undefined)
-                setNewUsers(undefined)
-                setUsersToAdd(undefined)
-                setDelUsers(undefined)
+                
                 
                 
             })
         }
-        if (delUsers){
-            console.log("To Be Developed")
+        if (updateUsers) {
+            updateUsers.map(async (updateUser) => {
+                if (updateUser) {
+                    const userInfo = {
+                    userId: updateUser.id, 
+                    data: {
+                        houseID: updateUser.houseID
+                    }
+                    }
+                    updatePreviousAuthorizedUser(userInfo)
+                }
+                
+            })
         }
+        if (delUsers){
+            delUsers.map(async (delUser: AuthorizedUser) => {
+                if (delUser) {
+                    const userInfo = {
+                    userId: delUser.id, 
+                    data: {
+                        houseID: ""
+                    }
+                    }
+                    updatePreviousAuthorizedUser(userInfo)
+                }
+                
+            })
+        }
+        resetAllStates();
         handleClose();
     }
     
@@ -287,11 +386,23 @@ const UploadHouseList = () => {
                             <Table stickyHeader aria-label="sticky table" sx={tableStyle}>
                                 <TableHead>
                                     <TableRow >
-                                        Members To Be Added ({usersToAdd.length})
+                                        Members To Be Added ({usersToAdd?.length + updateUsers?.length})
+                                        <IconButton sx={{ marginLeft: "auto",}} onClick={handleAddExpand}>
+                                            {isExpandedAdd ? (
+                                                <KeyboardArrowDownIcon
+                                                    sx={{ fontSize: 20, color: 'black'  }}
+                                                />
+                                                ) : (
+                                                <KeyboardArrowRightIcon
+                                                    sx={{ fontSize: 20, color: 'black', }}
+                                                />
+                                            )}
+                                        </IconButton>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {usersToAdd?.map((user, index) => {
+                                    
+                                    {isExpandedAdd && usersToAdd?.concat(updateUsers)?.map((user, index) => {
                                         return (
                                             <TableRow key={index}  sx={addUserTableStyle}>
                                                 <TableCell sx={{border: 'none'}}>
@@ -314,11 +425,22 @@ const UploadHouseList = () => {
                             <Table stickyHeader aria-label="sticky table" sx={tableStyle}>
                                 <TableHead>
                                     <TableRow >
-                                        Members To Be Removed ({delUsers.length})
+                                        Members To Be Removed ({delUsers?.length})
+                                        <IconButton onClick={handleRemoveExpand}>
+                                            {isExpandedRemove ? (
+                                                <KeyboardArrowDownIcon
+                                                    sx={{ fontSize: 20, color: 'black' }}
+                                                />
+                                                ) : (
+                                                <KeyboardArrowRightIcon
+                                                    sx={{ fontSize: 20, color: 'black' }}
+                                                />
+                                            )}
+                                        </IconButton>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {delUsers?.map((user, index) => {
+                                    {isExpandedRemove && delUsers?.map((user, index) => {
                                         return (
                                             <TableRow key={index} sx={userTableStyle}>
                                                 <TableCell sx={{border: 'none'}}>
