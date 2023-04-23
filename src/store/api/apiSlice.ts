@@ -83,7 +83,10 @@ const customBaseQuery: BaseQueryFn<
             if (hasFilter) {
               //** If the query is a collection and has a filter use where function */
               const { fieldPath, optStr, value } = params.filter
-              queryRef = query(queryColl, where(fieldPath, optStr, value))
+              queryRef = query(
+                queryColl,
+                where(fieldPath, optStr, value.toLowerCase())
+              )
             }
             //** If the query is a collection, get the full collection from the firebase */
             // console.log(path)

@@ -97,6 +97,7 @@ export const {
   useGetAuthorizedUsersQuery,
   useAddNewAuthorizedUserMutation,
   useUpdateAuthorizedUserMutation,
+  useGetHouseAuthorizedUsersQuery,
 } = authorizedUsersApiSlice
 
 // Creates memoized selector to get normalized state based on the query parameter
