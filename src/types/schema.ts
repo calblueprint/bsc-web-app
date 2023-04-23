@@ -48,6 +48,7 @@ export type User = {
   runningTotalMissedHours: number
   // The running total of penalty hours for the whole semester
   runningTotalPenatlyHours: number
+  applicationID: string
 }
 
 export type AuthorizedUser = {
