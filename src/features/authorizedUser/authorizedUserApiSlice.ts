@@ -38,6 +38,35 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
         } else return [{ type: 'AuthorizedUser', id: 'LIST' }]
       },
     }),
+    getHouseAuthorizedUsers: builder.query({
+      query: (value: string) => ({
+        url: `authorizedUsers`,
+        method: 'GET',
+        params: { filter: { fieldPath: 'houseID', opStr: '==', value } },
+      }),
+      transformResponse: (responseData: User[]) => {
+        const loadedAuthorizedUsers = responseData.map((entity) => {
+          entity.id = entity.id
+          return entity
+        })
+        console.debug(loadedAuthorizedUsers)
+        return authorizedUsersAdapter.setAll(
+          initialState,
+          loadedAuthorizedUsers
+        )
+      },
+      providesTags: (result) => {
+        if (result?.ids) {
+          return [
+            { type: 'AuthorizedUser', id: 'LIST' },
+            ...result.ids.map((id) => ({
+              type: 'AuthorizedUser' as const,
+              id,
+            })),
+          ]
+        } else return [{ type: 'AuthorizedUser', id: 'LIST' }]
+      },
+    }),
     addNewAuthorizedUser: builder.mutation({
       query: (data: Partial<AuthorizedUser>) => ({
         url: `authorizedUsers`,
@@ -49,10 +78,7 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'AuthorizedUser', id: 'LIST' }],
     }),
     updateAuthorizedUser: builder.mutation({
-      query: (data: {
-        userId: string, 
-        data: Partial<AuthorizedUser>
-      }) => ({
+      query: (data: { userId: string; data: Partial<AuthorizedUser> }) => ({
         url: `authorizedUsers/${data.userId}`,
         method: 'PATCH',
         body: {
