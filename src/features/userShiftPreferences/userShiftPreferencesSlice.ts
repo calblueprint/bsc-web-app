@@ -1,8 +1,5 @@
 import { RootState } from '@/store/store'
-import { ShiftPreferences, User } from '@/types/schema'
-import { createHouseCategories, validatePreferences } from '@/utils/utils'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
-import PreferencesTable from './tables/PreferencesTable'
 
 const shiftPreferences: {
   [key: string]: { preferredBy: []; dislikedBy: []; isActive: true }

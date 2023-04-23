@@ -104,5 +104,5 @@ export const selectShiftById = (queryParameter: string) =>
     (state: RootState) => selectShiftsData(state, queryParameter),
     (_: unknown, shiftId: EntityId) => shiftId,
     (data: { entities: { [x: string]: unknown } }, shiftId: string | number) =>
-      data.entities[shiftId]
+      data.entities[shiftId] as Shift
   )
