@@ -77,6 +77,7 @@ const customBaseQuery: BaseQueryFn<
           //** Check weather the request is a collection or a document */
           if (isCollection) {
             //** Get the collection to be query */
+            // console.log('filter: ', params)
             let queryColl = collection(firestore, path)
             let queryRef: Query<DocumentData> | undefined = undefined
             if (hasFilter) {
