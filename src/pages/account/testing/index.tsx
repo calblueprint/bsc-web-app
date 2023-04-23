@@ -15,11 +15,11 @@ import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 const TestingPage = () => {
   const authUser = useSelector(selectCurrentUser)
   const { data: authHouseUsersData } = useGetAuthorizedUsersQuery('EUC')
-  console.log(authUser)
+  // console.log(authUser)
 
   useEffect(() => {
     if (authHouseUsersData) {
-      console.log(authHouseUsersData)
+      console.log('Auth User', authHouseUsersData)
     }
   }, [authHouseUsersData])
 
