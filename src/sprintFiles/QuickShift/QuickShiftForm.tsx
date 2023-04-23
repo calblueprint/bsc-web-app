@@ -342,7 +342,7 @@ const QuickShiftForm = ({
               </LocalizationProvider>
               {targetUser != undefined ? (
                 <Field name="member" as={Autocomplete}>
-                  {(fields) => (
+                  {({ fields }) => (
                     <Autocomplete
                       {...fields}
                       options={userOptions}
