@@ -110,3 +110,6 @@ export const DAYS = [
   'friday',
   'saturday',
 ]
+
+export const VERIFIED = 'verified';
+export const UNVERIFIED = 'unverified';

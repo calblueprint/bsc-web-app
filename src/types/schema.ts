@@ -1,3 +1,5 @@
+import dayjs, {Dayjs} from "dayjs"
+
 export type User = {
   // this id is to help the standard table generalize the id attribute
   id: string
@@ -102,6 +104,7 @@ export type ScheduledShift = {
   verifiedAt: string
   unverifiedAt: string
   penaltyHours: number
+  shiftCopy: Shift
 }
 
 export type House = {
