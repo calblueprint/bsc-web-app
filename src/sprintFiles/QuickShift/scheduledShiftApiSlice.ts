@@ -57,15 +57,15 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
     }),
     addNewScheduledShift: builder.mutation({
       query: (data) => {
+        console.log({ data: data, datadata: data.data })
 
-
-        return ({
+        return {
           url: `houses/${data.houseId}/scheduledShifts`,
           method: 'POST',
           body: {
-            ...data.data, 
+            ...data.data,
           },
-        })
+        }
       },
       invalidatesTags: [{ type: 'ScheduledShift', id: 'LIST' }],
     }),

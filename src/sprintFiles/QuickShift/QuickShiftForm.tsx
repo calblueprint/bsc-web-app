@@ -1,20 +1,27 @@
-import { Formik, Form, FormikHelpers } from 'formik'
-import { Stack, Button, Typography } from '@mui/material'
-import { LocalizationProvider } from '@mui/x-date-pickers'
+import { Formik, Form, FormikHelpers, Field } from 'formik'
+import {
+  Stack,
+  Button,
+  Typography,
+  TextField,
+  Autocomplete,
+} from '@mui/material'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import * as Yup from 'yup'
 import {
   TextInput,
   SelectInput,
 } from '../../components/shared/forms/CustomFormikFields'
 import { useSelector } from 'react-redux'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { RootState } from '../../store/store'
 import { EntityId } from '@reduxjs/toolkit'
-import { ScheduledShift, Shift } from '../../types/schema'
+import { House, ScheduledShift, Shift, User } from '../../types/schema'
 import styles from './ShiftForm.module.css'
 import {
   selectScheduledShiftById,
@@ -26,6 +33,11 @@ import {
   useAddNewShiftMutation,
   useUpdateShiftMutation,
 } from '@/features/shift/shiftApiSlice'
+import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
+import { selectCurrentHouse } from '@/features/auth/authSlice'
+import { useGetUsersQuery } from '@/features/user/userApiSlice'
+import uuid from 'react-uuid'
+import { formatMilitaryTime } from '@/utils/utils'
 
 //TODO: NOTE FROM ANDREI - scheduledshift objects are referred to as shifts in this file.  Too many random changes if we rename it to scheduledShifts.
 // TODO: If you have time ig you could change, but sounds like a waste to me.
@@ -34,166 +46,46 @@ import {
 //** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. *
 //Todo: Needs a calendar. QUick shifts have a specific person, specific date.
 //TODO: members panel will become a dropdown
+//Todo: search bar needs 100% match right now, implement reactive soon.
 const ShiftSchema = Yup.object({
   name: Yup.string()
-    .typeError('Must be a string')
     .required('Name is required')
     .min(1, 'Name must have at least 1 characters'),
-  category: Yup.string().required('Category is required'),
-  members: Yup.number()
-    .typeError('Must be a number')
-    .positive('Must be greater than zero')
-    .integer()
-    .required('Members is required'),
-  hours: Yup.number()
-    .typeError('Must be a number')
-    .required('Hours is required'),
-  possibleDays: Yup.array()
-    .of(Yup.string())
-    .required('Possible days is required')
-    .min(1, 'Possible days is required'),
-  timeWindowStartTime: Yup.string().required('Start time is required'),
-  timeWindowEndTime: Yup.string().required('End time is required'),
-  verificationBuffer: Yup.number()
-    .typeError('Must be a number')
-    .required('Buffer hours is required'),
-  verification: Yup.string().required('Verification type is required'),
-  description: Yup.string()
-    .typeError('Must be a string')
-    .required('Description is required'),
+  description: Yup.string(),
+  possibleDays: Yup.array().of(Yup.string()),
+  startTime: Yup.date().required('Start time is required'),
+  endTime: Yup.date().required('End time is required'),
+  category: Yup.string().required('Cagegory is required'),
+  hours: Yup.number().required('Hours credit is required'),
+  verificationBuffer: Yup.number(),
   assignedUser: Yup.string(),
+  assignedDay: Yup.string(),
+  member: Yup.string(),
 })
 
 const daysList = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
 ]
 
-const shiftCategories = [
-  'cook dinner',
-  'clean bathroom',
-  'wash dishes',
-  'clean basement',
-]
-const verificationOptions = ['Verification required', 'No verification']
-const timeWindows = [
-  '12:00 AM',
-  '12:30 AM',
-  '1:00 AM',
-  '1:30 AM',
-  '2:00 AM',
-  '3:30 AM',
-  '4:00 AM',
-  '4:30 AM',
-  '5:00 AM',
-  '5:30 AM',
-  '6:00 AM',
-  '6:30 AM',
-  '7:00 AM',
-  '7:30 AM',
-  '8:00 AM',
-  '8:30 AM',
-  '9:00 AM',
-  '9:30 AM',
-  '10:00 AM',
-  '10:30 AM',
-  '11:00 AM',
-  '11:30 AM',
-  '12:00 PM',
-  '12:30 PM',
-  '1:00 PM',
-  '1:30 PM',
-  '2:00 PM',
-  '3:30 PM',
-  '4:00 PM',
-  '4:30 PM',
-  '5:00 PM',
-  '5:30 PM',
-  '6:00 PM',
-  '6:30 PM',
-  '7:00 PM',
-  '7:30 PM',
-  '8:00 PM',
-  '8:30 PM',
-  '9:00 PM',
-  '9:30 PM',
-  '10:00 PM',
-  '10:30 PM',
-  '11:00 PM',
-  '11:30 PM',
-]
-
-const parseTimeToNumber = (time: string) => {
-  let hour = 0
-  let minute = 0
-  let AM = 'AM'
-  if (time.length === 8) {
-    // ex: 12:00 AM
-    hour = parseInt(time.slice(0, 2))
-    minute = parseInt(time.slice(3, 5))
-    AM = time.slice(6, 8)
-  } else {
-    // ex: 1:00 AM
-    hour = parseInt(time.slice(0, 1))
-    minute = parseInt(time.slice(2, 4))
-    AM = time.slice(5, 7)
-  }
-  if (AM === 'AM' && hour === 12) {
-    hour = 0
-  }
-  // parses time to match our 0-2400 scale for time
-  return AM == 'AM' ? hour * 100 + minute : (hour + 12) * 100 + minute
-}
-
-export const parseTimefromNumber = (time: number) => {
-  let meridian = 'AM'
-  if (time == 0) {
-    return '12:00 AM'
-  }
-  if (time > 1159) {
-    meridian = 'PM'
-  }
-  if (time > 1259) {
-    time = time - 1200
-  }
-  const timeString = String(time)
-  let hours
-  if (timeString.length > 3) {
-    hours = timeString.slice(0, 2)
-  } else {
-    hours = timeString.slice(0, 1)
-  }
-  const minutes = timeString.slice(-2)
-  if (Number(minutes) > 0) {
-    return hours + ':' + minutes + ' ' + meridian
-  }
-  return hours + ':' + '00' + ' ' + meridian
-}
-
-const verifyToString = (bool: boolean) => {
-  if (bool) {
-    return 'Verification required'
-  }
-  return 'No Verification'
-}
+// const shiftCategories = ['cook dinner', 'clean bathroom', 'wash dishes', 'clean basement']
 
 const emptyShift = {
   name: '',
   category: '',
-  members: 1,
-  hours: 0,
   possibleDays: [],
-  timeWindowStartTime: '12:00 AM',
-  timeWindowEndTime: '11:30 PM',
+  startTime: dayjs('2023-04-17T12:00'),
+  endTime: dayjs('2023-04-17T18:30'),
+  hours: 0,
+  despription: '',
   verificationBuffer: 0,
-  verification: 'Verification required',
-  description: '',
   assignedUser: '',
+  assignedDay: '',
 }
 
 const QuickShiftForm = ({
@@ -205,6 +97,25 @@ const QuickShiftForm = ({
   shiftId?: string
   isNewShift: boolean
 }) => {
+  // const authUser = useSelector(selectCurrentUser) as User
+  const currentHouse = useSelector(selectCurrentHouse) as House
+
+  //** House shifts */
+  const { data: shiftsData, isSuccess: isShiftsSuccess } = useGetShiftsQuery(
+    currentHouse.id
+  )
+
+  //** for editing shifts */
+  const shift: Shift = useSelector(
+    (state: RootState) =>
+      selectShiftById(currentHouse.id)(state, shiftId as EntityId) as Shift
+  )
+
+  //** Holds the house shifts categories */
+  const [houseCategories, setHouseCategories] = useState<string[]>([
+    'Uncategorized',
+  ])
+
   //* Get API helpers to create or update a shift
   const [
     addNewShift,
@@ -225,64 +136,99 @@ const QuickShiftForm = ({
     },
   ] = useUpdateShiftMutation()
 
-  const shift: Shift = useSelector(
-    (state: RootState) =>
-      selectShiftById('EUC')(state, shiftId as EntityId) as Shift
-  )
+  const [chosenDate, setDate] = useState<dayjs.Dayjs | null>(null)
 
   const onSubmit = async (
     values: {
       name: string
       category: string
       hours: number
-      timeWindowStartTime: dayjs.Dayjs
-      timeWindowEndTime: dayjs.Dayjs
+      startTime: Dayjs
+      endTime: Dayjs
       possibleDays: string[]
       description: string
       verificationBuffer: number
+      assignedUser: string | undefined
+      assignedDay: string
+      member: string
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formikBag: FormikHelpers<any>
   ) => {
+    console.log('Submiting ShiftForm: ', values)
     const {
       name,
-      category,
+      category: categoryString,
       hours,
-      possibleDays,
-      timeWindowStartTime,
-      timeWindowEndTime,
-      verificationBuffer,
-      verification,
       description,
+      possibleDays,
+      startTime: startTimeObject,
+      endTime: endTimeObject,
+      verificationBuffer,
+      assignedUser,
+      assignedDay,
+      member,
     } = values
 
-    const startTime = parseTimeToNumber(timeWindowStartTime)
-    const endTime = parseTimeToNumber(timeWindowEndTime)
-
-    let result
-    const timeWindow = [startTime, endTime]
-    const timeWindowDisplay = timeWindowStartTime + ' - ' + timeWindowEndTime
-    const data = { data: {}, houseId: '', shiftId: '' }
-    const verificationBool =
-      verification === 'Verification required' ? true : false
-    data.data = {
-      name,
-      category,
-      hours,
-      possibleDays,
-      timeWindow,
-      timeWindowDisplay,
-      verificationBuffer,
-      verificationBool,
-      description,
-    }
-    data.houseId = 'EUC'
-    data.shiftId = shiftId ? shiftId : ''
-    // console.log('data: ', data)
-    if (isNewShift || !shiftId) {
-      result = await addNewShift(data)
+    const startTime = Number(startTimeObject.format('HHmm'))
+    const endTime = Number(endTimeObject.format('HHmm'))
+    let category
+    if (categoryString === undefined || categoryString === 'Uncategorized') {
+      category = ''
     } else {
-      result = await updateShift(data)
+      category = categoryString
+    }
+
+    // console.log(dayjs('1900', 'HHmm').format('HHmm'))
+    // const num = 1900
+    // console.log(dayjs(num.toString(), 'HHmm'))
+
+    // const dayString = possibleDays.join('')
+    let result
+    const timeWindow = { startTime, endTime }
+    const id = uuid()
+    const timeWindowDisplay =
+      formatMilitaryTime(startTime) + ' - ' + formatMilitaryTime(endTime)
+    const data = { data: {}, houseId: '', shiftId: '' }
+    data.data = {
+      id: id,
+      date: chosenDate,
+      assignedUser: targetUser?.id,
+      status: 'live',
+      verifiedBy: '',
+      verifiedAt: '',
+      unverifiedAt: '',
+      penaltyHours: 0,
+
+      // name,
+      // hours,
+      // date,
+      // description,
+      // timeWindow,
+      // verificationBuffer,
+      // timeWindowDisplay,
+      // assignedUser,
+      // assignedDay,
+
+      // id,
+      // shiftId = id,
+      // date,
+      // assignedUser
+      // status: string
+      // options: string
+      // verifiedBy: dayjs.Dayjs
+      // verifiedAt: dayjs.Dayjs
+      // unverifiedAt: dayjs.Dayjs
+      // penaltyHours: number
+      // jsonCopy: Shift //TODO : check if this fails
+    }
+    data.houseId = currentHouse.id
+    data.shiftId = id ? id : ''
+    // console.log('data: ', data)
+    console.log({ formdata: data, formdatadta: data.data })
+    if (isNewShift || !shiftId) {
+      result = await useAddNewScheduledShiftMutation(data)
+    } else {
+      result = await useUpdateScheduledShiftMutation(data)
     }
     if (result) {
       console.log('success with shift: ', result)
@@ -292,6 +238,54 @@ const QuickShiftForm = ({
     setOpen(false)
   }
 
+  // React.useEffect(() => {
+  //   console.log('This is the selected shift', shift)
+  // }, [shift])
+
+  const {
+    data: users,
+    // isLoading: isUsersLoading,
+    // isSuccess: isUsersSuccess,
+    // isError: isUsersError,
+  } = useGetUsersQuery({})
+
+  //Using this instead of setFieldValue in formik because of issues with the fields
+  //Will use the specific date that a quick shift must be in.
+  const [userOptions, setUserOptions] = useState([''])
+  type labeledUser = {
+    label: string
+    id: String
+  }
+  const [targetUser, setTargetUser] = useState<labeledUser>()
+
+  useEffect(() => {
+    // console.log({ ents: users?.entities, ids: users?.ids, targuser: targetUser, userOpt: Val: inputValue})
+    {
+      const tempOptions = []
+      if (users == undefined) return
+      users.ids?.map((id: EntityId) => {
+        let user = users?.entities[id]
+        if (user != undefined) {
+          let userWithLabel = {
+            label: user.displayName,
+            id: user.id,
+          } //TODO: add an ID here as well.
+          // Object.assign(userWithLabel, user)
+          tempOptions.push(userWithLabel)
+        }
+      })
+      setUserOptions(tempOptions)
+      setTargetUser(tempOptions[0])
+    }
+    console.log('OPTIONS: ', { options: userOptions })
+  }, [users])
+  const [inputValue, setInputValue] = React.useState('')
+  /**
+   * 1. load in the options, push the labeled options to a user options list
+   * 2. use the userOptions to create the members list
+   * 3. when picking an option from the dropdown, change the member OBJECT to match
+   */
+
   return (
     <>
       <Formik
@@ -299,122 +293,130 @@ const QuickShiftForm = ({
         initialValues={{
           name: shift ? shift.name : emptyShift.name,
           category: shift ? shift.category : emptyShift.category,
-          members: 1,
           hours: shift ? shift.hours : emptyShift.hours,
+          startTime: shift
+            ? dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
+            : emptyShift.startTime,
+          endTime: shift
+            ? dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
+            : emptyShift.endTime,
           possibleDays: shift
             ? shift.possibleDays
               ? shift.possibleDays
               : []
             : emptyShift.possibleDays,
-          timeWindowStartTime: shift
-            ? parseTimefromNumber(shift.timeWindow[0])
-            : emptyShift.timeWindowStartTime,
-          timeWindowEndTime: shift
-            ? parseTimefromNumber(shift.timeWindow[1])
-            : emptyShift.timeWindowEndTime,
+          description: shift ? shift.description : emptyShift.despription,
           verificationBuffer: shift
             ? shift.verificationBuffer
             : emptyShift.verificationBuffer,
-          verification: shift
-            ? verifyToString(shift.verification)
-            : emptyShift.verification,
-          description: shift ? shift.description : emptyShift.description,
+          assignedUser: shift ? shift.assignedUser : emptyShift.assignedUser,
+          assignedDay: shift ? shift.assignedDay : emptyShift.assignedDay,
+          member: { label: '', id: '' },
         }}
         onSubmit={onSubmit}
       >
-        {({ isSubmitting }) => (
-          <Form>
-            <div className={styles.formField}>
-              <Typography>Shift Name</Typography>
-              <TextInput name="name" label="" />
-            </div>
-            <div className={styles.flex}>
-              <div className={styles.formField}>
-                <Typography>Members</Typography>
-                <TextInput name="members" label="" />
-              </div>
-              <div className={styles.formField}>
-                <Typography>Value (hours)</Typography>
-                <TextInput name="hours" label="" />
-              </div>
-            </div>
-            <div className={styles.formField}>
-              <Typography>Days (select as many as applicable)</Typography>
-              <SelectInput
-                name="possibleDays"
-                label=""
-                labelid="possibleDays"
-                id="possibleDays"
-                options={daysList}
-                multiselect={true}
-              />
-            </div>
-            <div className={styles.flex}>
-              <div className={styles.formField}>
-                <Typography>Start Time</Typography>
-                <SelectInput
-                  name="timeWindowStartTime"
-                  label=""
-                  labelid="timeWindowStartTime"
-                  id="timeWindowStartTime"
-                  options={timeWindows}
-                  multiselect={false}
+        {({ isSubmitting, values, setFieldValue }) => {
+          console.log(values)
+          return (
+            <Form>
+              <TextInput name="name" label="Shift Name" />
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker value={chosenDate} onChange={(e) => setDate(e)} />
+              </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <MobileTimePicker
+                  label="Start Window Time"
+                  minutesStep={30}
+                  value={values.startTime}
+                  onChange={(newValue) => setFieldValue('startTime', newValue)}
                 />
-              </div>
-              <div className={styles.formField}>
-                <Typography>End Time</Typography>
-                <SelectInput
-                  name="timeWindowEndTime"
-                  label=""
-                  labelid="timeWindowEndTime"
-                  id="timeWindowEndTime"
-                  options={timeWindows}
-                  multiselect={false}
+                <MobileTimePicker
+                  label="End Window Time"
+                  minutesStep={30}
+                  value={values.endTime}
+                  onChange={(newValue) => {
+                    setFieldValue('endTime', newValue)
+                  }}
                 />
-              </div>
-              <div className={styles.formField}>
-                <Typography>Buffer Hours</Typography>
-                <TextInput name="verificationBuffer" label="" />
-              </div>
-            </div>
-            <div className={styles.formField}>
-              <Typography>Verification</Typography>
-              <SelectInput
-                name="verification"
-                label=""
-                labelid="verification"
-                id="verification"
-                options={verificationOptions}
-                multiselect={false}
-              />
-            </div>
-            <div className={styles.formField}>
-              <Typography>Description</Typography>
-              <TextInput name="description" label="" />
-            </div>
-            <div className={styles.flex}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                disabled={isSubmitting}
-                className={styles.submit}
-              >
-                Save
-              </Button>
-              <Button
-                fullWidth
-                variant="outlined"
-                color="primary"
-                onClick={() => setOpen(false)}
-                className={styles.submit}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Form>
-        )}
+              </LocalizationProvider>
+              {targetUser != undefined ? (
+                <Field name="member" as={Autocomplete}>
+                  {(fields) => (
+                    <Autocomplete
+                      {...fields}
+                      options={userOptions}
+                      sx={{ width: 300 }}
+                      renderInput={(params) => (
+                        <TextField {...params} label="member" />
+                      )}
+                      // value={targetUser}
+                      // onChange={(e) => {
+                      //   setTargetUser(e)
+                      // }}
+
+                      // inputValue={inputValue}
+                      // onInputChange={(event, newInputValue) => {
+                      //   setInputValue(newInputValue)
+                      // }}
+                      // value={values.member.label}
+                      // onChange={(chosen) => {
+                      //   setFieldValue('member', chosen)
+                      // }}
+                    />
+                  )}
+                </Field>
+              ) : // <Autocomplete
+              //   disablePortal
+              //   id="combo-box-demo"
+              //   options={userOptions}
+              //   sx={{ width: 300 }}
+              //   renderInput={(params) => (
+              //     <TextField {...params} label="member" />
+              //   )}
+              //   // value={targetUser}
+              //   // onChange={(e) => {
+              //   //   setTargetUser(e)
+              //   // }}
+
+              //   // inputValue={inputValue}
+              //   // onInputChange={(event, newInputValue) => {
+              //   //   setInputValue(newInputValue)
+              //   // }}
+              //   // value={values.member.label}
+              //   // onChange={(chosen) => {
+              //   //   setFieldValue('member', chosen)
+              //   // }}
+              // />
+              null}
+
+              <TextInput name="hours" label="Value" />
+
+              <TextInput name="verificationBuffer" label="Buffer Hours" />
+
+              <TextInput name="description" label="Description" />
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  disabled={isSubmitting}
+                >
+                  {isNewShift || !shiftId ? 'Submit' : 'Update'}
+                </Button>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Form>
+          )
+        }}
       </Formik>
     </>
   )
