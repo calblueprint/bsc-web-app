@@ -7,19 +7,7 @@ const ManagerAvailabilityTabContent = () => {
   const handleClick = () => {
     setOpen(true)
   }
- 
 
-  return (
-    <div>
-      <Button onClick={handleClick}>Test Button (can delete)</Button>
-      <ActionMsgBox
-        messageTop="Big Message"
-        messageBottom="Small Message"
-        iconType="CheckCircleIcon"
-        setOpen={setOpen}
-        open={open}
-      />
-    </div>
-  )
+  return <div>ManagerAvailabilityTabContent</div>
 }
 export default ManagerAvailabilityTabContent

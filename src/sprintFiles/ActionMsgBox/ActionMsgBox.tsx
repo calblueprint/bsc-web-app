@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert'
-import { AlertTitle, Slide } from '@mui/material'
+import { AlertTitle, Box } from '@mui/material'
 import Icon, { IconType } from '@/assets/Icon'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -39,7 +39,7 @@ export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
   }
 
   return (
-    <div>
+    <Box>
       <Snackbar
         open={open}
         autoHideDuration={2000}
@@ -51,6 +51,6 @@ export const ActionMsgBox: React.FC<ActionMsgBoxProps> = ({
           {messageBottom}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   )
 }
