@@ -20,8 +20,8 @@ import { selectShiftById } from '@/features/shift/shiftApiSlice'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    // backgroundColor: theme.palette.common.black,
+    // color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -171,7 +171,7 @@ export default function SortedTable<
                 align={cell.align}
                 sx={disable ? { backgroundColor: 'gray' } : {}}
               >
-                {row[cell.id]}
+                {cell.transformFn ? cell.transformFn(row) : row[cell.id]}
               </StyledTableCell>
             )
           } else {
@@ -183,6 +183,8 @@ export default function SortedTable<
               >
                 {cell.isButton && cell.button
                   ? cell.button({ handleButtonClick, id })
+                  : cell.transformFn
+                  ? cell.transformFn(row)
                   : row[cell.id]}
               </StyledTableCell>
             )

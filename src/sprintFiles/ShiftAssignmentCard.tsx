@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { EntityId } from '@reduxjs/toolkit'
 import ShiftInfoHeader from './ShiftInfoHeader'
 import SelectedUserComponent from './SelectedUserComponent'
-import AvailableUsersTable from './AvailableUsersTableV2'
+import AvailableUsersTable from './AvailableUsersTable'
 import { Days, House } from '@/types/schema'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
@@ -31,21 +31,6 @@ export const ShiftAssignmentCard = ({
   // const [unselect, setUnselect] = useState<boolean>(false)
   const [filteredUserIds, setFilteredUserIds] = useState<EntityId[]>([])
 
-  const dispatch = useDispatch()
-
-  const handleSelectedUserId = (userId: EntityId) => {
-    // console.log(userId)
-    dispatch(setSelectedUserId({ selectedUserId: userId }))
-    // setSelectedUserID(userId)
-    // setUnselect(false)
-  }
-
-  const handleUnselectedUserId = () => {
-    dispatch(setSelectedUserId({ selectedUserId: '' }))
-    // setSelectedUserID('')
-    // setUnselect(true)
-  }
-
   let content = null
   if (open) {
     content = (
@@ -65,13 +50,12 @@ export const ShiftAssignmentCard = ({
             />
           </DialogTitle>
           <DialogContent>
-            <SelectedUserComponent handleClick={handleUnselectedUserId} />
+            <SelectedUserComponent />
             {userData ? (
               <AvailableUsersTable
                 day={selectedDay}
                 houseID={authHouse.id}
                 shiftID={shiftId as string}
-                handleSelectedUserId={handleSelectedUserId}
                 handleEditShift={handleEditShift}
                 handleClose={handleClose}
                 // unselect={unselect}

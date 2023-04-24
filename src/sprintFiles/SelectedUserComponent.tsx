@@ -6,42 +6,38 @@ import { selectUserById, useGetUsersQuery } from '../features/user/userApiSlice'
 import { RootState } from '@/store/store'
 import { User } from '@/types/schema'
 import CloseButton from './CloseButton'
-import { selectSelectedUserId } from './userAssignmentSlice'
+import { selectSelectedUserId, setSelectedUserId } from './userAssignmentSlice'
 import { useEffect } from 'react'
 
-const SelectedUserComponent = ({
-  handleClick,
-}: {
-  handleClick: () => void
-}) => {
+const SelectedUserComponent = () => {
   // TODO: figure out why we needed to query the users here and hopefully remove it?
   const { data: users } = useGetUsersQuery({})
   const selectedUserId = useSelector(selectSelectedUserId)
+  const dispatch = useDispatch()
 
   const user: User = useSelector(
     (state: RootState) =>
       selectUserById(state, selectedUserId as EntityId) as User
   )
 
-  useEffect(() => {
-    console.log('UserID: ', selectedUserId)
-    console.log('User: ', user)
-  }, [user, selectedUserId])
+  const handleUnselectedUserId = () => {
+    dispatch(setSelectedUserId({ selectedUserId: '' }))
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container bgcolor={'#D1FAE5'}>
         <Grid xs={'auto'} md={'auto'} lg={'auto'}>
           {user && selectedUserId ? (
-            <Typography>
-              {user.preferredName ? user.preferredName : user.displayName}
-            </Typography>
+            <Typography>{user.displayName}</Typography>
           ) : (
             <Typography>No selected user</Typography>
           )}
         </Grid>
         <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
-          {selectedUserId ? <CloseButton handleClick={handleClick} /> : null}
+          {selectedUserId ? (
+            <CloseButton handleClick={handleUnselectedUserId} />
+          ) : null}
         </Grid>
       </Grid>
     </Box>
