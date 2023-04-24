@@ -146,6 +146,7 @@ const ScheduleTable = () => {
                 <TableCell style={{ minWidth: 200 }}>Sunday</TableCell>
                 {/* Add more cells as needed */}
               </TableRow>
+
               {/* Add more rows as needed */}
             </TableBody>
           </Table>
