@@ -16,7 +16,7 @@ import {
 } from '@/features/shift/shiftApiSlice'
 import { RootState } from '@/store/store'
 import SortedTable from '@/components/shared/tables/SortedTable'
-import { selectSelectedUserId, setSelectedUserId } from './userAssignmentSlice'
+import { selectSelectedUserId, setSelectedUserId } from '../userAssignmentSlice'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 
 type AvailableUsersTableProps = {

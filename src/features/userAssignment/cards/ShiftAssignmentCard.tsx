@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { EntityId } from '@reduxjs/toolkit'
-import ShiftInfoHeader from './ShiftInfoHeader'
-import SelectedUserComponent from './SelectedUserComponent'
-import AvailableUsersTable from './AvailableUsersTable'
+import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
+import SelectedUserComponent from '../SelectedUserComponent'
+import AvailableUsersTable from '../tables/AvailableUsersTable'
 import { Days, House } from '@/types/schema'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { useGetUsersQuery } from '@/features/user/userApiSlice'
-import { selectSelectedUserId, setSelectedUserId } from './userAssignmentSlice'
+import { selectSelectedUserId, setSelectedUserId } from '../userAssignmentSlice'
 
 export const ShiftAssignmentCard = ({
   shiftId,

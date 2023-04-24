@@ -14,9 +14,9 @@ import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
 import { Days, House } from '@/types/schema'
-import { ShiftAssignmentCard } from '@/sprintFiles/ShiftAssignmentCard'
+import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 import EditShiftCard from '@/features/shift/cards/EditShiftCard'
-import { setSelectedUserId } from '@/sprintFiles/userAssignmentSlice'
+import { setSelectedUserId } from '@/features/userAssignment/userAssignmentSlice'
 
 const filterOptions: Days[] = [
   'All',
