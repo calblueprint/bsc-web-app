@@ -4,7 +4,7 @@ const ManagerInformationTabContent = () => {
   return (
     <div>
       ManagerInformationTabContent
-      <DetailedToolTipBtn messagePopUp='testing' placement='right'/>
+      <DetailedToolTipBtn messagePopUp='Enter a custom message here!!!' placement='right'/>
     </div>
   )
 }
