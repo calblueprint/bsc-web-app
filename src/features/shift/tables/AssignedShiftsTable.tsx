@@ -5,8 +5,11 @@ import SortedTable from '@/components/shared/tables/SortedTable'
 import { HeadCell } from '@/interfaces/interfaces'
 
 const displayPossibleDays = (shift: Shift) => {
-  const ret = shift.possibleDays.join(', ')
-  console.log(ret)
+  const ret = shift.possibleDays
+    .map((day) => {
+      return day.slice(0, 2)
+    })
+    .join(', ')
   return ret
 }
 
