@@ -112,6 +112,13 @@ export type House = {
   address: string
   schedule: Record<string, string[]>
   userPINs: Record<string, string>
+  preferences: {
+    [key: string]: {
+      preferredBy: Array<string>
+      dislikedBy: Array<string>
+      isActive: boolean
+    }
+  }
 }
 
 // export enum Days {
@@ -148,4 +155,14 @@ export type RowOfCSV = {
   lastName: string
   houseID: string
   accountCreated: boolean
+}
+
+export type userPreferences = 'prefer' | 'dislike' | null
+
+export type ShiftPreferences = {
+  [key: string]: {
+    newPreference: string | null
+    savedPreference: string | null
+    hasChanged: boolean
+  }
 }

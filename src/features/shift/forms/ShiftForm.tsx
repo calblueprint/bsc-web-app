@@ -34,7 +34,11 @@ const ShiftSchema = Yup.object({
     .required('Name is required')
     .min(1, 'Name must have at least 1 characters'),
   description: Yup.string(),
-  possibleDays: Yup.array().of(Yup.string()),
+  possibleDays: Yup.array()
+    .of(Yup.string())
+    .test('notEmpty', 'Possible days is required', (value) => {
+      return value && value.length > 0
+    }),
   startTime: Yup.date().required('Start time is required'),
   endTime: Yup.date().required('End time is required'),
   category: Yup.string().required('Cagegory is required'),

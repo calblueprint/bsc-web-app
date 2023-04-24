@@ -4,6 +4,8 @@ import authReducer from '../features/auth/authSlice'
 import usersReducer from '../features/user/usersSlice'
 import userAvailabilityReducer from '../features/userAvailability/userAvailabilitySlice'
 import userAssignmentReducer from '@/sprintFiles/userAssignmentSlice'
+// import userShiftPreferencesReducer from '../features/userShiftPreferences/userShiftPreferencesSlice'
+import userShiftPreferencesReducer from '../features/userShiftPreferences/userShiftPreferencesSlice'
 import { apiSlice } from './api/apiSlice'
 // import authReducer from './slices/authSlice'
 
@@ -15,6 +17,7 @@ export const store = configureStore({
     users: usersReducer,
     userAvailability: userAvailabilityReducer,
     userAssignment: userAssignmentReducer,
+    userShiftPreferences: userShiftPreferencesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),

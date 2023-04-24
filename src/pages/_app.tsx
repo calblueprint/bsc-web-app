@@ -66,6 +66,22 @@ let theme = createTheme({
 theme = {
   ...theme,
   components: {
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#EFEFEF', //theme.palette.primary.light,
+          '& .MuiToggleButton-root': {
+            color: theme.palette.primary.main,
+            textTransform: 'uppercase',
+            backgroundColor: 'transparent',
+            '&.Mui-selected': {
+              color: theme.palette.secondary.main,
+              backgroundColor: theme.palette.primary.dark,
+            },
+          },
+        },
+      },
+    },
     MuiDrawer: {
       styleOverrides: {
         paper: {
@@ -86,6 +102,7 @@ theme = {
         },
       },
     },
+
     MuiTabs: {
       styleOverrides: {
         root: {
