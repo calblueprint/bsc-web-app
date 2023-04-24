@@ -77,16 +77,15 @@ const customBaseQuery: BaseQueryFn<
           //** Check weather the request is a collection or a document */
           if (isCollection) {
             //** Get the collection to be query */
-            // console.log('filter: ', params)
+            // console.log({ filter: { params, url } })
             let queryColl = collection(firestore, path)
             let queryRef: Query<DocumentData> | undefined = undefined
+            // console.log('hasFilter: ', hasFilter)
             if (hasFilter) {
               //** If the query is a collection and has a filter use where function */
               const { fieldPath, optStr, value } = params.filter
-              queryRef = query(
-                queryColl,
-                where(fieldPath, optStr, value.toLowerCase())
-              )
+              // console.log({ values: { fieldPath, optStr, value } })
+              queryRef = query(queryColl, where(fieldPath, optStr, value))
             }
             //** If the query is a collection, get the full collection from the firebase */
             // console.log(path)
@@ -135,7 +134,7 @@ const customBaseQuery: BaseQueryFn<
               id: snapshot.id,
             })
 
-            console.log(resObj)
+            // console.log(resObj)
             //** Return the resObj wrapped in a Response object */
             return { data: resObj }
           }

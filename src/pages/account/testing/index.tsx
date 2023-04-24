@@ -8,16 +8,17 @@ import {
   selectCurrentUser,
 } from '@/features/auth/authSlice'
 import { Typography } from '@mui/material'
-import { useGetAuthorizedUsersQuery } from '@/features/authorizedUser/authorizedUserApiSlice'
+import { useGetHouseAuthorizedUsersQuery } from '@/features/authorizedUser/authorizedUserApiSlice'
 import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 
 const TestingPage = () => {
   const authUser = useSelector(selectCurrentUser)
-  const { data: authHouseUsersData } = useGetAuthorizedUsersQuery('EUC')
+  const { data: authHouseUsersData } = useGetHouseAuthorizedUsersQuery('CLO')
   // console.log(authUser)
 
   useEffect(() => {
+    // console.log('Auth User', authHouseUsersData)
     if (authHouseUsersData) {
       console.log('Auth User', authHouseUsersData)
     }
