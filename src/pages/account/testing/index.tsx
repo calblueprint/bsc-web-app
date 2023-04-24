@@ -11,10 +11,12 @@ import { Typography } from '@mui/material'
 import { useGetHouseAuthorizedUsersQuery } from '@/features/authorizedUser/authorizedUserApiSlice'
 import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
+import { useGetHouseUsersQuery } from '@/features/user/userApiSlice'
 
 const TestingPage = () => {
   const authUser = useSelector(selectCurrentUser)
   const { data: authHouseUsersData } = useGetHouseAuthorizedUsersQuery('CLO')
+  const { data: houseUsers } = useGetHouseUsersQuery('EUC')
   // console.log(authUser)
 
   useEffect(() => {
@@ -23,6 +25,11 @@ const TestingPage = () => {
       console.log('Auth User', authHouseUsersData)
     }
   }, [authHouseUsersData])
+  useEffect(() => {
+    if (houseUsers) {
+      console.log('User', houseUsers)
+    }
+  }, [houseUsers])
 
   /**
    *  Here is an example of how I tested my ShiftInfoHeader component.
