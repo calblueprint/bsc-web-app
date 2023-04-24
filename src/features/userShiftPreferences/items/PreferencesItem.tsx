@@ -243,9 +243,9 @@ export default function PrefrencesItem(props: {
             }
           >
             {catogoryCollapseOpen ? (
-              <KeyboardArrowUpIcon />
-            ) : (
               <KeyboardArrowDownIcon />
+            ) : (
+              <KeyboardArrowRightIcon />
             )}
           </IconButton>
           <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
