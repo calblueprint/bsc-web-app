@@ -126,6 +126,8 @@ export interface HeadCell<
       | number[]
       | { day: number[] }[]
       | { taskID: number }[]
+      | { [key: string]: { startTime: string; endTime: string }[] }
+      | Record<string, string>[]
   }
 > {
   id: keyof T
@@ -135,6 +137,6 @@ export interface HeadCell<
   isButton?: boolean
   button?: React.FC<ButtonProps>
   align: 'left' | 'center' | 'right' | 'justify' | 'inherit' | undefined
-  transformFn?: (value: T) => string
-  complexTransformFn?: (a: T, b: string | number) => string
+  transformFn?: (value: T) => string | number
+  complexTransformFn?: (a: T, b: string | number) => string | number
 }

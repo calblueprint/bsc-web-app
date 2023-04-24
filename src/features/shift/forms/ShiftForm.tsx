@@ -163,7 +163,7 @@ const ShiftForm = ({
     const {
       name,
       category: categoryString,
-      hours,
+      hours: strHours,
       description,
       possibleDays,
       startTime: startTimeObject,
@@ -180,6 +180,8 @@ const ShiftForm = ({
     console.log('startTime:  ', startTimeObject)
     const startTime = startTimeObject // Number(startTimeObject.format('HHmm'))
     const endTime = endTimeObject //Number(endTimeObject.format('HHmm'))
+    const hours = Number(strHours)
+
     let category
     if (categoryString === undefined || categoryString === 'Uncategorized') {
       category = ''
@@ -216,6 +218,7 @@ const ShiftForm = ({
     data.shiftId = shiftId ? shiftId : ''
     // console.log('timeWindow:  ' + timeWindow.endTime)
     // console.log('timeWindowDisplay:  ' + timeWindowDisplay)
+    console.log('Type of: ', typeof Number(hours))
     // console.log('data: ', data)
     if (isNewShift || !shiftId) {
       result = await addNewShift(data)
