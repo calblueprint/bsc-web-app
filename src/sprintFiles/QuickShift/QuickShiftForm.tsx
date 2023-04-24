@@ -55,12 +55,12 @@ const ShiftSchema = Yup.object({
   possibleDays: Yup.array().of(Yup.string()),
   startTime: Yup.date().required('Start time is required'),
   endTime: Yup.date().required('End time is required'),
-  category: Yup.string().required('Cagegory is required'),
+  // category: Yup.string().required('Cagegory is required'),
   hours: Yup.number().required('Hours credit is required'),
   verificationBuffer: Yup.number(),
   assignedUser: Yup.string(),
   assignedDay: Yup.string(),
-  member: Yup.string(),
+  member: Yup.object(),
 })
 
 const daysList = [
@@ -151,9 +151,11 @@ const QuickShiftForm = ({
       assignedUser: string | undefined
       assignedDay: string
       member: string
+      targetUser: labeledUser
     },
     formikBag: FormikHelpers<any>
   ) => {
+    console.log('submitting')
     console.log('Submiting ShiftForm: ', values)
     const {
       name,
@@ -167,6 +169,7 @@ const QuickShiftForm = ({
       assignedUser,
       assignedDay,
       member,
+      targetUser,
     } = values
 
     const startTime = Number(startTimeObject.format('HHmm'))
@@ -198,28 +201,6 @@ const QuickShiftForm = ({
       verifiedAt: '',
       unverifiedAt: '',
       penaltyHours: 0,
-
-      // name,
-      // hours,
-      // date,
-      // description,
-      // timeWindow,
-      // verificationBuffer,
-      // timeWindowDisplay,
-      // assignedUser,
-      // assignedDay,
-
-      // id,
-      // shiftId = id,
-      // date,
-      // assignedUser
-      // status: string
-      // options: string
-      // verifiedBy: dayjs.Dayjs
-      // verifiedAt: dayjs.Dayjs
-      // unverifiedAt: dayjs.Dayjs
-      // penaltyHours: number
-      // jsonCopy: Shift //TODO : check if this fails
     }
     data.houseId = currentHouse.id
     data.shiftId = id ? id : ''
@@ -251,12 +232,12 @@ const QuickShiftForm = ({
 
   //Using this instead of setFieldValue in formik because of issues with the fields
   //Will use the specific date that a quick shift must be in.
-  const [userOptions, setUserOptions] = useState([''])
+  const [userOptions, setUserOptions] = useState(['', 'a', 'b', 'c', 'd'])
   type labeledUser = {
     label: string
     id: String
   }
-  const [targetUser, setTargetUser] = useState<labeledUser>()
+  const [targetUser, setTargetUser] = useState<labeledUser>(userOptions[0])
 
   useEffect(() => {
     // console.log({ ents: users?.entities, ids: users?.ids, targuser: targetUser, userOpt: Val: inputValue})
@@ -292,7 +273,7 @@ const QuickShiftForm = ({
         validationSchema={ShiftSchema}
         initialValues={{
           name: shift ? shift.name : emptyShift.name,
-          category: shift ? shift.category : emptyShift.category,
+          // category: shift ? shift.category : emptyShift.category,
           hours: shift ? shift.hours : emptyShift.hours,
           startTime: shift
             ? dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
@@ -312,11 +293,13 @@ const QuickShiftForm = ({
           assignedUser: shift ? shift.assignedUser : emptyShift.assignedUser,
           assignedDay: shift ? shift.assignedDay : emptyShift.assignedDay,
           member: { label: '', id: '' },
+          memberId: '',
         }}
         onSubmit={onSubmit}
       >
-        {({ isSubmitting, values, setFieldValue }) => {
-          console.log(values)
+        {({ isSubmitting, values, setFieldValue, errors }) => {
+          console.log({ values: values })
+          console.log({ errors: errors })
           return (
             <Form>
               <TextInput name="name" label="Shift Name" />
@@ -341,54 +324,27 @@ const QuickShiftForm = ({
                 />
               </LocalizationProvider>
               {targetUser != undefined ? (
-                <Field name="member" as={Autocomplete}>
-                  {({ fields }) => (
-                    <Autocomplete
-                      {...fields}
-                      options={userOptions}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="member" />
-                      )}
-                      // value={targetUser}
-                      // onChange={(e) => {
-                      //   setTargetUser(e)
-                      // }}
-
-                      // inputValue={inputValue}
-                      // onInputChange={(event, newInputValue) => {
-                      //   setInputValue(newInputValue)
-                      // }}
-                      // value={values.member.label}
-                      // onChange={(chosen) => {
-                      //   setFieldValue('member', chosen)
-                      // }}
-                    />
+                <Autocomplete
+                  disablePortal
+                  name="member"
+                  options={userOptions}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="member" />
                   )}
-                </Field>
-              ) : // <Autocomplete
-              //   disablePortal
-              //   id="combo-box-demo"
-              //   options={userOptions}
-              //   sx={{ width: 300 }}
-              //   renderInput={(params) => (
-              //     <TextField {...params} label="member" />
-              //   )}
-              //   // value={targetUser}
-              //   // onChange={(e) => {
-              //   //   setTargetUser(e)
-              //   // }}
-
-              //   // inputValue={inputValue}
-              //   // onInputChange={(event, newInputValue) => {
-              //   //   setInputValue(newInputValue)
-              //   // }}
-              //   // value={values.member.label}
-              //   // onChange={(chosen) => {
-              //   //   setFieldValue('member', chosen)
-              //   // }}
-              // />
-              null}
+                  value={undefined}
+                  // onChange={(e) => {
+                  //   setTargetUser(e)
+                  // }}
+                  inputValue={inputValue}
+                  onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue)
+                  }}
+                  onChange={(event: any, newValue: labeledUser) => {
+                    setFieldValue('member', newValue)
+                  }}
+                />
+              ) : null}
 
               <TextInput name="hours" label="Value" />
 
@@ -401,7 +357,7 @@ const QuickShiftForm = ({
                   fullWidth
                   variant="contained"
                   color="primary"
-                  disabled={isSubmitting}
+                  // disabled={isSubmitting}
                 >
                   {isNewShift || !shiftId ? 'Submit' : 'Update'}
                 </Button>
