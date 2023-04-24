@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
-import { Dictionary, EntityId } from '@reduxjs/toolkit'
+import { EntityId } from '@reduxjs/toolkit'
 import ShiftInfoHeader from './ShiftInfoHeader'
 import SelectedUserComponent from './SelectedUserComponent'
 import AvailableUsersTable from './AvailableUsersTableV2'
-import { Days, House, User } from '@/types/schema'
-import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
-import { useSelector } from 'react-redux'
-import {
-  selectCurrentHouse,
-  selectCurrentUser,
-} from '@/features/auth/authSlice'
+import { Days, House } from '@/types/schema'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { useGetUsersQuery } from '@/features/user/userApiSlice'
+import { selectSelectedUserId, setSelectedUserId } from './userAssignmentSlice'
 
 export const ShiftAssignmentCard = ({
   shiftId,
@@ -26,31 +23,28 @@ export const ShiftAssignmentCard = ({
   handleEditShift?: (shiftId: string) => void
   open: boolean
 }) => {
-  const authUser = useSelector(selectCurrentUser)
   const authHouse = useSelector(selectCurrentHouse) as House
   const { data: userData } = useGetUsersQuery(authHouse?.id)
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [dayFilter, setDayFilter] = useState<Days>('All')
-  const [selectedUserId, setSelectedUserID] = useState<EntityId>('')
-  const [unselect, setUnselect] = useState<boolean>(false)
+  // const [selectedUserId, setSelectedUserID] = useState<EntityId>('')
+  // const [unselect, setUnselect] = useState<boolean>(false)
   const [filteredUserIds, setFilteredUserIds] = useState<EntityId[]>([])
+
+  const dispatch = useDispatch()
 
   const handleSelectedUserId = (userId: EntityId) => {
     // console.log(userId)
-    setSelectedUserID(userId)
-    setUnselect(false)
+    dispatch(setSelectedUserId({ selectedUserId: userId }))
+    // setSelectedUserID(userId)
+    // setUnselect(false)
   }
 
   const handleUnselectedUserId = () => {
-    setSelectedUserID('')
-    setUnselect(true)
+    dispatch(setSelectedUserId({ selectedUserId: '' }))
+    // setSelectedUserID('')
+    // setUnselect(true)
   }
-
-  useEffect(() => {
-    if (unselect) {
-      handleUnselectedUserId()
-    }
-  }, [unselect])
 
   let content = null
   if (open) {
@@ -71,10 +65,7 @@ export const ShiftAssignmentCard = ({
             />
           </DialogTitle>
           <DialogContent>
-            <SelectedUserComponent
-              userId={selectedUserId}
-              handleClick={handleUnselectedUserId}
-            />
+            <SelectedUserComponent handleClick={handleUnselectedUserId} />
             {userData ? (
               <AvailableUsersTable
                 day={selectedDay}
@@ -83,7 +74,7 @@ export const ShiftAssignmentCard = ({
                 handleSelectedUserId={handleSelectedUserId}
                 handleEditShift={handleEditShift}
                 handleClose={handleClose}
-                unselect={unselect}
+                // unselect={unselect}
               />
             ) : null}
           </DialogContent>

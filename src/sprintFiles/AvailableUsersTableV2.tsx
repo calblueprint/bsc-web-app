@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
 import Grid from '@mui/material/Unstable_Grid2'
-import { Shift, User } from '@/types/schema'
+import { House, Shift, User } from '@/types/schema'
 import { HeadCell } from '@/interfaces/interfaces'
 import {
   useGetUsersQuery,
@@ -17,16 +17,13 @@ import {
 import { RootState } from '@/store/store'
 import SortedTable from '@/components/shared/tables/SortedTable'
 import { selectSelectedUserId, setSelectedUserId } from './userAssignmentSlice'
-
-// waiting on sorted table to only allow selecting 1 checkbox at a time
-// pass in something that's been selected
-// somehow need to refetch on update
+import { selectCurrentHouse } from '@/features/auth/authSlice'
 
 type AvailableUsersTableProps = {
   day: string
   houseID: string
   shiftID: string
-  unselect: boolean
+  // unselect: boolean
   handleSelectedUserId: (userId: string) => void
   handleClose: () => void
   handleEditShift?: (shiftId: string) => void
@@ -91,7 +88,6 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   handleSelectedUserId,
   handleEditShift,
   handleClose,
-  unselect,
 }: AvailableUsersTableProps) => {
   // TODO:
   // - handle close
@@ -106,16 +102,19 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
       selectShiftById(houseID)(state, shiftID as EntityId) as Shift
   )
 
+  // shiftObject.hours = shiftObject.hours as number
+
   const selectedUserId = useSelector(selectSelectedUserId)
   const dispatch = useDispatch()
 
   // define state variables
+  const authHouse = useSelector(selectCurrentHouse) as House
   const [listOfUserIds, setLitsOfUserIds] = useState<EntityId[]>([])
   const [disableTable, setDisableTable] = useState(
     selectedUserId ? true : false
   )
 
-  const oringalAssignedUser = shiftObject.assignedUser
+  const originalAssignedUser = shiftObject.assignedUser
 
   // Define the user queries
   const {
@@ -146,13 +145,9 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   ] = useUpdateUserMutation()
 
   const handleSelectUser = (event: React.MouseEvent<unknown>, id: EntityId) => {
-    dispatch(setSelectedUserId({ selectedUserId: id as string }))
-    setDisableTable(true)
-  }
-
-  const handleDeselectUser = () => {
-    dispatch(setSelectedUserId({ selectedUserId: '' }))
-    setDisableTable(false)
+    if (!disableTable) {
+      dispatch(setSelectedUserId({ selectedUserId: id as string }))
+    }
   }
 
   useEffect(() => {
@@ -163,11 +158,73 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
     }
   }, [isUsersDataSuccess, usersData])
 
-  //   useEffect(() => {
-  //     if (unselect) {
-  //       handleDeselectUser()
-  //     }
-  //   }, [unselect])
+  useEffect(() => {
+    if (selectedUserId) {
+      setDisableTable(true)
+    } else {
+      setDisableTable(false)
+    }
+  }, [selectedUserId])
+
+  const assignSelectedUser = () => {
+    const userObject = usersData?.entities[selectedUserId]
+    const shiftData = {
+      data: { assignedUser: selectedUserId, assignedDay: day },
+      houseId: authHouse.houseID,
+      shiftId: shiftObject.id,
+    }
+    console.log("USER'S HOURS ASSIGNED: ", userObject?.hoursAssigned)
+    console.log('SHIFTS HOURS: ', shiftObject.hours as number)
+    const userData = {
+      data: {
+        hoursAssigned:
+          userObject && userObject.hoursAssigned
+            ? userObject.hoursAssigned + shiftObject.hours
+            : (shiftObject.hours as number),
+      },
+      userId: selectedUserId,
+    }
+    console.log('NUMBER OF HOURS ASSIGNED', userData.data.hoursAssigned)
+    updateShift(shiftData)
+    updateUser(userData)
+  }
+
+  const unassignOriginalUser = () => {
+    const userObject = usersData?.entities[originalAssignedUser]
+    const shiftData = {
+      data: { assignedUser: '', assignedDay: '' },
+      houseId: authHouse.houseID,
+      shiftId: shiftObject.id,
+    }
+    const userData = {
+      data: {
+        hoursAssigned: userObject
+          ? userObject.hoursAssigned - (shiftObject.hours as number)
+          : 0,
+      },
+      userId: originalAssignedUser,
+    }
+    updateShift(shiftData)
+    updateUser(userData)
+  }
+
+  const handleSubmit = () => {
+    if (!originalAssignedUser && selectedUserId) {
+      assignSelectedUser()
+    } else if (!originalAssignedUser && !selectedUserId) {
+      // do nothing
+    } else if (originalAssignedUser && selectedUserId) {
+      if (originalAssignedUser === selectedUserId) {
+        // do nothing
+      } else {
+        unassignOriginalUser()
+        assignSelectedUser()
+      }
+    } else if (originalAssignedUser && !selectedUserId) {
+      unassignOriginalUser()
+    }
+    handleClose()
+  }
 
   return (
     <React.Fragment>
@@ -200,11 +257,7 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
         </Grid>
         {/* <Grid xs /> */}
         <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={() => console.log('HELLO GREGY')}
-          >
+          <Button variant="contained" fullWidth onClick={handleSubmit}>
             Save
           </Button>
         </Grid>

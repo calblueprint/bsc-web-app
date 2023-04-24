@@ -9,13 +9,14 @@ import {
   selectCurrentHouse,
   selectCurrentUser,
 } from '@/features/auth/authSlice'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
 import { Days, House } from '@/types/schema'
 import { ShiftAssignmentCard } from '@/sprintFiles/ShiftAssignmentCard'
 import EditShiftCard from '@/features/shift/cards/EditShiftCard'
+import { setSelectedUserId } from '@/sprintFiles/userAssignmentSlice'
 
 const filterOptions: Days[] = [
   'All',
@@ -44,6 +45,7 @@ const ManagerUnassignedTabContent = () => {
 
   const [openEditShift, setOpenEditShift] = useState<boolean>(false)
   const [editShiftId, setEditShiftId] = useState<string>('')
+  const dispatch = useDispatch()
 
   const handleSearchChange = (value: string) => {
     // console.log('search: ' + value)
@@ -68,6 +70,7 @@ const ManagerUnassignedTabContent = () => {
 
   const handleClose = () => {
     setOpen(false)
+    dispatch(setSelectedUserId({ selectedUserId: '' }))
   }
 
   const handleOpen = () => {

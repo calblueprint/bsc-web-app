@@ -154,7 +154,7 @@ const ShiftForm = ({
     const {
       name,
       category: categoryString,
-      hours,
+      hours: strHours,
       description,
       possibleDays,
       startTime: startTimeObject,
@@ -164,6 +164,7 @@ const ShiftForm = ({
       assignedDay,
     } = values
 
+    const hours = Number(strHours)
     const startTime = Number(startTimeObject.format('HHmm'))
     const endTime = Number(endTimeObject.format('HHmm'))
     let category
@@ -197,6 +198,7 @@ const ShiftForm = ({
     }
     data.houseId = currentHouse.id
     data.shiftId = shiftId ? shiftId : ''
+    console.log('Type of: ', typeof Number(hours))
     // console.log('data: ', data)
     if (isNewShift || !shiftId) {
       result = await addNewShift(data)
