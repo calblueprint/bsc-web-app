@@ -17,8 +17,41 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: `users`,
         method: 'GET',
-        data: { body: 'hello world' },
+
         params: { queryType: 'users' },
+        // validateStatus: (response, result) => {
+        //   console.log('response: ', response, ' -- result: ', result)
+        //   return response.status === 200 && !result.isError
+        // },
+      }),
+      // keepUnusedDataFor: 60,
+      transformResponse: (responseData: User[]) => {
+        // console.log('[transformResponse] responseData: ', responseData)
+        const loaddedUsers = responseData.map((entity) => {
+          // console.log('[loaddedUsers] entity: ', entity)
+          entity.id = entity.id
+          return entity
+        })
+        console.debug(loaddedUsers)
+        return usersAdapter.setAll(initialState, loaddedUsers)
+      },
+      providesTags: (result) => {
+        if (result?.ids) {
+          return [
+            { type: 'User', id: 'LIST' },
+            ...result.ids.map((id) => ({ type: 'User' as const, id })),
+          ]
+        } else return [{ type: 'User', id: 'LIST' }]
+      },
+    }),
+    getHouseUsers: builder.query({
+      query: (value: string) => ({
+        url: `users`,
+        method: 'GET',
+
+        params: {
+          filter: { fieldPath: 'houseID', optStr: '==', value },
+        },
         // validateStatus: (response, result) => {
         //   console.log('response: ', response, ' -- result: ', result)
         //   return response.status === 200 && !result.isError
@@ -118,6 +151,7 @@ export const {
   useGetUsersQuery,
   useAddNewUserMutation,
   useUpdateUserMutation,
+  useGetHouseUsersQuery,
   // useUpdateUserAvailabilityMutation,
   //   useDeleteUserMutation,
 } = usersApiSlice

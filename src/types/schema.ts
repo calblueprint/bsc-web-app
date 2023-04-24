@@ -51,6 +51,7 @@ export type User = {
 }
 
 export type AuthorizedUser = {
+  id: string
   applicationID: string
   email: string
   firstName: string
