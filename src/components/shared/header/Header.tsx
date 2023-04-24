@@ -129,7 +129,7 @@ const Header = (props: HeaderProps) => {
       <AppBar
         component="div"
         color="secondary"
-        position="static"
+        position="sticky"
         elevation={0}
         sx={{ zIndex: 0 }}
       >

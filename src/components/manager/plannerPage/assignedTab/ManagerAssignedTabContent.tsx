@@ -15,6 +15,7 @@ import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
 import { Days, House } from '@/types/schema'
+import ScheduleTable from '@/features/tentativeSchedule/tables/ScheduleTable'
 
 const filterOptions: Days[] = [
   'All',
@@ -113,6 +114,7 @@ const ManagerAssignedTabContent = () => {
           shiftEntities={shiftData?.entities}
         />
       ) : null}
+      <ScheduleTable />
     </React.Fragment>
   )
 }

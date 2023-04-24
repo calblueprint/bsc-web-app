@@ -15,6 +15,8 @@ import { useTheme } from '@mui/material/styles'
 import Copyright from '@/components/shared/Copyright'
 import NavBar from '@/components/shared/navBar/NavBar'
 import Header from '@/components/shared/header/Header'
+import { useDispatch } from 'react-redux'
+import { setDrawerWidth } from '@/features/user/usersSlice'
 
 type Props = {
   children: ReactNode
@@ -30,6 +32,8 @@ const drawerWidth = 230 //256
 export default function PrivateLayout({ children }: Props) {
   /** Materials UI styles */
   const theme = useTheme()
+
+  const dispatch = useDispatch()
   // TODO: Add description
   const [mobileOpen, setMobileOpen] = React.useState(false)
 
@@ -40,6 +44,10 @@ export default function PrivateLayout({ children }: Props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
   }
+
+  useEffect(() => {
+    dispatch(setDrawerWidth(isSmUp))
+  }, [isSmUp])
 
   //TODO: Delete after testing ******************************
   // useEffect(() => {
