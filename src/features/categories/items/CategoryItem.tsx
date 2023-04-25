@@ -46,10 +46,37 @@ const CategoryItem = (props: CategoryItemProps) => {
   //** hook to dispatch redux actions */
   const dispatch = useDispatch()
 
+  const handleCategoryToggle = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement
+    const targetClassList = target.classList
+    // const targetId = target.id
+
+    // console.log(targetClassList)
+    // console.log(targetId)
+
+    // Check if the target element has a class or ID that identifies it as the category box
+    if (
+      targetClassList.contains('MuiBox-root') ||
+      // targetId === 'MuiBox-root' ||
+      targetClassList.contains('MuiTypography-root')
+    ) {
+      dispatch(
+        setIsCategoryOpen({
+          isCategoryOpen: { [category]: !isCategoryOpen },
+        })
+      )
+    }
+  }
+
   const item = (
     <React.Fragment>
       <Box marginBottom={2} component={Paper}>
-        <Box display={'flex'} paddingTop={2} paddingBottom={1}>
+        <Box
+          display={'flex'}
+          paddingTop={2}
+          paddingBottom={1}
+          onClick={(event) => handleCategoryToggle(event)}
+        >
           <IconButton
             aria-label="expand row"
             size="small"

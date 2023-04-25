@@ -130,26 +130,35 @@ const DeleteCategory = (props: DeleteButtonProps) => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              marginBottom={3}
-            >
-              {`This action will delete ${category} Category and Uncategorized all its shifts`}
-            </Typography>
-
-            <Button
-              onClick={handleDeleteCategory}
-              variant="contained"
-              sx={{ marginRight: 2 }}
-            >
-              Confirm
-            </Button>
-            <Button onClick={handleClose} variant="outlined">
-              Cancel
-            </Button>
+          <Box sx={style} display={'flex'} flexDirection={'column'}>
+            <Box>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+                marginBottom={3}
+              >
+                {`This action will delete the "${category}" category and move all its shifts to "Uncategorized."`}
+              </Typography>
+            </Box>
+            <Box display={'flex'}>
+              <Button
+                fullWidth
+                sx={{ marginRight: 1 }}
+                onClick={handleClose}
+                variant="outlined"
+              >
+                Cancel
+              </Button>
+              <Button
+                fullWidth
+                sx={{ marginLeft: 1 }}
+                onClick={handleDeleteCategory}
+                variant="contained"
+              >
+                Confirm
+              </Button>
+            </Box>
           </Box>
         </Modal>
       </div>
