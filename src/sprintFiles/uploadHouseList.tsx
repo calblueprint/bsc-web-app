@@ -11,12 +11,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import { Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import { useGetAuthorizedUsersQuery, useAddNewAuthorizedUserMutation, useUpdateAuthorizedUserMutation } from '@/features/authorizedUser/authorizedUserApiSlice';
+import { useGetAuthorizedUsersQuery, useGetHouseAuthorizedUsersQuery, useAddNewAuthorizedUserMutation, useUpdateAuthorizedUserMutation } from '@/features/authorizedUser/authorizedUserApiSlice';
 import { AuthorizedUser } from '@/types/schema';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowRight'
 
 
 let timer = undefined;
@@ -91,6 +91,9 @@ const addUserTableStyle = {
     borderWidth: .5
 }
 
+const footerBtnStyle = {float: 'right', marginTop: 2.5, marginRight:6}
+const footerBackStyle = {float: 'right',marginTop: 2.5, }
+
 const UploadHouseList = () => {
     //usestates
     const [fileHolder, setFileHolder] = useState<File>()
@@ -131,7 +134,7 @@ const UploadHouseList = () => {
     const [updatePreviousAuthorizedUser] = useUpdateAuthorizedUserMutation();
     const allAuthUsers = useGetAuthorizedUsersQuery([]);
 
-    
+    console.log("showconfirmation", showConfirmation)
     const handleAddExpand = () => {
         setIsExpandedAdd(!isExpandedAdd)
     }
@@ -184,7 +187,7 @@ const UploadHouseList = () => {
     // useEffect that parses csv file, and and updates progress bar
     useEffect(() => {
         //checks if fileHolder has a file in it
-        
+        console.log("progress", progress)
         if (fileHolder) {
             //i dont htink htis works correctly but its supposed to time how long this useEffect takes lol
            timer = setInterval(() => {
@@ -218,10 +221,11 @@ const UploadHouseList = () => {
             complete: function () {
                 setNewUsers(userHolder)
             },
+            
           })
+          setProgress(100);
         }else {
             clearInterval(timer);
-            setProgress(0);
           }
     }, [fileHolder])
     //
@@ -256,15 +260,16 @@ const UploadHouseList = () => {
             const toBeAdded: AuthorizedUser[] = []
             const oldMemIds = prevMemNums
             const toBeDeleted: AuthorizedUser[] = []
-            const toBeUpdated: AuthorizedUser[] = [{
-                firstName: "Shawn",
-                lastName: "Mendes",
-                email: "shawn@gmail.com",
-                applicationID: "101120",
-                accountCreated: false,
-                houseID: 'EUC',
-                id: 'tSHkG0qmlbxNbV4heCQA'
-            }]
+            const toBeUpdated: AuthorizedUser[] = []
+            // [{
+            //     firstName: "Shawn",
+            //     lastName: "Mendes",
+            //     email: "shawn@gmail.com",
+            //     applicationID: "101120",
+            //     accountCreated: false,
+            //     houseID: 'EUC',
+            //     id: 'tSHkG0qmlbxNbV4heCQA'
+            // }]
             
             
             //loops throught the uploaded members and checks if they were already in the firebase
@@ -296,9 +301,6 @@ const UploadHouseList = () => {
                 }
                 
             })
-            console.log("toBeupdate", toBeUpdated)
-            console.log("To be added", toBeAdded)
-            console.log("to be deleted", toBeDeleted)
             setUsersToAdd(toBeAdded)
             setDelUsers(toBeDeleted)
             setShowConfirmation(true)
@@ -319,6 +321,11 @@ const UploadHouseList = () => {
         setDelUsers(undefined)
         setUpdateUsers(undefined)
     }
+
+    const importBack = () => {
+        setShowConfirmation(false)
+    }
+    
     
     //change to auth users when you get the chacne
     const updateAuthUsers = () => {
@@ -389,11 +396,11 @@ const UploadHouseList = () => {
                                         Members To Be Added ({usersToAdd?.length + updateUsers?.length})
                                         <IconButton sx={{ marginLeft: "auto",}} onClick={handleAddExpand}>
                                             {isExpandedAdd ? (
-                                                <KeyboardArrowDownIcon
+                                                <KeyboardArrowUpIcon
                                                     sx={{ fontSize: 20, color: 'black'  }}
                                                 />
                                                 ) : (
-                                                <KeyboardArrowRightIcon
+                                                <KeyboardArrowDownIcon
                                                     sx={{ fontSize: 20, color: 'black', }}
                                                 />
                                             )}
@@ -428,11 +435,11 @@ const UploadHouseList = () => {
                                         Members To Be Removed ({delUsers?.length})
                                         <IconButton onClick={handleRemoveExpand}>
                                             {isExpandedRemove ? (
-                                                <KeyboardArrowDownIcon
-                                                    sx={{ fontSize: 20, color: 'black' }}
+                                                <KeyboardArrowUpIcon
+                                                    sx={{ fontSize: 20, color: 'black'  }}
                                                 />
                                                 ) : (
-                                                <KeyboardArrowRightIcon
+                                                <KeyboardArrowDownIcon
                                                     sx={{ fontSize: 20, color: 'black' }}
                                                 />
                                             )}
@@ -480,7 +487,7 @@ const UploadHouseList = () => {
                             <Box>
                                 <Container sx={uploadingStyle}>
                                     <Container sx={{display: "flex", flexDirection: 'column', alignItems: 'baseline'}}>
-                                        
+                                    <CloseIcon sx={{alignSelf: "flex-end", marginTop: 2,  fontSize:18,  "&:hover": {cursor: 'pointer'}}} onClick={resetAllStates}/>
                                         <DescriptionOutlinedIcon sx={{fontSize: 40}}/>
                                     
                                     
@@ -494,6 +501,7 @@ const UploadHouseList = () => {
                                         <Typography sx={{alignSelf: "flex-end"}}>
                                             {progress == 100 ? "Done": "Uploading..."}
                                         </Typography>
+                                        
                                     </Container>
                                     <LinearProgress sx={{ borderRadius: 3, blockSize: 10, color: 'blue'}} variant="determinate" value={progress} />
                                 </Container>
@@ -506,14 +514,28 @@ const UploadHouseList = () => {
 
                 
                 <Box sx={disabledFooter}>
+
                     {progress == 100 ? 
-                        <Button variant="contained" sx={{float: 'right', margin: 2.5, marginRight:6}}  onClick={() => showConfirmation ?  updateAuthUsers() : compareMembers()}>
-                            {showConfirmation ?  "Import":"Next"}
-                        </Button>
-                    :
-                        <Button variant="contained" disabled sx={{float: 'right', margin: 2.5, marginRight:6}} >
-                            Next
-                        </Button>
+                        <Container>
+                            <Button variant="contained" sx={footerBtnStyle}  onClick={() => showConfirmation ?  updateAuthUsers() : compareMembers()}>
+                                {showConfirmation ?  "Import":"Next"}
+                            </Button>
+                            <Button variant="text" sx={footerBackStyle} onClick={resetAllStates}> Back</Button>
+                            
+                        </Container>
+                        
+                    :   <Container>
+                            <Button variant="contained" disabled sx={footerBtnStyle} >
+                                Next
+                            </Button>
+                            {fileHolder ? 
+                                <Button variant="text" sx = {footerBackStyle} onClick={resetAllStates}>Back</Button>
+                            : 
+                                <></>
+                            }
+                            
+                            
+                        </Container>
                     }
                 </Box>
 
