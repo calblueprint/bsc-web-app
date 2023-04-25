@@ -1,9 +1,5 @@
 import { Formik, Form, FormikHelpers } from 'formik'
-import { Stack, Button } from '@mui/material'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker'
-
+import { Stack, Button, Box } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import * as Yup from 'yup'
 import {
@@ -26,6 +22,14 @@ import {
   selectCurrentHouse,
   selectCurrentUser,
 } from '@/features/auth/authSlice'
+import TimeSelectField from '@/components/shared/forms/TimeSelectField'
+
+//** Custom Functions */
+import {
+  generateTimeOptions,
+  generateTimeOptionsIndex,
+} from '../../../utils/utils'
+import TimeRangeComponent from '@/components/shared/forms/TimeRangeComponent'
 
 //** Yup allows us to define a schema, transform a value to match, and/or assert the shape of an existing value. */
 //** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. */
@@ -34,9 +38,15 @@ const ShiftSchema = Yup.object({
     .required('Name is required')
     .min(1, 'Name must have at least 1 characters'),
   description: Yup.string(),
-  possibleDays: Yup.array().of(Yup.string()),
-  startTime: Yup.date().required('Start time is required'),
-  endTime: Yup.date().required('End time is required'),
+  possibleDays: Yup.array()
+    .of(Yup.string())
+    .test('notEmpty', 'Possible days is required', (value) => {
+      return value && value.length > 0
+    }),
+  // startTime: Yup.date().required('Start time is required'),
+  // endTime: Yup.date().required('End time is required'),
+  startTime: Yup.string().required('Start time is required'),
+  endTime: Yup.string().required('End time is required'),
   category: Yup.string().required('Cagegory is required'),
   hours: Yup.number().required('Hours credit is required'),
   verificationBuffer: Yup.number(),
@@ -60,13 +70,17 @@ const emptyShift = {
   name: '',
   category: '',
   possibleDays: [],
-  startTime: dayjs('2023-04-17T12:00'),
-  endTime: dayjs('2023-04-17T18:30'),
-  hours: 0,
+  startTime: '1200', //dayjs('2023-04-17T12:00'),
+  endTime: '1600', //dayjs('2023-04-17T18:30'),
+  hours: 2,
   despription: '',
-  verificationBuffer: 0,
+  verificationBuffer: 8,
   assignedUser: '',
   assignedDay: '',
+}
+
+type TimeOptions = {
+  [key: string]: string
 }
 
 const ShiftForm = ({
@@ -79,6 +93,8 @@ const ShiftForm = ({
   isNewShift: boolean
 }) => {
   // const authUser = useSelector(selectCurrentUser) as User
+  const timeOptions: TimeOptions = generateTimeOptions()
+  const timeOptionsIndex: string[] = generateTimeOptionsIndex()
   const currentHouse = useSelector(selectCurrentHouse) as House
 
   //** House shifts */
@@ -93,27 +109,14 @@ const ShiftForm = ({
   )
 
   //** Holds the house shifts categories */
-  const [houseCategories, setHouseCategories] = useState<string[]>([
-    'Uncategorized',
-  ])
+  const [houseCategories, setHouseCategories] = useState<string[]>()
 
   //** Get the house categories */
   useEffect(() => {
-    // console.log('currentHouse: ', currentHouse)
-    // console.log('shiftsData: ', shiftsData)
-    if (shiftsData && isShiftsSuccess) {
-      // console.log('shiftsData: ', shiftsData)
-      const categories = [...houseCategories]
-      shiftsData.ids.forEach((id) => {
-        const category = shiftsData.entities[id]?.category
-        if (category && !categories.includes(category)) {
-          categories.push(category)
-        }
-      })
-      // console.log('Categories: ', categories)
-      setHouseCategories(categories)
+    if (currentHouse) {
+      setHouseCategories(currentHouse.categories)
     }
-  }, [shiftsData, isShiftsSuccess, houseCategories])
+  }, [currentHouse])
 
   //* Get API helpers to create or update a shift
   const [
@@ -135,13 +138,19 @@ const ShiftForm = ({
     },
   ] = useUpdateShiftMutation()
 
+  const [error, setError] = useState(false)
+
+  const handleError = (value: boolean) => {
+    setError(value)
+  }
+
   const onSubmit = async (
     values: {
       name: string
       category: string
       hours: number
-      startTime: Dayjs
-      endTime: Dayjs
+      startTime: string //Dayjs
+      endTime: string //Dayjs
       possibleDays: string[]
       description: string
       verificationBuffer: number
@@ -154,7 +163,7 @@ const ShiftForm = ({
     const {
       name,
       category: categoryString,
-      hours,
+      hours: strHours,
       description,
       possibleDays,
       startTime: startTimeObject,
@@ -164,8 +173,15 @@ const ShiftForm = ({
       assignedDay,
     } = values
 
-    const startTime = Number(startTimeObject.format('HHmm'))
-    const endTime = Number(endTimeObject.format('HHmm'))
+    if (error) {
+      console.log('[ERROR]: Cannot submit with errors: ')
+      return
+    }
+    console.log('startTime:  ', startTimeObject)
+    const startTime = startTimeObject // Number(startTimeObject.format('HHmm'))
+    const endTime = endTimeObject //Number(endTimeObject.format('HHmm'))
+    const hours = Number(strHours)
+
     let category
     if (categoryString === undefined || categoryString === 'Uncategorized') {
       category = ''
@@ -179,9 +195,12 @@ const ShiftForm = ({
 
     // const dayString = possibleDays.join('')
     let result
-    const timeWindow = { startTime, endTime }
+    const timeWindow = {
+      startTime: Number(startTime),
+      endTime: Number(endTime),
+    }
     const timeWindowDisplay =
-      formatMilitaryTime(startTime) + ' - ' + formatMilitaryTime(endTime)
+      timeOptions[startTime] + ' - ' + timeOptions[endTime]
     const data = { data: {}, houseId: '', shiftId: '' }
     data.data = {
       name,
@@ -197,6 +216,9 @@ const ShiftForm = ({
     }
     data.houseId = currentHouse.id
     data.shiftId = shiftId ? shiftId : ''
+    // console.log('timeWindow:  ' + timeWindow.endTime)
+    // console.log('timeWindowDisplay:  ' + timeWindowDisplay)
+    console.log('Type of: ', typeof Number(hours))
     // console.log('data: ', data)
     if (isNewShift || !shiftId) {
       result = await addNewShift(data)
@@ -217,97 +239,95 @@ const ShiftForm = ({
 
   return (
     <>
-      <Formik
-        validationSchema={ShiftSchema}
-        initialValues={{
-          name: shift ? shift.name : emptyShift.name,
-          category: shift ? shift.category : emptyShift.category,
-          hours: shift ? shift.hours : emptyShift.hours,
-          startTime: shift
-            ? dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
-            : emptyShift.startTime,
-          endTime: shift
-            ? dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
-            : emptyShift.endTime,
-          possibleDays: shift
-            ? shift.possibleDays
+      {houseCategories && houseCategories.length ? (
+        <Formik
+          validationSchema={ShiftSchema}
+          initialValues={{
+            name: shift ? shift.name : emptyShift.name,
+            category: shift ? shift.category : emptyShift.category,
+            hours: shift ? shift.hours : emptyShift.hours,
+            startTime: shift
+              ? shift.timeWindow.startTime.toString() //dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
+              : emptyShift.startTime,
+            endTime: shift
+              ? shift.timeWindow.endTime.toString() //dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
+              : emptyShift.endTime,
+            possibleDays: shift
               ? shift.possibleDays
-              : []
-            : emptyShift.possibleDays,
-          description: shift ? shift.description : emptyShift.despription,
-          verificationBuffer: shift
-            ? shift.verificationBuffer
-            : emptyShift.verificationBuffer,
-          assignedUser: shift ? shift.assignedUser : emptyShift.assignedUser,
-          assignedDay: shift ? shift.assignedDay : emptyShift.assignedDay,
-        }}
-        onSubmit={onSubmit}
-      >
-        {({ isSubmitting, values, setFieldValue }) => (
-          <Form>
-            <TextInput name="name" label="Shift Name" />
+                ? shift.possibleDays
+                : []
+              : emptyShift.possibleDays,
+            description: shift ? shift.description : emptyShift.despription,
+            verificationBuffer: shift
+              ? shift.verificationBuffer
+              : emptyShift.verificationBuffer,
+            assignedUser: shift ? shift.assignedUser : emptyShift.assignedUser,
+            assignedDay: shift ? shift.assignedDay : emptyShift.assignedDay,
+          }}
+          onSubmit={onSubmit}
+        >
+          {({ isSubmitting, values, setFieldValue }) => (
+            <Form>
+              <TextInput name="name" label="Shift Name" />
 
-            <SelectInput
-              name="category"
-              label="Category"
-              labelid="category"
-              id="category"
-              options={houseCategories}
-              multiselect={false}
-            />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <MobileTimePicker
-                label="Start Window Time"
-                minutesStep={30}
-                value={values.startTime}
-                onChange={(newValue) => setFieldValue('startTime', newValue)}
+              <SelectInput
+                name="category"
+                label="Category"
+                labelid="category"
+                id="category"
+                options={houseCategories}
+                multiselect={false}
               />
-              <MobileTimePicker
-                label="End Window Time"
-                minutesStep={30}
-                value={values.endTime}
-                onChange={(newValue) => {
-                  setFieldValue('endTime', newValue)
-                }}
+
+              <Box display={'flex'}>
+                <TimeRangeComponent
+                  startTimeValue={values.startTime}
+                  endTimeValue={values.endTime}
+                  setFieldValue={setFieldValue}
+                  setError={handleError}
+                />
+                <Box marginRight={2}>
+                  <TextInput name="hours" label="Credit Hours For Shift" />
+                </Box>
+                <Box>
+                  <TextInput name="verificationBuffer" label="Buffer Hours" />
+                </Box>
+              </Box>
+
+              <SelectInput
+                name="possibleDays"
+                label="Posible Days"
+                labelid="possibleDays"
+                id="possibleDays"
+                options={daysList}
+                multiselect={true}
               />
-            </LocalizationProvider>
-
-            <TextInput name="hours" label="Credit Hours For Shift" />
-
-            <TextInput name="verificationBuffer" label="Buffer Hours" />
-
-            <SelectInput
-              name="possibleDays"
-              label="Posible Days"
-              labelid="possibleDays"
-              id="possibleDays"
-              options={daysList}
-              multiselect={true}
-            />
-
-            <TextInput name="description" label="Description" />
-            <Stack direction="row" alignItems="center" spacing={2}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                disabled={isSubmitting}
-              >
-                {isNewShift || !shiftId ? 'Submit' : 'Update'}
-              </Button>
-              <Button
-                fullWidth
-                variant="outlined"
-                color="primary"
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-            </Stack>
-          </Form>
-        )}
-      </Formik>
+              <Box marginBottom={2}>
+                <TextInput name="description" label="Description" />
+              </Box>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  disabled={isSubmitting || error}
+                >
+                  {isNewShift || !shiftId ? 'Submit' : 'Update'}
+                </Button>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Form>
+          )}
+        </Formik>
+      ) : null}
     </>
   )
 }

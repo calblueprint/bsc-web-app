@@ -50,9 +50,18 @@ export type User = {
   runningTotalPenatlyHours: number
 }
 
+export type AuthorizedUser = {
+  applicationID: string
+  email: string
+  firstName: string
+  lastName: string
+  houseID: string
+  accountCreated: boolean
+}
+
 export type Shift = {
   // optional id attribute for table stuff
-  id?: string
+  id: string
   // Name of the shift
   name: string //! Form Item
   // ID of the shift (not stored in Firebase, attached to shift)
@@ -99,10 +108,18 @@ export type House = {
   id: string
   name: string
   houseID: string
-  categories: Record<string, string[]>
+  // categories: Record<string, string[]>
+  categories: string[]
   address: string
   schedule: Record<string, string[]>
   userPINs: Record<string, string>
+  preferences: {
+    [key: string]: {
+      preferredBy: Array<string>
+      dislikedBy: Array<string>
+      isActive: boolean
+    }
+  }
 }
 
 // export enum Days {
@@ -139,4 +156,14 @@ export type RowOfCSV = {
   lastName: string
   houseID: string
   accountCreated: boolean
+}
+
+export type userPreferences = 'prefer' | 'dislike' | null
+
+export type ShiftPreferences = {
+  [key: string]: {
+    newPreference: string | null
+    savedPreference: string | null
+    hasChanged: boolean
+  }
 }

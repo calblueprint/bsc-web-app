@@ -37,6 +37,13 @@ let theme = createTheme({
       letterSpacing: 0.5,
       font: 'Inter',
     },
+    h3: {
+      fontWeight: 500,
+      fontSize: 24,
+      letterSpacing: 0.5,
+      font: 'Inter',
+      fontStyle: 'normal',
+    },
     subtitle1: {
       fontWeight: 500,
       font: 'Inter',
@@ -66,6 +73,22 @@ let theme = createTheme({
 theme = {
   ...theme,
   components: {
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#EFEFEF', //theme.palette.primary.light,
+          '& .MuiToggleButton-root': {
+            color: theme.palette.primary.main,
+            textTransform: 'uppercase',
+            backgroundColor: 'transparent',
+            '&.Mui-selected': {
+              color: theme.palette.secondary.main,
+              backgroundColor: theme.palette.primary.dark,
+            },
+          },
+        },
+      },
+    },
     MuiDrawer: {
       styleOverrides: {
         paper: {
@@ -86,6 +109,7 @@ theme = {
         },
       },
     },
+
     MuiTabs: {
       styleOverrides: {
         root: {
