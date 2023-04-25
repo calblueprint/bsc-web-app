@@ -4,6 +4,15 @@ import React, { useEffect, useState } from 'react'
 import SortedTable from '@/components/shared/tables/SortedTable'
 import { HeadCell } from '@/interfaces/interfaces'
 
+const displayPossibleDays = (shift: Shift) => {
+  const ret = shift.possibleDays
+    .map((day) => {
+      return day.slice(0, 2)
+    })
+    .join(', ')
+  return ret
+}
+
 const shiftHeadCells: HeadCell<
   Shift & { [key in keyof Shift]: string | number }
 >[] = [
@@ -15,6 +24,14 @@ const shiftHeadCells: HeadCell<
     align: 'left',
   },
   {
+    id: 'possibleDays',
+    isNumeric: false,
+    label: 'Possible Days',
+    isSortable: false,
+    align: 'left',
+    transformFn: displayPossibleDays,
+  },
+  {
     id: 'timeWindowDisplay',
     isNumeric: true,
     label: 'Time',
@@ -24,7 +41,7 @@ const shiftHeadCells: HeadCell<
   {
     id: 'hours',
     isNumeric: true,
-    label: 'Value',
+    label: 'Hours',
     isSortable: true,
     align: 'left',
   },
@@ -43,18 +60,20 @@ const shiftHeadCells: HeadCell<
 const UnassignedShiftsTable = ({
   shiftIds,
   shiftEntities,
+  handleRowClick,
 }: {
   shiftIds: EntityId[]
   shiftEntities: Dictionary<Shift>
+  handleRowClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
 }) => {
   const [filteredShiftIds, setFilteredShiftIds] = useState<EntityId[]>([])
 
-  const handleRowClick = (
-    event: React.MouseEvent<unknown, MouseEvent>,
-    entityId: EntityId
-  ) => {
-    console.log(entityId)
-  }
+  // const handleRowClick = (
+  //   event: React.MouseEvent<unknown, MouseEvent>,
+  //   entityId: EntityId
+  // ) => {
+  //   console.log(entityId)
+  // }
 
   useEffect(() => {
     console.log('changed ids in unassigned table')
