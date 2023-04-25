@@ -10,12 +10,14 @@ import {
   selectCurrentHouse,
   selectCurrentUser,
 } from '@/features/auth/authSlice'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
 import { Days, House } from '@/types/schema'
 import ScheduleTable from '@/features/tentativeSchedule/tables/ScheduleTable'
+import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
+import { setSelectedUserId } from '@/features/userAssignment/userAssignmentSlice'
 
 const filterOptions: Days[] = [
   'All',
@@ -35,6 +37,13 @@ const ManagerAssignedTabContent = () => {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [dayFilter, setDayFilter] = useState<Days>('All')
   const [filteredShiftIds, setFilteredShiftIds] = useState<EntityId[]>([])
+  const dispatch = useDispatch()
+
+  //** Modal stuff */
+  const [open, setOpen] = useState(false)
+  //** State variables that pass the selected item's info from the table to the modal */
+  const [selectedShiftId, setSelectedShiftId] = useState<EntityId>()
+  //** end Modal stuff */
 
   const handleSearchChange = (value: string) => {
     // console.log('search: ' + value)
@@ -49,6 +58,25 @@ const ManagerAssignedTabContent = () => {
   const handleFilterChange = (selectedFilter: Days) => {
     console.log('Selected filter:', selectedFilter)
     setDayFilter(selectedFilter)
+  }
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+    dispatch(setSelectedUserId({ selectedUserId: '' }))
+  }
+
+  //** this function handles passing the info from selected item from table to the modal that pops open */
+  const handleRowClick = (
+    event: React.MouseEvent<unknown>,
+    shiftId: EntityId
+  ) => {
+    // console.log('event: ', event, 'shift: ', shiftId)
+    setSelectedShiftId(shiftId)
+    handleOpen()
   }
 
   useEffect(() => {
@@ -112,9 +140,16 @@ const ManagerAssignedTabContent = () => {
         <AssignedShiftsTable
           shiftIds={filteredShiftIds}
           shiftEntities={shiftData?.entities}
+          handleRowClick={handleRowClick}
         />
       ) : null}
       <ScheduleTable />
+      <ShiftAssignmentCard
+        shiftId={selectedShiftId}
+        selectedDay={dayFilter}
+        handleClose={handleClose}
+        open={open}
+      />
     </React.Fragment>
   )
 }
