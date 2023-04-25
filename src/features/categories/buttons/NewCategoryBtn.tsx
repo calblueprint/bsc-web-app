@@ -15,6 +15,7 @@ import { selectHouseCategories, selectHouseId } from '../categoriesSlice'
 import { User } from '@/types/schema'
 import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
+import { capitalizeFirstLetter } from '@/utils/utils'
 
 const NewCategoryBtn = () => {
   const authUser = useSelector(selectCurrentUser) as User
@@ -70,7 +71,9 @@ const NewCategoryBtn = () => {
 
     try {
       const data = {
-        data: { categories: [...houseCategories, inputValue] },
+        data: {
+          categories: [...houseCategories, capitalizeFirstLetter(inputValue)],
+        },
         houseId: houseId,
       }
       await updateHouses(data)
