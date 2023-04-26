@@ -40,7 +40,7 @@ import uuid from 'react-uuid'
 import { formatMilitaryTime } from '@/utils/utils'
 
 //TODO: NOTE FROM ANDREI - scheduledshift objects are referred to as shifts in this file.  Too many random changes if we rename it to scheduledShifts.
-// TODO: If you have time ig you could change, but sounds like a waste to me.
+
 //TODO: Greg wants scheduled shift objects to hold a shift copy within themselves.  Have it be saved as string in FB, as Shift in-browser.
 //** Yup allows us to define a schema, transform a value to match, and/or assert the shape of an existing value. */
 //** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. *
@@ -58,9 +58,11 @@ const ShiftSchema = Yup.object({
   // category: Yup.string().required('Cagegory is required'),
   hours: Yup.number().required('Hours credit is required'),
   verificationBuffer: Yup.number(),
-  assignedUser: Yup.string(),
+  assignedUser: Yup.string(), //unsure what this did in the original shift.
   assignedDay: Yup.string(),
+
   member: Yup.object(),
+  date: Yup.date(),
 })
 
 const daysList = [
@@ -171,6 +173,7 @@ const QuickShiftForm = ({
       member,
       targetUser,
     } = values
+    console.log({ afterwards: values })
 
     const startTime = Number(startTimeObject.format('HHmm'))
     const endTime = Number(endTimeObject.format('HHmm'))
@@ -264,7 +267,9 @@ const QuickShiftForm = ({
   /**
    * 1. load in the options, push the labeled options to a user options list
    * 2. use the userOptions to create the members list
-   * 3. when picking an option from the dropdown, change the member OBJECT to match
+   * 3. treat the form like a normal shift form.  Except:  Categories, assignedUser, possible days will be set to defaults.
+   * 4. when picking an option from the dropdown, change the member OBJECT to match
+   * 5.
    */
 
   return (
@@ -298,8 +303,6 @@ const QuickShiftForm = ({
         onSubmit={onSubmit}
       >
         {({ isSubmitting, values, setFieldValue, errors }) => {
-          console.log({ values: values })
-          console.log({ errors: errors })
           return (
             <Form>
               <TextInput name="name" label="Shift Name" />
