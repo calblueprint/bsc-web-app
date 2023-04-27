@@ -49,10 +49,7 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'AuthorizedUser', id: 'LIST' }],
     }),
     updateAuthorizedUser: builder.mutation({
-      query: (data: {
-        userId: string, 
-        data: Partial<AuthorizedUser>
-      }) => ({
+      query: (data: { userId: string; data: Partial<AuthorizedUser> }) => ({
         url: `authorizedUsers/${data.userId}`,
         method: 'PATCH',
         body: {

@@ -22,7 +22,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import useUserRolePath from '../../../hooks/useUserRolePath'
 
 //** Constants */
-import { memberTabs, managerTabs, supervisorTabs } from '../../../utils/constants'
+import {
+  memberTabs,
+  managerTabs,
+  supervisorTabs,
+} from '../../../utils/constants'
 
 //** Interfaces */
 import { NavP } from '../../../interfaces/interfaces'
