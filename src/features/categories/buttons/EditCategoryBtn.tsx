@@ -52,7 +52,7 @@ const EditCategoryBtn = (props: EditCategoryBtnProps) => {
   ) => {
     const { category } = values
     if (!houseCategories || houseCategories.length === 0) {
-      console.log('HouseCategories is undefined of empty: ', houseCategories)
+      console.log('HouseCategories is undefined or empty: ', houseCategories)
       return
     }
 

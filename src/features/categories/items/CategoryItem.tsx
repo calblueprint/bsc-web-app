@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
@@ -19,6 +19,8 @@ import TableBody from '@mui/material/TableBody'
 import CategoryShiftItem from './CategoryShiftItem'
 import uuid from 'react-uuid'
 import ShiftQuantityDisplay from '@/components/shared/items/ShiftQuantityDisplay'
+import Button from '@mui/material/Button'
+import DeleteCategory from '../buttons/DeleteCategory'
 
 type CategoryItemProps = {
   category: string
@@ -27,6 +29,9 @@ type CategoryItemProps = {
 const CategoryItem = (props: CategoryItemProps) => {
   //** Extract the compenents' props */
   const { category } = props
+
+  //** Edit state for category name */
+  const [isEditing, setIsEditing] = useState(false)
 
   //** Get the category collaps state from redux state */
   const isCategoryOpen = useSelector((state: RootState) =>
@@ -41,10 +46,37 @@ const CategoryItem = (props: CategoryItemProps) => {
   //** hook to dispatch redux actions */
   const dispatch = useDispatch()
 
+  const handleCategoryToggle = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement
+    const targetClassList = target.classList
+    // const targetId = target.id
+
+    // console.log(targetClassList)
+    // console.log(targetId)
+
+    // Check if the target element has a class or ID that identifies it as the category box
+    if (
+      targetClassList.contains('MuiBox-root') ||
+      // targetId === 'MuiBox-root' ||
+      targetClassList.contains('MuiTypography-root')
+    ) {
+      dispatch(
+        setIsCategoryOpen({
+          isCategoryOpen: { [category]: !isCategoryOpen },
+        })
+      )
+    }
+  }
+
   const item = (
     <React.Fragment>
       <Box marginBottom={2} component={Paper}>
-        <Box display={'flex'} paddingTop={2} paddingBottom={1}>
+        <Box
+          display={'flex'}
+          paddingTop={2}
+          paddingBottom={1}
+          onClick={(event) => handleCategoryToggle(event)}
+        >
           <IconButton
             aria-label="expand row"
             size="small"
@@ -73,6 +105,14 @@ const CategoryItem = (props: CategoryItemProps) => {
           <ShiftQuantityDisplay
             quantity={categoryShifts ? categoryShifts.length : 0}
           />
+          {category === 'Uncategorized' ? null : (
+            <Box marginLeft={'auto'} marginRight={3}>
+              <DeleteCategory
+                categoryShifts={categoryShifts}
+                category={category}
+              />
+            </Box>
+          )}
         </Box>
         <Box sx={{ flexGrow: 1 }} />
         <Divider />
