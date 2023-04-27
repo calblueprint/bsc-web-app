@@ -31,7 +31,6 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
             date: dayjs(entity.date),
             assignedUser: entity.assignedUser,
             status: entity.status,
-            options: entity.options,
             verifiedBy: dayjs(entity.verifiedBy),
             verifiedAt: dayjs(entity.verifiedAt),
             unverifiedAt: dayjs(entity.unverifiedAt),
@@ -57,6 +56,7 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
     }),
     addNewScheduledShift: builder.mutation({
       query: (data) => {
+        console.log({ apiData: data })
         console.log({ data: data, datadata: data.data })
 
         return {
@@ -70,13 +70,26 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'ScheduledShift', id: 'LIST' }],
     }),
     updateScheduledShift: builder.mutation({
-      query: (data) => ({
-        url: `houses/${data.houseId}/scheduledShifts/${data.shiftId}`,
-        method: 'PATCH',
-        body: {
-          ...data.data,
-        },
-      }),
+      // query: (data) => ({
+      //   url: `houses/${data.houseId}/scheduledShifts/${data.shiftId}`,
+      //   method: 'PATCH',
+      //   body: {
+      //     ...data.data,
+      //   },
+      // }),
+      query: (data) => {
+        console.log({ apiDataUpdate: data })
+        console.log({ data: data, datadata: data.data })
+
+        return {
+          url: `houses/${data.houseId}/scheduledShifts/${data.shiftId}`,
+          method: 'PATCH',
+          body: {
+            ...data.data,
+          },
+        }
+      },
+
       invalidatesTags: (result, error, arg) => [
         { type: 'ScheduledShift', id: arg.id },
       ],

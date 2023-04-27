@@ -90,7 +90,6 @@ export type ScheduledShift = {
   date: dayjs.Dayjs
   assignedUser: string
   status: string
-  options: string
   verifiedBy: dayjs.Dayjs
   verifiedAt: dayjs.Dayjs
   unverifiedAt: dayjs.Dayjs

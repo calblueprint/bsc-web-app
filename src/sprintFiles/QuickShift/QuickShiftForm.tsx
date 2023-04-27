@@ -39,14 +39,6 @@ import { useGetUsersQuery } from '@/features/user/userApiSlice'
 import uuid from 'react-uuid'
 import { formatMilitaryTime } from '@/utils/utils'
 
-//TODO: NOTE FROM ANDREI - scheduledshift objects are referred to as shifts in this file.  Too many random changes if we rename it to scheduledShifts.
-
-//TODO: Greg wants scheduled shift objects to hold a shift copy within themselves.  Have it be saved as string in FB, as Shift in-browser.
-//** Yup allows us to define a schema, transform a value to match, and/or assert the shape of an existing value. */
-//** Here, we are defining what kind of inputs we are expecting and attaching error msgs for when the input is not what we want. *
-//Todo: Needs a calendar. QUick shifts have a specific person, specific date.
-//TODO: members panel will become a dropdown
-//Todo: search bar needs 100% match right now, implement reactive soon.
 const ShiftSchema = Yup.object({
   name: Yup.string()
     .required('Name is required')
@@ -58,10 +50,9 @@ const ShiftSchema = Yup.object({
   // category: Yup.string().required('Cagegory is required'),
   hours: Yup.number().required('Hours credit is required'),
   verificationBuffer: Yup.number(),
-  assignedUser: Yup.string(), //unsure what this did in the original shift.
   assignedDay: Yup.string(),
 
-  member: Yup.object(),
+  assignedUser: Yup.object(), //reassign the assignedUser
   date: Yup.date(),
 })
 
@@ -86,9 +77,18 @@ const emptyShift = {
   hours: 0,
   despription: '',
   verificationBuffer: 0,
-  assignedUser: '',
-  assignedDay: '',
+  assignedUser: { label: '', id: '' },
+  assignedDay: dayjs(),
 }
+
+/**
+ * 1. Fill out the quick shift form like a shift form
+ * 2. Formik uses validation schema + setField value to track form changes
+ * 3. For any option, setFieldValue, TextField, and other formik components/funcs will update initialValues
+ * 4. When submit is pressed, initialValues is sent to onSubmit function.
+ * 5. onSubmit function accesses the field values from formik.  Can manipulate as wanted
+ * 6. OnSubmit formats the field info to match a scheduled shift.  Sends it to firebase
+ */
 
 const QuickShiftForm = ({
   setOpen,
@@ -120,26 +120,33 @@ const QuickShiftForm = ({
 
   //* Get API helpers to create or update a shift
   const [
-    addNewShift,
+    addNewScheduledShift,
     {
       // isLoading: isLoadingNewShift,
       // isSuccess: isSuccessNewShift,
       // isError: isErrorNewShift,
       // error: errorNewShift,
     },
-  ] = useAddNewShiftMutation()
+  ] = useAddNewScheduledShiftMutation()
   const [
-    updateShift,
+    updateScheduledShift,
     {
       // isLoading: isLoadingUpdateShift,
       // isSuccess: isSuccessUpdateShift,
       // isError: isErrorUpdateShift,
       // error: errorUpdateShift,
     },
-  ] = useUpdateShiftMutation()
+  ] = useUpdateScheduledShiftMutation()
 
   const [chosenDate, setDate] = useState<dayjs.Dayjs | null>(null)
 
+  /**
+   *
+   * Has part of the data formatted into JSONcopy, which is what the original shift should've looked like
+   * Note that JSONCopy won't match a Shift object in our firebase like a regular scheduled shift would
+   * Rest of info is stored in a defaulted scheduledShift.  Bare min. info to fit a quickshift.
+   *
+   */
   const onSubmit = async (
     values: {
       name: string
@@ -150,15 +157,12 @@ const QuickShiftForm = ({
       possibleDays: string[]
       description: string
       verificationBuffer: number
-      assignedUser: string | undefined
-      assignedDay: string
-      member: string
-      targetUser: labeledUser
+
+      assignedDay: Dayjs
+      assignedUser: labeledUser | undefined
     },
     formikBag: FormikHelpers<any>
   ) => {
-    console.log('submitting')
-    console.log('Submiting ShiftForm: ', values)
     const {
       name,
       category: categoryString,
@@ -170,10 +174,7 @@ const QuickShiftForm = ({
       verificationBuffer,
       assignedUser,
       assignedDay,
-      member,
-      targetUser,
     } = values
-    console.log({ afterwards: values })
 
     const startTime = Number(startTimeObject.format('HHmm'))
     const endTime = Number(endTimeObject.format('HHmm'))
@@ -184,35 +185,51 @@ const QuickShiftForm = ({
       category = categoryString
     }
 
-    // console.log(dayjs('1900', 'HHmm').format('HHmm'))
-    // const num = 1900
-    // console.log(dayjs(num.toString(), 'HHmm'))
-
-    // const dayString = possibleDays.join('')
     let result
     const timeWindow = { startTime, endTime }
-    const id = uuid()
     const timeWindowDisplay =
       formatMilitaryTime(startTime) + ' - ' + formatMilitaryTime(endTime)
     const data = { data: {}, houseId: '', shiftId: '' }
+    const shiftObject = {
+      name,
+      category,
+      hours,
+      possibleDays,
+      description,
+      timeWindow,
+      verificationBuffer,
+      timeWindowDisplay,
+      assignedUser,
+      assignedDay,
+    }
+
     data.data = {
-      id: id,
-      date: chosenDate,
-      assignedUser: targetUser?.id,
+      id: '',
+      shiftID: '',
+      date: assignedDay.toString(),
+      assignedUser: assignedUser,
       status: 'live',
       verifiedBy: '',
       verifiedAt: '',
       unverifiedAt: '',
       penaltyHours: 0,
+      jsonCopy: JSON.stringify(shiftObject), //TODO : check if this fails
     }
+
     data.houseId = currentHouse.id
-    data.shiftId = id ? id : ''
+    data.shiftId = shiftId ? shiftId : ''
     // console.log('data: ', data)
-    console.log({ formdata: data, formdatadta: data.data })
+    console.log({
+      pushedData: data,
+      datadata: data.data,
+      isNewShift: isNewShift,
+      shiftId: shiftId,
+    })
+
     if (isNewShift || !shiftId) {
-      result = await useAddNewScheduledShiftMutation(data)
+      result = await addNewScheduledShift(data)
     } else {
-      result = await useUpdateScheduledShiftMutation(data)
+      result = await updateScheduledShift(data)
     }
     if (result) {
       console.log('success with shift: ', result)
@@ -235,7 +252,7 @@ const QuickShiftForm = ({
 
   //Using this instead of setFieldValue in formik because of issues with the fields
   //Will use the specific date that a quick shift must be in.
-  const [userOptions, setUserOptions] = useState(['', 'a', 'b', 'c', 'd'])
+  const [userOptions, setUserOptions] = useState([{ label: '', id: '' }])
   type labeledUser = {
     label: string
     id: String
@@ -258,6 +275,7 @@ const QuickShiftForm = ({
           tempOptions.push(userWithLabel)
         }
       })
+      emptyShift.assignedUser = tempOptions[0]
       setUserOptions(tempOptions)
       setTargetUser(tempOptions[0])
     }
@@ -297,8 +315,6 @@ const QuickShiftForm = ({
             : emptyShift.verificationBuffer,
           assignedUser: shift ? shift.assignedUser : emptyShift.assignedUser,
           assignedDay: shift ? shift.assignedDay : emptyShift.assignedDay,
-          member: { label: '', id: '' },
-          memberId: '',
         }}
         onSubmit={onSubmit}
       >
@@ -308,7 +324,12 @@ const QuickShiftForm = ({
               <TextInput name="name" label="Shift Name" />
 
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker value={chosenDate} onChange={(e) => setDate(e)} />
+                <DatePicker
+                  value={values.assignedDay}
+                  onChange={(newValue) =>
+                    setFieldValue('assignedDay', newValue)
+                  }
+                />
               </LocalizationProvider>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <MobileTimePicker
@@ -344,7 +365,8 @@ const QuickShiftForm = ({
                     setInputValue(newInputValue)
                   }}
                   onChange={(event: any, newValue: labeledUser) => {
-                    setFieldValue('member', newValue)
+                    console.log({ newValue: newValue })
+                    setFieldValue('assignedUser', newValue)
                   }}
                 />
               ) : null}
