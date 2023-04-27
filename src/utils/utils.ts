@@ -92,7 +92,12 @@ export const streamToObject = async (body: ReadableStream) => {
 
 export function capitalizeFirstLetter(word: string) {
   if (!word || word.length < 2) return word
-  return word.charAt(0).toUpperCase() + word.slice(1)
+  const splittedWord = word.split(' ')
+  const capWord = splittedWord.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1)
+  )
+
+  return capWord.join(' ')
 }
 
 /**
