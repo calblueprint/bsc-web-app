@@ -124,16 +124,17 @@ const ManagerAssignedTabContent = () => {
             onSearchSubmit={handleSearchSubmit}
           />
         </Box>
-        <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ flexGrow: 1, marginX: 2, marginBottom: 2 }}>
-          <FilterShiftByDayBtn
-            filterOptions={filterOptions}
-            onFilterChange={handleFilterChange}
-          />
-        </Box>
-        <Box sx={{ flexGrow: 2 }}>
-          <NewShiftBtn />
-        </Box>
+        <Stack direction={'row'}>
+          <Box sx={{ flexGrow: 1, marginX: 2, marginBottom: 2 }}>
+            <FilterShiftByDayBtn
+              filterOptions={filterOptions}
+              onFilterChange={handleFilterChange}
+            />
+          </Box>
+          <Box sx={{ flexGrow: 2 }}>
+            <NewShiftBtn />
+          </Box>
+        </Stack>
       </Stack>
       {shiftData ? (
         <AssignedShiftsTable

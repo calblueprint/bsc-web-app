@@ -10,8 +10,8 @@ const NewShiftBtn = () => {
   }
   return (
     <React.Fragment>
-      <Button fullWidth variant="contained" onClick={handleOpen}>
-        <Typography>Add Shift</Typography>
+      <Button variant="contained" onClick={handleOpen}>
+        <Typography>New Shift +</Typography>
       </Button>
       <NewShiftCard setOpen={setOpen} open={open} />
     </React.Fragment>

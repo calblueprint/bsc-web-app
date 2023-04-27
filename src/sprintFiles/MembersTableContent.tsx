@@ -1,11 +1,12 @@
-import { TextField } from '@mui/material'
+import { Box, InputAdornment, Stack, TextField } from '@mui/material'
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import EditUserCard from '@/features/user/cards/EditUserCard'
 import SortedTable from '@/components/shared/tables/SortedTable'
 import { HeadCell } from '@/interfaces/interfaces'
 import { useGetUsersQuery } from '@/features/user/userApiSlice'
 import { User } from '@/types/schema'
+import FilterSearchBar from '@/components/shared/searchBar/FilterSearchBar'
 
 const headCells: HeadCell<User & { [key in keyof User]: string | number }>[] = [
   {
@@ -80,6 +81,13 @@ export const MembersTableContent = () => {
     setModalMemberID(member?.id)
     handleOpen()
   }
+  const handleSearchChange = (value: string) => {
+    setFilterBy(value)
+  }
+
+  const handleSearchSubmit = (event: FormEvent) => {
+    event.preventDefault()
+  }
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -108,13 +116,12 @@ export const MembersTableContent = () => {
   } else {
     return (
       <>
-        <TextField
-          value={filterBy}
-          placeholder="Search"
-          onChange={(event) => {
-            setFilterBy(event.target.value)
-          }}
-        ></TextField>
+        <Box sx={{ marginBottom: 2 }}>
+          <FilterSearchBar
+            onSearchChange={handleSearchChange}
+            onSearchSubmit={handleSearchSubmit}
+          />
+        </Box>
         <SortedTable
           ids={displayMembers as EntityId[]}
           entities={
