@@ -43,10 +43,11 @@ const filterUsersByAvailability = (shiftObject: Shift, days: string[], entitySta
     // iterate thru all days for a user
     for (let j = 0; j < days.length; j++) {
         const day = days[j];
-        if (!(day in currAvailabilities)) {
+        if (!(day.toLowerCase() in currAvailabilities)) {
             continue;
         }
-        const perDayAvailability = currAvailabilities[day];
+
+        const perDayAvailability = currAvailabilities[day.toLowerCase()];
         if (perDayAvailability === undefined) {
             continue;
         }
@@ -63,6 +64,7 @@ const filterUsersByAvailability = (shiftObject: Shift, days: string[], entitySta
                 continue;
             }
             // calculatedStart = either the start of the shift or the start of the user's availability, whichever comes later
+
             let calculatedStart: Dayjs = shiftStart;
             if (userStart.isAfter(shiftStart)) {
                 calculatedStart = userStart;

@@ -108,7 +108,7 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
 
   // define state variables
   const authHouse = useSelector(selectCurrentHouse) as House
-  const [listOfUserIds, setLitsOfUserIds] = useState<EntityId[]>([])
+  const [listOfUserIds, setListOfUserIds] = useState<EntityId[]>([])
   const [disableTable, setDisableTable] = useState(
     selectedUserId ? true : false
   )
@@ -173,7 +173,7 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
         days = [day]
       }
       let userIds = createListOfUsersForShift(shiftObject, usersData, days)
-      setLitsOfUserIds(userIds)
+      setListOfUserIds(userIds)
     }
   }, [day, isUsersDataSuccess, shiftObject, usersData])
 
