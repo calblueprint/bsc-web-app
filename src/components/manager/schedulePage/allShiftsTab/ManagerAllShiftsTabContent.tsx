@@ -57,11 +57,23 @@ const ManagerAllShiftsTabContent = () => {
       let filteredCopy = [...scheduledShifts.ids];
       if (dayFilter !== 'All') {
         filteredCopy = filteredCopy.filter((id) => {
-          const shift = scheduledShifts.entities[id]
-          if (shift) {
-            let assignedDay = dayjs(shift.date).format('dddd');
-            console.log(assignedDay);
-            return assignedDay.toLowerCase() === dayFilter.toLowerCase();
+          const scheduledShift = scheduledShifts.entities[id]
+          if (scheduledShift) {
+            // DO NAME FILTERING, WILL PROBABLY HAVE TO FETCH NAME FROM INNER SHIFT OBJECT LIKE IN ALLSSCHEDULED SHIFTS
+            let shiftCopy: Shift | undefined = undefined;
+            if ('shiftCopy' in scheduledShift) {
+                shiftCopy = scheduledShift['shiftCopy'] as Shift;
+            } else {
+                let innerShiftID = scheduledShift.shiftID;
+                if (shifts === undefined) {
+                  return false;
+                }
+                shiftCopy = shifts.entities[innerShiftID] as Shift;
+            }
+            if (shiftCopy === undefined) {
+                return false;
+            }
+            return shiftCopy.assignedDay.toLowerCase() === dayFilter.toLowerCase();
           }
           return false;
         })
