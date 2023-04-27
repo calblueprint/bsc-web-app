@@ -104,7 +104,7 @@ export type ScheduledShift = {
   verifiedAt: string
   unverifiedAt: string
   penaltyHours: number
-  shiftCopy: Shift
+  shiftCopy?: Shift
 }
 
 export type House = {
