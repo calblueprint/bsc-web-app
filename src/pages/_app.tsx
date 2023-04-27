@@ -4,7 +4,7 @@ import { AuthState } from '@/features/auth/AuthState'
 
 import { Provider } from 'react-redux'
 import { store } from '../store/store'
-import theme from './Theme'
+import theme from '../assets/Theme'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 
