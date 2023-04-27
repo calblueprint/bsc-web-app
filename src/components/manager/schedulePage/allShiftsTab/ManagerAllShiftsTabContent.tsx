@@ -27,7 +27,7 @@ const ManagerAllShiftsTabContent = () => {
   const currentHouse: House = useSelector(selectCurrentHouse) as House
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [dayFilter, setDayFilter] = useState<Days>('All')
-  const [filteredShiftIDs, setFilteredShiftIDs] = useState<EntityId[]>([]);
+  const [filteredShiftIDs, setFilteredShiftIDs] = useState<EntityId[]>();
   
   const {
       data: scheduledShifts
@@ -52,19 +52,15 @@ const ManagerAllShiftsTabContent = () => {
     setDayFilter(selectedFilter)
   }
 
-
-  useEffect(() => {
-    handleFiltering();
-  }, [scheduledShifts, dayFilter, searchQuery]) 
-
   const handleFiltering = () => {
     if (scheduledShifts) {
-      let filteredCopy = scheduledShifts.ids;
+      let filteredCopy = [...scheduledShifts.ids];
       if (dayFilter !== 'All') {
         filteredCopy = filteredCopy.filter((id) => {
           const shift = scheduledShifts.entities[id]
           if (shift) {
             let assignedDay = dayjs(shift.date).format('dddd');
+            console.log(assignedDay);
             return assignedDay.toLowerCase() === dayFilter.toLowerCase();
           }
           return false;
@@ -92,9 +88,14 @@ const ManagerAllShiftsTabContent = () => {
           }
         })
       }
-      setFilteredShiftIDs(filteredCopy)
+      console.log(filteredCopy);
+      setFilteredShiftIDs(filteredCopy);
     }
   }
+
+  useEffect(() => {
+    handleFiltering(); 
+  }, [scheduledShifts, dayFilter, searchQuery]) 
   
   return (
     <React.Fragment>
@@ -116,11 +117,11 @@ const ManagerAllShiftsTabContent = () => {
           <QuickShiftButton />
         </Box> */}
       </Stack>
-        {scheduledShifts && 
+        {scheduledShifts && filteredShiftIDs && 
             <AllScheduledShifts scheduledShiftIDs={filteredShiftIDs} scheduledShiftDictionary = {scheduledShifts.entities}/>
         }
-    </React.Fragment>
+    </React.Fragment> 
   )
 }
 
-export default ManagerAllShiftsTabContent
+export default ManagerAllShiftsTabContent 

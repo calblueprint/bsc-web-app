@@ -19,6 +19,13 @@ const headCells: HeadCell<ScheduledShiftDisplayObject & { [key in keyof Schedule
         align: 'left'
     }, 
     {
+        id: "category",
+        isNumeric: false,
+        label: "Category",
+        isSortable: true,
+        align: 'left'
+    },
+    {
         id: "timeWindow",
         isNumeric: false,
         label: "Time Window",
@@ -43,6 +50,7 @@ const headCells: HeadCell<ScheduledShiftDisplayObject & { [key in keyof Schedule
 
 type ScheduledShiftDisplayObject = {
     shiftName: string,
+    category: string,
     timeWindow: string,
     creditHours: string,
     status: string
@@ -56,23 +64,27 @@ const AllScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {sch
     const {
         data: shifts
     } = useGetShiftsQuery(currentHouse.houseID);
-
+ 
     useEffect(() => {
         populateDisplayDictionary();
     }, [shifts])
+
+    useEffect(() => {
+        populateDisplayDictionary();
+    }, [scheduledShiftIDs]) // useEffect on parameter
+
 
     const populateDisplayDictionary = async () => {
         if (shifts === undefined) {
             return;
         }
-        console.log(shifts);
         console.log(scheduledShiftIDs);
-        let copyDisplayIDs = [];
+        let copyDisplayIDs = []; 
         let copyDisplayDictionary: Dictionary<ScheduledShiftDisplayObject> = {};
         for (let i = 0; i < scheduledShiftIDs.length; i++) {
             let scheduledShiftID = scheduledShiftIDs[i];
             let scheduledShiftObject = scheduledShiftDictionary[scheduledShiftID];
-            if (scheduledShiftObject === undefined) {
+            if (scheduledShiftObject === undefined) { 
                 continue;
             }
             let shiftCopy: Shift | undefined = undefined;
@@ -87,6 +99,7 @@ const AllScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {sch
             }
             let newDisplayObject = {
                 shiftName: shiftCopy.name,
+                category: shiftCopy.category,
                 timeWindow: shiftCopy.timeWindowDisplay,
                 creditHours: pluralizeHours(shiftCopy.hours),
                 status: scheduledShiftObject.status
