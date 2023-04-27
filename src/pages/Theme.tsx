@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 
-export let theme = createTheme({
+let theme = createTheme({
   palette: {
     primary: {
       light: '#C0C0C0',
@@ -219,3 +219,4 @@ theme = {
     },
   },
 }
+export default theme
