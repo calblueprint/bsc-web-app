@@ -57,7 +57,9 @@ type ScheduledShiftDisplayObject = {
 }
 
 const AllScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {scheduledShiftIDs: EntityId[], scheduledShiftDictionary: Dictionary<ScheduledShift>}) => {
+    // IDs that will be displayed
     const [displayIDs, setDisplayIDs] = useState<EntityId[]>([]);
+    // Dictionatry that will be passed into the Sorted Table
     const [displayDictionary, setDisplayDictionary] = useState<Dictionary<ScheduledShiftDisplayObject>>();
     const currentHouse: House = useSelector(selectCurrentHouse) as House
 
@@ -73,7 +75,8 @@ const AllScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {sch
         populateDisplayDictionary();
     }, [scheduledShiftIDs]) // useEffect on parameter
 
-
+    // Populates the displayIDs with ids of scheduled shifts that have the proper format
+    // Populates the display dictionary with display objects
     const populateDisplayDictionary = async () => {
         if (shifts === undefined) {
             return;
@@ -107,7 +110,6 @@ const AllScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {sch
             copyDisplayIDs.push(scheduledShiftID);
             copyDisplayDictionary[scheduledShiftID] = newDisplayObject;
         }
-        console.log(copyDisplayIDs);
         setDisplayIDs(copyDisplayIDs); 
         setDisplayDictionary(copyDisplayDictionary);
     }

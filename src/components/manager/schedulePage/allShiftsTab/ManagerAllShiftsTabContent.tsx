@@ -25,8 +25,11 @@ const filterOptions: Days[] = [
 
 const ManagerAllShiftsTabContent = () => {
   const currentHouse: House = useSelector(selectCurrentHouse) as House
+  // Stores the search query
   const [searchQuery, setSearchQuery] = useState<string>('')
+  // Stores the day filter
   const [dayFilter, setDayFilter] = useState<Days>('All')
+  // The ids that are passed into the AllScheduledShifts Table to display
   const [filteredShiftIDs, setFilteredShiftIDs] = useState<EntityId[]>();
   
   const {
@@ -52,6 +55,7 @@ const ManagerAllShiftsTabContent = () => {
     setDayFilter(selectedFilter)
   }
 
+  // Filters based on the day filter and search filter and sets the filteredShiftIDs
   const handleFiltering = () => {
     if (scheduledShifts) {
       let filteredCopy = [...scheduledShifts.ids];
@@ -59,7 +63,6 @@ const ManagerAllShiftsTabContent = () => {
         filteredCopy = filteredCopy.filter((id) => {
           const scheduledShift = scheduledShifts.entities[id]
           if (scheduledShift) {
-            // DO NAME FILTERING, WILL PROBABLY HAVE TO FETCH NAME FROM INNER SHIFT OBJECT LIKE IN ALLSSCHEDULED SHIFTS
             let shiftCopy: Shift | undefined = undefined;
             if ('shiftCopy' in scheduledShift) {
                 shiftCopy = scheduledShift['shiftCopy'] as Shift;
@@ -100,7 +103,6 @@ const ManagerAllShiftsTabContent = () => {
           }
         })
       }
-      console.log(filteredCopy);
       setFilteredShiftIDs(filteredCopy);
     }
   }
