@@ -29,10 +29,10 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         // console.log('[transformResponse] responseData: ', responseData)
         const loaddedUsers = responseData.map((entity) => {
           // console.log('[loaddedUsers] entity: ', entity)
-          entity.id = entity.id
+          // entity.id = entity.id
           return entity
         })
-        console.debug(loaddedUsers)
+        console.log(loaddedUsers)
         return usersAdapter.setAll(initialState, loaddedUsers)
       },
       providesTags: (result) => {

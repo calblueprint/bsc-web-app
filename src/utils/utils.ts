@@ -1,7 +1,12 @@
-import { EntityId, Dictionary } from '@reduxjs/toolkit'
+import { EntityId, Dictionary, EntityState } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { House, Shift, User } from '../types/schema'
 import { DAYS } from './constants'
+import duration from 'dayjs/plugin/duration'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+dayjs.extend(duration)
+dayjs.extend(customParseFormat)
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -247,4 +252,151 @@ export const createHouseCategories = (
   })
 
   return categories
+}
+
+export const getNumberOfBlocks = (startTime: string, endTime: string) => {
+  const start = dayjs(startTime, 'HHmm')
+    .startOf('minute')
+    .add(Math.round(dayjs(startTime, 'HHmm').minute() / 30) * 30, 'minute')
+
+  // Change the endTime from '2359' to '2350'
+  const newEndTime = endTime === '2359' ? '2400' : endTime
+
+  const end = dayjs(newEndTime, 'HHmm')
+    .startOf('minute')
+    .add(Math.round(dayjs(newEndTime, 'HHmm').minute() / 30) * 30, 'minute')
+
+  const diff = end.diff(start)
+  const blocks = diff / (1000 * 60 * 30)
+  console.log(Math.round(blocks))
+  return Math.round(blocks)
+}
+
+// export const generateMilitaryTimeForWeek = () => {
+//   const militaryTimes = []
+//   const minutesInterval = 30 // Set the interval between each time
+//   const weekInMinutes = 7 * 24 * 60 // Calculate the total minutes in a week
+
+//   let currentTime = dayjs().startOf('week') // Start at the beginning of the week
+
+//   for (let i = 0; i < weekInMinutes; i += minutesInterval) {
+//     // Format the current time as military time
+//     const militaryTime = currentTime.format('HHmm')
+//     militaryTimes.push(militaryTime)
+
+//     // Increment the current time by the interval
+//     currentTime = currentTime.add(minutesInterval, 'minute')
+//   }
+
+//   return militaryTimes
+// }
+
+export const generateContinuousMilitaryTimeForWeek = () => {
+  const militaryTimes = []
+  const minutesInterval = 30 // Set the interval between each time
+  const weekInMinutes = 8 * 24 * 60 // Calculate the total minutes in a week
+
+  let currentTime = dayjs().startOf('week') // Start at the beginning of the week
+
+  for (let i = 0; i < weekInMinutes; i += minutesInterval) {
+    // Calculate the total minutes from the start of the week
+    const totalMinutes = currentTime.diff(dayjs().startOf('week'), 'minute')
+
+    // Convert total minutes to military time
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
+    const militaryTime =
+      String(hours).padStart(2, '0') + String(minutes).padStart(2, '0')
+
+    militaryTimes.push(militaryTime)
+
+    // Increment the current time by the interval
+    currentTime = currentTime.add(minutesInterval, 'minute')
+  }
+
+  return militaryTimes
+}
+
+type TimeInterval = {
+  startTime: string
+  endTime: string
+}
+
+export function findAvailableShiftsForUsers(
+  userState: EntityState<User>,
+  shiftState: EntityState<Shift>
+): Record<string, Record<string, string[]>> {
+  const users = userState.ids.map((id) => userState.entities[id]) as User[]
+  const shifts = shiftState.ids.map((id) => shiftState.entities[id]) as Shift[]
+
+  const availableShifts: Record<string, Record<string, string[]>> = {}
+
+  // Helper function to check if there is enough overlap between two time intervals
+  function hasEnoughOverlap(
+    interval1: TimeInterval,
+    interval2: TimeInterval,
+    requiredDuration: number
+  ): boolean {
+    const startTime = Math.max(
+      dayjs(interval1.startTime, 'HHmm').unix(),
+      dayjs(interval2.startTime, 'HHmm').unix()
+    )
+    const endTime = Math.min(
+      dayjs(interval1.endTime, 'HHmm').unix(),
+      dayjs(interval2.endTime, 'HHmm').unix()
+    )
+
+    return endTime - startTime >= requiredDuration * 60 * 60
+  }
+
+  for (const user of users) {
+    if (!user.id || !user.availabilities) {
+      console.log({ user: user })
+      throw new Error('Invalid user object')
+    }
+
+    availableShifts[user.id] = {}
+
+    for (const shift of shifts) {
+      if (
+        !shift.id ||
+        !shift.possibleDays ||
+        !shift.timeWindow ||
+        !shift.hours ||
+        shift.hours < 0
+      ) {
+        console.log({ shift: shift })
+        throw new Error('Invalid shift object')
+      }
+
+      for (const day of shift.possibleDays) {
+        const lowerCaseDay = day.toLowerCase()
+        const userAvailability = user.availabilities[lowerCaseDay]
+
+        if (userAvailability) {
+          for (const userTime of userAvailability) {
+            // console.log({ userTime: userTime }, { shiftTime: shift.timeWindow })
+            if (
+              hasEnoughOverlap(
+                userTime,
+                {
+                  startTime: String(shift.timeWindow.startTime),
+                  endTime: String(shift.timeWindow.endTime),
+                },
+                shift.hours
+              )
+            ) {
+              if (!availableShifts[user.id][lowerCaseDay]) {
+                availableShifts[user.id][lowerCaseDay] = []
+              }
+              availableShifts[user.id][lowerCaseDay].push(shift.id)
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return availableShifts
 }

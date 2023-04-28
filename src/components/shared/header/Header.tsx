@@ -125,11 +125,23 @@ const Header = (props: HeaderProps) => {
             </Grid>
           </Grid>
         </Toolbar>
+        <Toolbar>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs>
+              <Typography color="inherit" variant="h5" component="h1">
+                {isMemberPath ? memberNavState.id : null}
+                {isManagerPath ? managerNavState.id : null}
+                {isSupervisorPath ? supervisorNavState.id : null}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Toolbar>
+        <HeaderTabs />
       </AppBar>
-      <AppBar
-        component="div"
+      {/* <AppBar
+        // component="div"
         color="secondary"
-        position="sticky"
+        position="relative"
         elevation={0}
         sx={{ zIndex: 0 }}
       >
@@ -147,13 +159,13 @@ const Header = (props: HeaderProps) => {
       </AppBar>
       <AppBar
         color="secondary"
-        component="div"
-        position="static"
+        // component="div"
+        position="relative"
         elevation={0}
         sx={{ zIndex: 0 }}
       >
         <HeaderTabs />
-      </AppBar>
+      </AppBar> */}
     </React.Fragment>
   )
 }

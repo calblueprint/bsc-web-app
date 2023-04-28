@@ -91,18 +91,35 @@ export const {
   //   useDeleteShiftMutation,
 } = shiftsApiSlice
 
-// Creates memoized selector to get normalized state based on the query parameter
-const selectShiftsData = createSelector(
-  (state: RootState, queryParameter: string) =>
-    shiftsApiSlice.endpoints.getShifts.select(queryParameter)(state),
-  (shiftsResult) => shiftsResult.data ?? initialState
-)
+// Create selector to select state based on query parameter
+const getQueryShifts = (queryParameter: string) =>
+  shiftsApiSlice.endpoints.getShifts.select(queryParameter)
 
-// Creates memoized selector to get a shift by its ID based on the query parameter
-export const selectShiftById = (queryParameter: string) =>
-  createSelector(
-    (state: RootState) => selectShiftsData(state, queryParameter),
-    (_: unknown, shiftId: EntityId) => shiftId,
-    (data: { entities: { [x: string]: unknown } }, shiftId: string | number) =>
-      data.entities[shiftId] as Shift
-  )
+const selectShift = (state: RootState, shiftId: string) => state
+
+// // Creates memoized selector to get normalized state based on the query parameter
+// const selectShiftsData = createSelector(
+//   (state: RootState, queryParameter: string) =>
+//     shiftsApiSlice.endpoints.getShifts.select(queryParameter)(state),
+//   (shiftsResult) => shiftsResult.data ?? initialState
+// )
+
+// // Creates memoized selector to get a shift by its ID based on the query parameter
+// export const selectShiftById = (queryParameter: string) =>
+//   createSelector(
+//     (state: RootState) => selectShiftsData(state, queryParameter),
+//     (_: unknown, shiftId: EntityId) => shiftId,
+//     (data: { entities: { [x: string]: unknown } }, shiftId: string | number) =>
+//       data.entities[shiftId] as Shift
+//   )
+
+export const selectShiftById = (
+  state: RootState,
+  shiftId: EntityId,
+  queryParameter: string
+): Shift | undefined => {
+  const data =
+    shiftsApiSlice.endpoints.getShifts.select(queryParameter)(state).data ??
+    initialState
+  return data.entities[shiftId] as Shift
+}

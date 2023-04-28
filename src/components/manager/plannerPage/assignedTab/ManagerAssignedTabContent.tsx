@@ -143,7 +143,7 @@ const ManagerAssignedTabContent = () => {
           handleRowClick={handleRowClick}
         />
       ) : null}
-      <ScheduleTable />
+
       <ShiftAssignmentCard
         shiftId={selectedShiftId}
         selectedDay={dayFilter}
