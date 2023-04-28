@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { DAYS } from '@/utils/constants'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
 import CellScheduleShift from './CellScheduleShift'
+import { Typography } from '@mui/material'
 
 type RowUserScheduleItemProps = {
   userId: EntityId
@@ -32,8 +33,14 @@ const RowUserScheduleItem = (props: RowUserScheduleItemProps) => {
           left: 0,
         }}
       >
-        <Box>{user.displayName}</Box>
-        <Box>{`Hours Needed: ${5 - user.hoursAssigned} hrs`}</Box>
+        <Box>
+          <Typography fontWeight="bold"> {user.displayName}</Typography>
+        </Box>
+        <Box>
+          {`Hours Needed: ${
+            5 - (user.hoursAssigned ? user.hoursAssigned : 0)
+          } hrs`}
+        </Box>
       </TableCell>
       {DAYS
         ? DAYS.map((day) => (

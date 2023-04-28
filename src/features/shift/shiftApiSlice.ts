@@ -91,35 +91,37 @@ export const {
   //   useDeleteShiftMutation,
 } = shiftsApiSlice
 
-// Create selector to select state based on query parameter
-const getQueryShifts = (queryParameter: string) =>
-  shiftsApiSlice.endpoints.getShifts.select(queryParameter)
+export const selectShiftById = () => {
+  return createSelector(
+    (state: RootState, shiftId: EntityId, queryParameter: string) =>
+      shiftsApiSlice.endpoints.getShifts.select(queryParameter)(state).data ??
+      initialState,
+    (_: RootState, shiftId: EntityId) => shiftId,
+    (data, shiftId) => data.entities[shiftId] as Shift
+  )
+}
 
-const selectShift = (state: RootState, shiftId: string) => state
-
-// // Creates memoized selector to get normalized state based on the query parameter
-// const selectShiftsData = createSelector(
-//   (state: RootState, queryParameter: string) =>
-//     shiftsApiSlice.endpoints.getShifts.select(queryParameter)(state),
-//   (shiftsResult) => shiftsResult.data ?? initialState
-// )
-
-// // Creates memoized selector to get a shift by its ID based on the query parameter
-// export const selectShiftById = (queryParameter: string) =>
-//   createSelector(
-//     (state: RootState) => selectShiftsData(state, queryParameter),
-//     (_: unknown, shiftId: EntityId) => shiftId,
-//     (data: { entities: { [x: string]: unknown } }, shiftId: string | number) =>
-//       data.entities[shiftId] as Shift
-//   )
-
-export const selectShiftById = (
-  state: RootState,
-  shiftId: EntityId,
-  queryParameter: string
-): Shift | undefined => {
-  const data =
-    shiftsApiSlice.endpoints.getShifts.select(queryParameter)(state).data ??
-    initialState
-  return data.entities[shiftId] as Shift
+export const selectMultipleAssignedShiftById = () => {
+  return createSelector(
+    (state: RootState, shiftIds: string[], queryParameter: string) =>
+      shiftsApiSlice.endpoints.getShifts.select(queryParameter)(state).data ??
+      initialState,
+    (_: RootState, shiftIds: string[], houseId: string, userId: string) => {
+      return { shiftIds, userId }
+    },
+    (data, { shiftIds, userId }) => {
+      if (data.entities && data.ids) {
+        return data.ids.filter((id) => {
+          if (shiftIds.includes(id as string)) {
+            const shift = data.entities[id]
+            if (shift?.assignedUser === userId) {
+              return true
+            } else {
+              return false
+            }
+          }
+        })
+      }
+    }
+  )
 }

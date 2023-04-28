@@ -27,8 +27,12 @@ const DisplayShiftCard = (props: DisplayShiftCardProps) => {
   const houseId = useSelector(selectHouseId)
 
   //** for editing shifts */
-  const shift: Shift = useSelector((state: RootState) =>
-    selectShiftById(houseId)(state, shiftId as EntityId)
+  // const shift: Shift = useSelector((state: RootState) =>
+  //   selectShiftById(houseId)(state, shiftId as EntityId)
+  // )
+  const shift: Shift = useSelector(
+    (state: RootState) =>
+      selectShiftById()(state, shiftId as EntityId, houseId) as Shift
   )
 
   return (

@@ -5,22 +5,25 @@ import TableCell from '@mui/material/TableCell'
 import { Dictionary } from '@reduxjs/toolkit'
 import React, { useEffect, useState } from 'react'
 import SimpleShiftDisplay from './SimpleShiftDisplay'
+import { useSelector } from 'react-redux'
+import { selectEmptyShiftsByDay } from '../../scheduleSlice'
+import { RootState } from '@/store/store'
 
 type CellShiftsItmeProps = {
-  shiftIds: string[]
+  dayId: string
 }
 
 const CellShiftsItme = (props: CellShiftsItmeProps) => {
-  const { shiftIds } = props
+  const { dayId } = props
 
-  const { data: shifts } = useGetShiftsQuery('EUC')
-  const [shiftEntities, setShiftEntities] = useState<Dictionary<Shift>>()
+  // const { data: shifts } = useGetShiftsQuery('EUC')
+  const shiftIds = useSelector((state: RootState) =>
+    selectEmptyShiftsByDay(state, dayId)
+  )
 
   useEffect(() => {
-    if (shifts) {
-      setShiftEntities(shifts.entities)
-    }
-  }, [shifts])
+    console.log({ shiftIds: shiftIds })
+  }, [shiftIds])
 
   return (
     <TableCell
@@ -32,12 +35,11 @@ const CellShiftsItme = (props: CellShiftsItmeProps) => {
       }}
     >
       <Box padding={0} sx={{ maxHeight: '100px', overflowY: 'scroll' }}>
-        {shiftIds.map((shiftId) => (
-          <SimpleShiftDisplay
-            key={shiftId}
-            shift={shiftEntities ? shiftEntities[shiftId] : undefined}
-          />
-        ))}
+        {Array.isArray(shiftIds)
+          ? shiftIds.map((shiftId) => (
+              <SimpleShiftDisplay key={shiftId} shiftId={shiftId} />
+            ))
+          : null}
       </Box>
     </TableCell>
   )

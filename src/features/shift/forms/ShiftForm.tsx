@@ -110,7 +110,7 @@ const ShiftForm = ({
 
   const shift: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById(state, shiftId as EntityId, currentHouse.id) as Shift
+      selectShiftById()(state, shiftId as EntityId, currentHouse.id) as Shift
   )
 
   //** Holds the house shifts categories */

@@ -25,7 +25,7 @@ const ShiftInfoHeader = ({
   // )
   const shift: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById(state, shiftId as EntityId, authHouse.houseID) as Shift
+      selectShiftById()(state, shiftId as EntityId, authHouse.houseID) as Shift
   )
 
   return (

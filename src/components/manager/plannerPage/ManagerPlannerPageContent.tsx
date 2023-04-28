@@ -1,13 +1,43 @@
 import { selectManagerNavState } from '@/features/user/usersSlice'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import ManagerAssignedTabContent from './assignedTab/ManagerAssignedTabContent'
 import ManagerCategoriesTabContent from './categoriesTab/ManagerCategoriesTabContent'
 import ManagerUnassignedTabContent from './unassignedTab/ManagerUnassignedTabContent'
 import ManagerTentativeScheduleTabContent from './tentativeScheduleTab/ManagerTentativeScheduleTabContent'
+import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
+import {
+  setAssignedUserShifts,
+  setEmptyShifts,
+  setUsersSchedule,
+} from '@/features/tentativeSchedule/scheduleSlice'
+import { useGetUsersQuery } from '@/features/user/userApiSlice'
+import {
+  findAssignedShiftsForUsers,
+  findAvailableShiftsForUsers,
+  findEmptyShifts,
+} from '@/utils/utils'
+import { useEffect } from 'react'
+import { EntityId } from '@reduxjs/toolkit'
 
 const ManagerPlannerContent = () => {
   const managerNavState = useSelector(selectManagerNavState)
+  const { data: shifts } = useGetShiftsQuery('EUC')
+  const { data: users } = useGetUsersQuery({})
+  const dispatch = useDispatch()
+  useEffect(() => {
+    if (users && shifts) {
+      console.log()
+
+      const usersSchedule = findAvailableShiftsForUsers(users, shifts)
+      const assignedShifts = findAssignedShiftsForUsers(users, shifts)
+      const emptyShifts = findEmptyShifts(shifts)
+      dispatch(setUsersSchedule({ usersSchedule }))
+      dispatch(setAssignedUserShifts(assignedShifts))
+      dispatch(setEmptyShifts(emptyShifts))
+    }
+  }, [users, shifts, dispatch])
   let content = null
+
   if (managerNavState.tab === 0) {
     content = <ManagerTentativeScheduleTabContent />
   } else if (managerNavState.tab === 1) {

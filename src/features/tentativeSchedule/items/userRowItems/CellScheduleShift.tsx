@@ -7,8 +7,16 @@ import { EntityId } from '@reduxjs/toolkit'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { DAYS } from '@/utils/constants'
-import { selectShiftById } from '@/features/shift/shiftApiSlice'
-import { selectUserDayScheduleByDay } from '../../scheduleSlice'
+import {
+  selectMultipleAssignedShiftById,
+  selectShiftById,
+} from '@/features/shift/shiftApiSlice'
+import {
+  selectAssignedUserShiftsByIdDay,
+  selectUserScheduleByIdDay,
+} from '../../scheduleSlice'
+import ScheduleShiftDisplay from './ScheduleShiftDisplay'
+import { selectCurrentHouse } from '@/features/auth/authSlice'
 
 type CellScheduleShiftProps = {
   dayId: string
@@ -17,19 +25,21 @@ type CellScheduleShiftProps = {
 const CellScheduleShift = (props: CellScheduleShiftProps) => {
   const { dayId, userId } = props
 
+  const houseId = useSelector(selectCurrentHouse)?.id ?? ''
   const shiftIds = useSelector((state: RootState) =>
-    selectUserDayScheduleByDay(state, userId, dayId)
+    selectUserScheduleByIdDay(state, userId, dayId)
   )
-  //   const shift = useSelector((state: RootState) =>
-  //     selectShiftById('EUC')(state, shiftId)
-  //   )
+
+  const assignedShifts = useSelector((state: RootState) =>
+    selectAssignedUserShiftsByIdDay(state, userId, dayId)
+  )
 
   useEffect(() => {
-    // console.log(shiftIds)
-    if (shiftIds.length) {
-      //   console.log(shiftIds)
+    // console.log(assignedShifts)
+    if (assignedShifts.length) {
+      console.log({ [userId]: assignedShifts })
     }
-  }, [shiftIds])
+  }, [assignedShifts])
 
   return (
     <TableCell
@@ -38,8 +48,8 @@ const CellScheduleShift = (props: CellScheduleShiftProps) => {
         borderLeft: '1px solid black',
       }}
     >
-      {shiftIds.map((shiftId) => (
-        <Box key={shiftId}>{shiftId}</Box>
+      {assignedShifts.map((shiftId) => (
+        <ScheduleShiftDisplay key={shiftId} shiftId={shiftId as string} />
       ))}
     </TableCell>
   )

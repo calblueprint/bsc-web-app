@@ -22,7 +22,7 @@ const CategoryShiftItem = (props: CategoryShiftItemProps) => {
   // )
   const shift: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById(state, shiftId as EntityId, houseId) as Shift
+      selectShiftById()(state, shiftId as EntityId, houseId) as Shift
   )
   const [open, setOpen] = useState(false)
 

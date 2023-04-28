@@ -400,3 +400,102 @@ export function findAvailableShiftsForUsers(
 
   return availableShifts
 }
+
+export function findAssignedShiftsForUsers(
+  userState: EntityState<User>,
+  shiftState: EntityState<Shift>
+): Record<string, Record<string, string[]>> {
+  const assignedShifts: Record<string, Record<string, string[]>> = {}
+
+  userState.ids.forEach((userId) => {
+    const user = userState.entities[userId]
+    if (!user || !user.id || !user.availabilities) {
+      throw new Error(`Invalid user object for user ID ${userId}`)
+    }
+
+    assignedShifts[user.id] = {}
+
+    shiftState.ids.forEach((shiftId) => {
+      const shift = shiftState.entities[shiftId]
+      if (
+        !shift ||
+        !shift.id ||
+        !shift.possibleDays ||
+        !shift.timeWindow ||
+        !shift.hours ||
+        shift.hours < 0
+      ) {
+        throw new Error(`Invalid shift object for shift ID ${shiftId}`)
+      }
+
+      if (!shift.assignedUser || !shift.assignedDay) {
+        return
+      }
+
+      if (shift.assignedUser === userId) {
+        console.log(`Assigned User: ${shift.assignedUser} --> ${userId}`)
+        const lowerCaseDay = shift.assignedDay.toLowerCase()
+        assignedShifts[userId][lowerCaseDay] ??= []
+        assignedShifts[userId][lowerCaseDay].push(shiftId as string)
+      }
+    })
+  })
+
+  return assignedShifts
+}
+
+export function findEmptyShifts(
+  shiftState: EntityState<Shift>
+): Record<string, string[]> {
+  const emptyShifts: Record<string, string[]> = {}
+
+  let count = 0
+  shiftState.ids.forEach((id) => {
+    const shift = shiftState.entities[id]
+    // console.log(shift)
+    if (!shift) {
+      console.log('Undefinded shift: ', id)
+      return
+    }
+    // console.log(
+    //   '-------------',
+    //   {
+    //     assignedUser: shift.assignedUser,
+    //     assignedDay: shift.assignedDay,
+    //   },
+    //   ' Count: ',
+    //   count
+    // )
+    count += 1
+    if (
+      !shift.id ||
+      !shift.possibleDays ||
+      !shift.timeWindow ||
+      !shift.hours ||
+      shift.hours < 0
+    ) {
+      console.log({ shift: shift })
+      throw new Error('Invalid shift object')
+    }
+
+    if (shift.assignedUser && shift.assignedDay) {
+      // console.log('+++', {
+      //   assignedUser: shift.assignedUser,
+      //   assignedDay: shift.assignedDay,
+      // })
+      return
+    }
+
+    for (const day of shift.possibleDays) {
+      const lowerCaseDay = day.toLowerCase()
+      if (!emptyShifts[lowerCaseDay]) {
+        emptyShifts[lowerCaseDay] = []
+      }
+      emptyShifts[lowerCaseDay].push(shift.id)
+    }
+  })
+
+  // console.log('EMPTYSHIFTS: ', emptyShifts)
+
+  return emptyShifts
+}

@@ -27,13 +27,15 @@ import {
   generateContinuousMilitaryTimeForWeek,
   findAvailableShiftsForUsers,
 } from '@/utils/utils'
+import RowEmptyShiftsItem from '../items/emptyRowItems/RowEmptyShiftsItem'
+import { DAYS } from '@/utils/constants'
 
 const ScheduleTable = () => {
   /** Materials UI styles */
   //   const theme = useTheme()
   //   const [drawerWidth, setDrawerWidth] = useState(280)
   const drawerWidth = useSelector(selectDrawerWidth)
-  const { data: shifts } = useGetShiftsQuery('EUC')
+  // const { data: shifts } = useGetShiftsQuery('EUC')
   const { data: users } = useGetUsersQuery({})
 
   const dispatch = useDispatch()
@@ -46,47 +48,14 @@ const ScheduleTable = () => {
   //     }
   //   }, [isSmUp])
 
-  const stickyStyle = {
-    background: 'white',
-    position: 'sticky',
-    zIndex: 10,
-  }
+  // useEffect(() => {
+  //   if (users && shifts) {
+  //     console.log()
+  //     const usersSchedule = findAvailableShiftsForUsers(users, shifts)
 
-  useEffect(() => {
-    if (users && shifts) {
-      console.log()
-      const usersSchedule = findAvailableShiftsForUsers(users, shifts)
-      // users.ids.map((userId) => {
-      //   let weeklySchedule = {}
-      //   const availability = users.entities[userId]?.availabilities
-      //   if (availability) {
-      //     const days = Object.keys(availability)
-      //     if (days && days.length) {
-      //       days.forEach((day) => {
-      //         const dayArray = shifts.ids.filter(
-      //           (id) =>
-      //             shifts.entities[id]?.possibleDays.includes(
-      //               day.toLowerCase()
-      //             ) ||
-      //             shifts.entities[id]?.possibleDays.includes(
-      //               capitalizeFirstLetter(day)
-      //             )
-      //         )
-      //         if (dayArray.length) {
-      //           weeklySchedule = {
-      //             ...weeklySchedule,
-      //             [day.toLowerCase()]: dayArray,
-      //           }
-      //         }
-      //       })
-      //     }
-      //   }
-      //   usersSchedule = { ...usersSchedule, [userId]: weeklySchedule }
-      // })
-      // console.log({ usersSchedule: usersSchedule })
-      dispatch(setUsersSchedule({ usersSchedule }))
-    }
-  }, [users, shifts])
+  //     dispatch(setUsersSchedule({ usersSchedule }))
+  //   }
+  // }, [users, shifts])
 
   return (
     <Box
@@ -129,13 +98,23 @@ const ScheduleTable = () => {
                 >
                   Weekly Schedule
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ minWidth: 200, borderLeft: '1px solid black' }}
-                >
-                  Monday
-                </TableCell>
-                <TableCell
+                {DAYS
+                  ? DAYS.map((day) => (
+                      <TableCell
+                        key={day}
+                        align="center"
+                        style={{
+                          minWidth: 200,
+                          borderLeft: '1px solid black',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {day}
+                      </TableCell>
+                    ))
+                  : null}
+
+                {/* <TableCell
                   align="center"
                   style={{ minWidth: 200, borderLeft: '1px solid black' }}
                 >
@@ -170,49 +149,12 @@ const ScheduleTable = () => {
                   style={{ minWidth: 200, borderLeft: '1px solid black' }}
                 >
                   Sunday
-                </TableCell>
+                </TableCell> */}
                 {/* Add more headers as needed */}
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow sx={{ ...stickyStyle, top: 57 }}>
-                <TableCell
-                  style={{
-                    minWidth: 250,
-                    height: 100,
-                    borderRight: '1px solid black',
-                    position: 'sticky',
-                    left: 0,
-                    backgroundColor: 'white',
-                    zIndex: 1, // add z-index to ensure it appears above other columns
-                  }}
-                >
-                  Empty Shifts
-                </TableCell>
-                {shifts ? (
-                  <CellShiftsItme shiftIds={shifts.ids as string[]} />
-                ) : null}
-
-                {shifts ? (
-                  <CellShiftsItme shiftIds={shifts.ids as string[]} />
-                ) : null}
-                {shifts ? (
-                  <CellShiftsItme shiftIds={shifts.ids as string[]} />
-                ) : null}
-                {shifts ? (
-                  <CellShiftsItme shiftIds={shifts.ids as string[]} />
-                ) : null}
-                {shifts ? (
-                  <CellShiftsItme shiftIds={shifts.ids as string[]} />
-                ) : null}
-                {shifts ? (
-                  <CellShiftsItme shiftIds={shifts.ids as string[]} />
-                ) : null}
-                {shifts ? (
-                  <CellShiftsItme shiftIds={shifts.ids as string[]} />
-                ) : null}
-                {/* Add more cells as needed */}
-              </TableRow>
+              <RowEmptyShiftsItem />
 
               {users
                 ? users.ids.map((userId) => (

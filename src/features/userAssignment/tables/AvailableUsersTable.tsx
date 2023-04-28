@@ -102,7 +102,7 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
 
   const shiftObject: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById(state, shiftID as EntityId, houseID) as Shift
+      selectShiftById()(state, shiftID as EntityId, houseID) as Shift
   )
 
   // shiftObject.hours = shiftObject.hours as number
