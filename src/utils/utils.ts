@@ -248,3 +248,10 @@ export const createHouseCategories = (
 
   return categories
 }
+
+export const pluralizeHours = (hours: number) => {
+  if (hours === 1) {
+    return hours + " hour";
+  }
+  return hours + " hours";
+}
