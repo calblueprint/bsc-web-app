@@ -195,11 +195,12 @@ const UploadHouseList = () => {
             header: true,
             skipEmptyLines: true,
             download: true,
-            step: function (row) {
+            step: function (row : any) {
               
               //console.log("current row", row.data)
               //HELLO LOOK AT ME, UPDATE WITH AUTH STATE HOUSE
               const currMember = row.data
+              // eslint-disable-next-line 
               if(currMember.houseID != 'EUC'){
                 setFileHolder(undefined)
                 window.alert("CSV File contains data from multiple houses.")
