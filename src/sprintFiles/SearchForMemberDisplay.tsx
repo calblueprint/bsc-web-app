@@ -2,6 +2,9 @@ import { Grid } from '@mui/material'
 import React from 'react'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 
+/**
+ * Used to indicate that the manager should search for a member (referenced in ManagerIndividualTabContent)
+ */
 const SearchForMemberDisplay = () => {
   return (
     <Grid

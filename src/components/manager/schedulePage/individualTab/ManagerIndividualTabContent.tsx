@@ -3,7 +3,7 @@ import { useGetScheduledShiftsQuery } from '@/features/scheduledShift/scheduledS
 import { Days, House, ScheduledShift, Shift } from '@/types/schema'
 import React, { useState, FormEvent, useEffect, SyntheticEvent } from 'react'
 import { useSelector } from 'react-redux'
-import IndividualScheduledShifts from '@/sprintFiles/IndividualScheduledShifts'
+import IndividualScheduledShiftsTable from '@/sprintFiles/IndividualScheduledShiftsTable'
 import { Autocomplete, Box, Grid, Stack, TextField } from '@mui/material'
 import FilterSearchBar from '@/components/shared/searchBar/FilterSearchBar'
 import FilterShiftByDayBtn from '@/features/shift/buttons/FilterShiftByDayBtn'
@@ -15,7 +15,10 @@ import { useGetUsersQuery } from '@/features/user/userApiSlice'
 import SearchForMemberDisplay from '@/sprintFiles/SearchForMemberDisplay'
 import NoScheduleFoundDisplay from '@/sprintFiles/NoScheduleFoundDisplay'
 
-
+/**
+ * 
+ * @returns The page for manager individual tab content, includes a search bar where managers can search for a user and their scheduled shifts
+ */
 const ManagerIndividualTabContent = () => {
   const currentHouse: House = useSelector(selectCurrentHouse) as House
   const [filteredUserIDs, setFilteredUserIDs] = useState<EntityId[]>();;
@@ -30,6 +33,11 @@ const ManagerIndividualTabContent = () => {
     data: usersInHouse
   } = useGetUsersQuery(currentHouse.houseID)
 
+  /**
+   * 
+   * @param option An entityId
+   * @returns The name of the person associated with the entityId
+   */
   const extractName = (option: EntityId) => {
     if (usersInHouse === undefined) {
       return ''
@@ -41,6 +49,12 @@ const ManagerIndividualTabContent = () => {
     return userObject.displayName;
   }
   
+  /**
+   * 
+   * @param event The event that occurred
+   * @param value The id of the selected user
+   * @returns Update the selectedUser and filters the scheduledShiftIDs passed into the table
+   */
   const updateSelectedUserAndShiftIDs = (event: SyntheticEvent<Element, Event>, value: EntityId | null) => {
     if (value === null) {
       setSelectedUserID('');
@@ -91,7 +105,7 @@ const ManagerIndividualTabContent = () => {
         <Box sx={{ flexGrow: 1 }} />
       </Stack>
       {scheduledShifts && tableScheduledShiftIDs && tableScheduledShiftIDs.length > 0 &&
-          <IndividualScheduledShifts scheduledShiftIDs={tableScheduledShiftIDs} scheduledShiftDictionary = {scheduledShifts.entities}/>
+          <IndividualScheduledShiftsTable scheduledShiftIDs={tableScheduledShiftIDs} scheduledShiftDictionary = {scheduledShifts.entities}/>
       }
       {
         selectedUserID === "" &&

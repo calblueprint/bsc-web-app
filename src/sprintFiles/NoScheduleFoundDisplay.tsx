@@ -2,6 +2,9 @@ import React from 'react'
 import { Grid } from '@mui/material'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
+/**
+ * Used to indicate that no schedule was found for this user (referenced in ManagerIndividualTabContent)
+ */
 const NoScheduleFoundDisplay = () => {
   return (
     <Grid

@@ -56,6 +56,12 @@ type ScheduledShiftDisplayObject = {
     status: string
 }
 
+/**
+ * 
+ * @param scheduledShiftIDs - The IDs of the scheduled shifts to display
+ * @param scheduledShiftDictionary - The dictionary of the scheduled shift ids to the scheduled shift objects
+ * @returns A table of an individual's scheduled shifts
+ */
 const IndividualScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {scheduledShiftIDs: EntityId[], scheduledShiftDictionary: Dictionary<ScheduledShift>}) => {
     // IDs that will be displayed
     const [displayIDs, setDisplayIDs] = useState<EntityId[]>([]);
@@ -75,8 +81,10 @@ const IndividualScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary}
         populateDisplayDictionary();
     }, [scheduledShiftIDs]) // useEffect on parameter
 
-    // Populates the displayIDs with ids of scheduled shifts that have the proper format
-    // Populates the display dictionary with display objects
+    /**
+     * 
+     * @returns Populates the display dictionary with display objects for the table
+     */
     const populateDisplayDictionary = async () => {
         if (shifts === undefined) {
             return;
