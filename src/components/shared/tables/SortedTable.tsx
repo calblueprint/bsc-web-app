@@ -109,6 +109,7 @@ export default function SortedTable<
             align={headCell.align}
             padding={'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ fontWeight: 'bold' }}
           >
             {headCell.isSortable && isSortable ? (
               <TableSortLabel
@@ -172,7 +173,7 @@ export default function SortedTable<
                 id={labelId}
                 scope="row"
                 align={cell.align}
-                sx={disable ? { backgroundColor: 'gray' } : {}}
+                sx={disable ? { backgroundColor: '#C0C0C0' } : {}}
               >
                 {cell.transformFn ? cell.transformFn(row) : row[cell.id]}
               </StyledTableCell>
@@ -182,7 +183,7 @@ export default function SortedTable<
               <StyledTableCell
                 key={uuid()}
                 align={cell.align}
-                sx={disable ? { backgroundColor: 'gray' } : {}}
+                sx={disable ? { backgroundColor: '#C0C0C0' } : {}}
               >
                 {cell.isButton && cell.button
                   ? cell.button({ handleButtonClick, id })

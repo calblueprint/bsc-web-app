@@ -25,7 +25,7 @@ const RowUserScheduleItem = (props: RowUserScheduleItemProps) => {
       <TableCell
         align="center"
         style={{
-          minWidth: 250,
+          minWidth: 200,
           position: 'sticky',
           borderRight: '1px solid black',
           backgroundColor: 'white',

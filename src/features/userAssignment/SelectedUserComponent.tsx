@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Paper, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { EntityId } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,21 +25,29 @@ const SelectedUserComponent = () => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container bgcolor={'#D1FAE5'}>
-        <Grid xs={'auto'} md={'auto'} lg={'auto'}>
-          {user && selectedUserId ? (
-            <Typography>{user.displayName}</Typography>
-          ) : (
-            <Typography>No selected user</Typography>
-          )}
-        </Grid>
-        <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
-          {selectedUserId ? (
-            <CloseButton handleClick={handleUnselectedUserId} />
-          ) : null}
-        </Grid>
-      </Grid>
+    <Box
+      display={'flex'}
+      bgcolor={'#D1FAE5'}
+      component={Paper}
+      alignItems="center"
+      sx={{ flexGrow: 1, marginBottom: 2, minHeight: '50px' }}
+    >
+      <Box>
+        {user && selectedUserId ? (
+          <Typography variant="h6" marginLeft={3}>
+            {user.displayName}
+          </Typography>
+        ) : (
+          <Typography variant="h6" marginLeft={3}>
+            No selected user
+          </Typography>
+        )}
+      </Box>
+      <Box sx={{ marginLeft: 'auto' }}>
+        {selectedUserId ? (
+          <CloseButton handleClick={handleUnselectedUserId} />
+        ) : null}
+      </Box>
     </Box>
   )
 }

@@ -6,6 +6,7 @@ import {
 import { RootState } from '@/store/store'
 import { Shift } from '@/types/schema'
 import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
 import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import { Dictionary } from '@reduxjs/toolkit'
@@ -33,11 +34,13 @@ const SimpleShiftDisplay = (props: DynamicShiftDisplayProps) => {
       <Box
         textTransform={'capitalize'}
         padding={0.5}
-        marginBottom={'1px'}
+        marginBottom={'2px'}
         marginLeft={1}
+        component={Paper}
+        elevation={3}
       >
         <Typography
-          sx={{ fontSize: 14, backgroundColor: 'lightgray' }}
+          sx={{ fontSize: 14 }}
           textAlign={'center'}
           textTransform={'capitalize'}
         >

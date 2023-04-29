@@ -499,3 +499,34 @@ export function findEmptyShifts(
 
   return emptyShifts
 }
+
+type UserProperty = keyof User
+
+export function sortUserIdsByProperty(
+  state: EntityState<User>,
+  property: UserProperty
+): (string | number)[] {
+  const sortedIds = [...state.ids] as (string | number)[]
+
+  sortedIds.sort((idA, idB) => {
+    const userA = state.entities[idA]
+    const userB = state.entities[idB]
+
+    if (userA && userB) {
+      if (property in userA && property in userB) {
+        // Use type assertion to inform TypeScript about the expected types
+        const valueA = userA[property] as unknown as number
+        const valueB = userB[property] as unknown as number
+
+        if (valueA < valueB) {
+          return -1
+        } else if (valueA > valueB) {
+          return 1
+        }
+      }
+    }
+    return 0
+  })
+
+  return sortedIds
+}

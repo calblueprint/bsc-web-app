@@ -20,15 +20,20 @@ import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 import { useGetUsersQuery } from '@/features/user/userApiSlice'
 import RowUserScheduleItem from '../items/userRowItems/RowUserScheduleItem'
 import { setUserSchedule, setUsersSchedule } from '../scheduleSlice'
-import { EntityId } from '@reduxjs/toolkit'
+import { Dictionary, EntityId } from '@reduxjs/toolkit'
 import {
   capitalizeFirstLetter,
   getNumberOfBlocks,
   generateContinuousMilitaryTimeForWeek,
   findAvailableShiftsForUsers,
+  stableSort,
+  getComparator,
+  Order,
+  sortUserIdsByProperty,
 } from '@/utils/utils'
 import RowEmptyShiftsItem from '../items/emptyRowItems/RowEmptyShiftsItem'
 import { DAYS } from '@/utils/constants'
+import { User } from '@/types/schema'
 
 const ScheduleTable = () => {
   /** Materials UI styles */
@@ -37,6 +42,7 @@ const ScheduleTable = () => {
   const drawerWidth = useSelector(selectDrawerWidth)
   // const { data: shifts } = useGetShiftsQuery('EUC')
   const { data: users } = useGetUsersQuery({})
+  const [sortedUsers, setSortedUsers] = useState<string[]>()
 
   const dispatch = useDispatch()
   // TODO: Add description
@@ -56,6 +62,13 @@ const ScheduleTable = () => {
   //     dispatch(setUsersSchedule({ usersSchedule }))
   //   }
   // }, [users, shifts])
+
+  useEffect(() => {
+    if (users) {
+      const sortedList = sortUserIdsByProperty(users, 'hoursAssigned')
+      setSortedUsers(sortedList as string[])
+    }
+  }, [users])
 
   return (
     <Box
@@ -89,11 +102,12 @@ const ScheduleTable = () => {
                 <TableCell
                   align="center"
                   style={{
-                    minWidth: 250,
+                    minWidth: 200,
                     position: 'sticky',
                     borderRight: '1px solid black',
                     zIndex: 5,
                     left: 0,
+                    fontWeight: 'bold',
                   }}
                 >
                   Weekly Schedule
@@ -107,6 +121,7 @@ const ScheduleTable = () => {
                           minWidth: 200,
                           borderLeft: '1px solid black',
                           textTransform: 'capitalize',
+                          fontWeight: 'bold',
                         }}
                       >
                         {day}
@@ -156,8 +171,8 @@ const ScheduleTable = () => {
             <TableBody>
               <RowEmptyShiftsItem />
 
-              {users
-                ? users.ids.map((userId) => (
+              {sortedUsers
+                ? sortedUsers.map((userId) => (
                     <RowUserScheduleItem key={userId} userId={userId} />
                   ))
                 : null}

@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
 import { House } from '@/types/schema'
+import Paper from '@mui/material/Paper'
+import { useTheme } from '@mui/material/styles'
 
 type ScheduleShiftDisplayProps = {
   shiftId: string
@@ -13,7 +15,7 @@ type ScheduleShiftDisplayProps = {
 
 const ScheduleShiftDisplay = (props: ScheduleShiftDisplayProps) => {
   const { shiftId } = props
-
+  const theme = useTheme()
   const authHouse = useSelector(selectCurrentHouse) as House
 
   const shift = useSelector((state: RootState) =>
@@ -21,8 +23,12 @@ const ScheduleShiftDisplay = (props: ScheduleShiftDisplayProps) => {
   )
   return shift ? (
     <Box
+      // variant="outlined"
+      elevation={3}
+      component={Paper}
       sx={{
-        backgroundColor: 'lightgray',
+        backgroundColor: '#232323',
+        color: '#ffffff',
         marginBottom: 1,
         alignContent: 'center',
       }}

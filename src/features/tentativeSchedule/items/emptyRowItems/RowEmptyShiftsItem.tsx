@@ -13,14 +13,16 @@ const RowEmptyShiftsItem = () => {
   return (
     <TableRow sx={{ ...stickyStyle, top: 57 }}>
       <TableCell
+        align="center"
         style={{
-          minWidth: 250,
+          minWidth: 200,
           height: 100,
           borderRight: '1px solid black',
           position: 'sticky',
           left: 0,
           backgroundColor: 'white',
           zIndex: 1, // add z-index to ensure it appears above other columns
+          fontWeight: 'bold',
         }}
       >
         Empty Shifts
