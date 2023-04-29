@@ -18,6 +18,7 @@ import { RootState } from '@/store/store'
 import SortedTable from '@/components/shared/tables/SortedTable'
 import { selectSelectedUserId, setSelectedUserId } from '../userAssignmentSlice'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
+import { createListOfUsersForShift } from '@/sprintFiles/availabilityHelper'
 
 type AvailableUsersTableProps = {
   day: string
@@ -107,7 +108,7 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
 
   // define state variables
   const authHouse = useSelector(selectCurrentHouse) as House
-  const [listOfUserIds, setLitsOfUserIds] = useState<EntityId[]>([])
+  const [listOfUserIds, setListOfUserIds] = useState<EntityId[]>([])
   const [disableTable, setDisableTable] = useState(
     selectedUserId ? true : false
   )
@@ -157,10 +158,24 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   useEffect(() => {
     // would filter the userIds here, but not doing any filtering or sorting right now
     if (isUsersDataSuccess && usersData) {
-      let userIds = usersData.ids
-      setLitsOfUserIds(userIds)
+      let days = []
+      if (day === 'All') {
+        days = [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ]
+      } else {
+        days = [day]
+      }
+      let userIds = createListOfUsersForShift(shiftObject, usersData, days)
+      setListOfUserIds(userIds)
     }
-  }, [isUsersDataSuccess, usersData])
+  }, [day, isUsersDataSuccess, shiftObject, usersData])
 
   useEffect(() => {
     if (selectedUserId) {

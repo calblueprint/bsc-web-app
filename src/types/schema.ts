@@ -71,7 +71,7 @@ export type Shift = {
   // Possible days that the shift can be done on
   possibleDays: string[]
   // Time window that this shift must be done in [startTime, endTime]
-  timeWindow: { startTime: number; endTime: number }
+  timeWindow: { startTime: string; endTime: string }
   // property to display timeWindow
   timeWindowDisplay: string //Todo: Maybe delete this property
   // Day that the shift is assigned

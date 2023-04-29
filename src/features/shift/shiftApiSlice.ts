@@ -27,12 +27,12 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
         const loaddedShifts = responseData.map((entity) => {
           // console.log('[loaddedShifts] entity: ', entity)
           entity.id = entity.id
-          if (!entity.timeWindowDisplay) {
-            entity.timeWindowDisplay =
-              formatMilitaryTime(entity.timeWindow.startTime) +
-              ' - ' +
-              formatMilitaryTime(entity.timeWindow.endTime)
-          }
+          // if (!entity.timeWindowDisplay) {
+          //   entity.timeWindowDisplay =
+          //     formatMilitaryTime(entity.timeWindow.startTime) +
+          //     ' - ' +
+          //     formatMilitaryTime(entity.timeWindow.endTime)
+          // }
           return entity
         })
         console.debug(loaddedShifts)
