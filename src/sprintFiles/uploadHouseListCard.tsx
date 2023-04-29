@@ -152,18 +152,23 @@ const UploadHouseList = () => {
             const eucUsers = users.filter((member) => member?.houseID =='EUC')
             setPreviousMembers(eucUsers)
             setAllMembers(users)
+            const eucUsersNums : string[] = []
+            const usersNums: string[] = []
+
             eucUsers?.map((member) => {
                 if (member?.applicationID){
                     //need to change to deep copy
-                    setPrevMemNums(prevMemNums => [...prevMemNums, member?.applicationID]);
+                    eucUsersNums.push(member?.applicationID)
                 }
                
             })
             users?.map((member) => {
                 if (member?.applicationID){
-                    setAllMemNums(allMemNums => [...allMemNums, member?.applicationID]);
+                    usersNums.push(member?.applicationID)
                 } 
             })
+            setPrevMemNums(eucUsersNums);
+            setAllMemNums(usersNums)
         }
     }, [authUsers])
 
