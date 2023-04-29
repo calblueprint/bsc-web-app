@@ -93,7 +93,7 @@ const addUserTableStyle = {
 const footerBtnStyle = {
     float: 'right', 
     marginTop: 2.5, 
-    marginRight:6
+    marginRight:1
 }
 const footerBackStyle = {
     float: 'right',
