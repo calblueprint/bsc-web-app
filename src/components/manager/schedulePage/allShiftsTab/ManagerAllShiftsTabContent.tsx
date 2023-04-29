@@ -23,6 +23,10 @@ const filterOptions: Days[] = [
   'Sunday',
 ]
 
+/**
+ * 
+ * @returns Renders the page for all of the shifts in the house (allows for filtering by day, category and shift name)
+ */
 const ManagerAllShiftsTabContent = () => {
   const currentHouse: House = useSelector(selectCurrentHouse) as House
   // Stores the search query
@@ -55,7 +59,9 @@ const ManagerAllShiftsTabContent = () => {
     setDayFilter(selectedFilter)
   }
 
-  // Filters based on the day filter and search filter and sets the filteredShiftIDs
+  /**
+   * @returns Filters based on the day filter and search filter and sets the filteredShiftID
+   */
   const handleFiltering = () => {
     if (scheduledShifts) {
       let filteredCopy = [...scheduledShifts.ids];
