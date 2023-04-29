@@ -1,9 +1,13 @@
 // use this to test your stuff
-import UploadHouseList from '../../sprintFiles/uploadHouseList'
+import UploadHouseListCard from '../../sprintFiles/uploadHouseListCard'
+import UploadHouseListBtn from '../../sprintFiles/uploadHouseListBtn'
 
 const index = () => {
   return (
-    <UploadHouseList/>
+    <div>
+      <UploadHouseListCard/>
+    </div>
+    
   ) 
 }
 export default index
