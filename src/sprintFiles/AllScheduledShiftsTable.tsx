@@ -62,7 +62,7 @@ type ScheduledShiftDisplayObject = {
  * @param scheduledShiftDictionary - The dictionary of the scheduled shift id : scheduledShiftObject to display
  * @returns A table with all of the shifts based on the passed in IDs
  */
-const AllScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {scheduledShiftIDs: EntityId[], scheduledShiftDictionary: Dictionary<ScheduledShift>}) => {
+const AllScheduledShiftsTable = ({scheduledShiftIDs, scheduledShiftDictionary} : {scheduledShiftIDs: EntityId[], scheduledShiftDictionary: Dictionary<ScheduledShift>}) => {
     // IDs that will be displayed
     const [displayIDs, setDisplayIDs] = useState<EntityId[]>([]);
     // Dictionatry that will be passed into the Sorted Table
@@ -136,4 +136,4 @@ const AllScheduledShifts = ({scheduledShiftIDs, scheduledShiftDictionary} : {sch
     )
 }
 
-export default AllScheduledShifts
+export default AllScheduledShiftsTable

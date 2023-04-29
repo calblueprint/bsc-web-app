@@ -3,7 +3,7 @@ import { useGetScheduledShiftsQuery } from '@/features/scheduledShift/scheduledS
 import { Days, House, Shift } from '@/types/schema'
 import React, { useState, FormEvent, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import AllScheduledShifts from '@/sprintFiles/AllScheduledShifts'
+import AllScheduledShiftsTable from '@/sprintFiles/AllScheduledShiftsTable'
 import { Box, Grid, Stack } from '@mui/material'
 import FilterSearchBar from '@/components/shared/searchBar/FilterSearchBar'
 import FilterShiftByDayBtn from '@/features/shift/buttons/FilterShiftByDayBtn'
@@ -138,7 +138,7 @@ const ManagerAllShiftsTabContent = () => {
         </Box> */}
       </Stack>
         {scheduledShifts && filteredShiftIDs && 
-            <AllScheduledShifts scheduledShiftIDs={filteredShiftIDs} scheduledShiftDictionary = {scheduledShifts.entities}/>
+            <AllScheduledShiftsTable scheduledShiftIDs={filteredShiftIDs} scheduledShiftDictionary = {scheduledShifts.entities}/>
         }
     </React.Fragment> 
   )
