@@ -20,21 +20,12 @@ import { selectShiftById } from '@/features/shift/shiftApiSlice'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    // backgroundColor: theme.palette.common.black,
-    // color: theme.palette.common.white,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: 'secondary.main',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-  },
-}))
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
   },
 }))
 
@@ -127,9 +118,7 @@ export default function SortedTable<
             )}
           </StyledTableCell>
         ))}
-        {isCheckable ? (
-          <StyledTableCell padding="checkbox"></StyledTableCell>
-        ) : null}
+        {isCheckable ? <TableCell padding="checkbox"></TableCell> : null}
       </TableRow>
     </TableHead>
   )
@@ -151,7 +140,7 @@ export default function SortedTable<
       return null
     }
     return (
-      <StyledTableRow
+      <TableRow
         hover
         onClick={(event) => handleClick(event, id)}
         role="checkbox"
@@ -192,7 +181,7 @@ export default function SortedTable<
         })}
 
         {isCheckable ? (
-          <StyledTableCell padding="checkbox">
+          <TableCell padding="checkbox">
             <Checkbox
               color="primary"
               checked={isItemSelected}
@@ -200,9 +189,9 @@ export default function SortedTable<
                 'aria-labelledby': labelId,
               }}
             />
-          </StyledTableCell>
+          </TableCell>
         ) : null}
-      </StyledTableRow>
+      </TableRow>
     )
   })
 

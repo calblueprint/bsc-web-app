@@ -43,26 +43,33 @@ const TimeRangeComponent = (props: TimeRangeComponentProps) => {
         flexDirection={'row'}
         sx={{ marginY: 2, marginRight: 2 }}
       >
-        <TimeSelectField
-          fieldId="start-time-select"
-          labelId="start-time-label"
-          label="Start Time"
-          value={startTimeValue}
-          handleOnChange={(newValue) => {
-            console.log('newValue', newValue.target.value)
-            setFieldValue('startTime', newValue.target.value)
-          }}
-        />
-        <TimeSelectField
-          fieldId="end-time-select"
-          labelId="end-time-label"
-          label="End Time"
-          value={endTimeValue}
-          handleOnChange={(newValue) => {
-            console.log('newValue', newValue.target.value)
-            setFieldValue('endTime', newValue.target.value)
-          }}
-        />
+        <Box sx={{ marginRight: 2 }}>
+          <Typography>Start Time</Typography>
+          <TimeSelectField
+            fieldId="start-time-select"
+            labelId="start-time-label"
+            label=""
+            value={startTimeValue}
+            handleOnChange={(newValue) => {
+              console.log('newValue', newValue.target.value)
+              setFieldValue('startTime', newValue.target.value)
+            }}
+          />
+        </Box>
+
+        <Box>
+          <Typography>End Time</Typography>
+          <TimeSelectField
+            fieldId="end-time-select"
+            labelId="end-time-label"
+            label=""
+            value={endTimeValue}
+            handleOnChange={(newValue) => {
+              console.log('newValue', newValue.target.value)
+              setFieldValue('endTime', newValue.target.value)
+            }}
+          />
+        </Box>
       </Box>
 
       {isInvalidRange ? (

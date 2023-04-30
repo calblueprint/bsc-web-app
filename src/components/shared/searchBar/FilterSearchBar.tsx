@@ -3,8 +3,7 @@ import InputBase from '@mui/material/InputBase'
 import Box from '@mui/material/Box'
 import SearchIcon from '@mui/icons-material/Search'
 import React, { ChangeEvent, FormEvent, useState } from 'react'
-import { Dictionary, EntityId } from '@reduxjs/toolkit'
-import { Shift } from '@/types/schema'
+import { search } from '@/assets/StyleGuide'
 
 interface FilterSearchBarProps {
   onSearchChange: (value: string) => void
@@ -25,19 +24,13 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
   return (
     <Box
       component="form"
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        borderRadius: '4px',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        padding: '0 8px',
-      }}
+      sx={search}
       onSubmit={onSearchSubmit}
     >
       <InputBase
         value={searchQuery}
         onChange={handleChange}
-        placeholder="Search…"
+        placeholder="Search"
         inputProps={{ 'aria-label': 'search' }}
         sx={{
           flexGrow: 1,

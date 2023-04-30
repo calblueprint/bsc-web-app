@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { Box, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { EntityId } from '@reduxjs/toolkit'
 import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
 import SelectedUserComponent from '../SelectedUserComponent'
@@ -42,26 +42,28 @@ export const ShiftAssignmentCard = ({
           onClose={handleClose}
           className="dialog"
         >
-          <DialogTitle>
-            <ShiftInfoHeader
-              shiftId={shiftId}
-              selectedDay={selectedDay}
-              handleClose={handleClose}
-            />
-          </DialogTitle>
-          <DialogContent>
-            <SelectedUserComponent />
-            {userData ? (
-              <AvailableUsersTable
-                day={selectedDay}
-                houseID={authHouse.id}
-                shiftID={shiftId as string}
-                handleEditShift={handleEditShift}
+          <Box sx={{ margin: '3%' }}>
+            <DialogTitle>
+              <ShiftInfoHeader
+                shiftId={shiftId}
+                selectedDay={selectedDay}
                 handleClose={handleClose}
-                // unselect={unselect}
               />
-            ) : null}
-          </DialogContent>
+            </DialogTitle>
+            <DialogContent sx={{ marginLeft: '3%', marginTop: '1%' }}>
+              <SelectedUserComponent />
+              {userData ? (
+                <AvailableUsersTable
+                  day={selectedDay}
+                  houseID={authHouse.id}
+                  shiftID={shiftId as string}
+                  handleEditShift={handleEditShift}
+                  handleClose={handleClose}
+                  // unselect={unselect}
+                />
+              ) : null}
+            </DialogContent>
+          </Box>
         </Dialog>
       </>
     )
