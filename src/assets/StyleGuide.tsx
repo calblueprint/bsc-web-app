@@ -1,5 +1,6 @@
 // CUSTOM COMPONENT STYLES!!! use by calling <Button style={lightButton}
 
+// light grey button with dark grey text
 export const lightButton = {
   borderRadius: '5px',
   backgroundColor: '#F6F6F6',
@@ -10,6 +11,7 @@ export const lightButton = {
   boxShadow: 'none',
 }
 
+// dark blue button with white text
 export const darkButton = {
   borderRadius: '5px',
   backgroundColor: '#1A202C',
@@ -20,6 +22,7 @@ export const darkButton = {
   boxShadow: 'none',
 }
 
+// search bar for tables
 export const search = {
   display: 'flex',
   alignItems: 'center',
@@ -31,6 +34,7 @@ export const search = {
   width: '50%',
 }
 
+// preference text for member preferences
 export const activePreference = {
   backgroundColor: 'primary.main',
   color: 'white',
@@ -41,6 +45,7 @@ export const activePreference = {
   fontSize: '16px',
 }
 
+// preference text for member preferences
 export const inactivePreference = {
   backgroundColor: 'secondary.light',
   color: 'secondary.dark',
@@ -49,4 +54,28 @@ export const inactivePreference = {
   padding: '5px 0px 5px 0px',
   borderRadius: '20px',
   fontSize: '16px',
+}
+
+// title text for shift assignment
+export const shiftAssignTitle = {
+  color: '#ACACAC',
+  fontSize: '18px',
+  paddingRight: '3%',
+}
+
+// body text for shift assignment
+export const shiftAssignInfo = {
+  color: 'primary.dark',
+  fontSize: '18px',
+  paddingRight: '10%',
+}
+
+// grey bubble bkgd text for shift assignment
+export const shiftAssignBuffer = {
+  color: '#464646',
+  fontSize: '14px',
+  backgroundColor: '#F3F3F3',
+  borderRadius: '18px',
+  padding: '5px 15px 5px 15px',
+  marginLeft: '-8%',
 }

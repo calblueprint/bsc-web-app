@@ -1,12 +1,7 @@
 import ShiftForm from '../forms/ShiftForm'
-import {
-  Button,
-  Dialog,
-  Typography,
-  DialogContent,
-  DialogTitle,
-} from '@mui/material'
-import { useState } from 'react'
+import { Dialog, DialogContent, DialogTitle, Box } from '@mui/material'
+import styles from '../../user/forms/UserForm.module.css'
+import CloseIcon from '@mui/icons-material/Close'
 
 function NewShiftCard({
   shiftId,
@@ -22,9 +17,6 @@ function NewShiftCard({
     setOpen(false)
   }
 
-  const handleOpen = () => {
-    setOpen(true)
-  }
   return (
     <>
       <Dialog
@@ -34,16 +26,23 @@ function NewShiftCard({
         onClose={handleClose}
         className="dialog"
       >
-        <DialogTitle variant="h4" component="h2">
-          Create Shift
-        </DialogTitle>
-        <DialogContent>
-          <ShiftForm
-            setOpen={setOpen}
-            // shiftId={shiftId} //'6401c47de8d154aa9ccf5d93'
-            isNewShift={true}
-          />
-        </DialogContent>
+        <Box margin={'5%'}>
+          <Box display={'flex'} justifyContent={'space-between'}>
+            <DialogTitle variant="h4" component="h2">
+              Create Shift
+            </DialogTitle>
+            <CloseIcon fontSize="large" onClick={handleClose} />
+          </Box>
+
+          <hr className={styles.line} />
+          <DialogContent>
+            <ShiftForm
+              setOpen={setOpen}
+              // shiftId={shiftId} //'6401c47de8d154aa9ccf5d93'
+              isNewShift={true}
+            />
+          </DialogContent>
+        </Box>
       </Dialog>
     </>
   )
