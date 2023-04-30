@@ -3,7 +3,7 @@ import { useGetScheduledShiftsQuery } from '@/features/scheduledShift/scheduledS
 import { Days, House, Shift } from '@/types/schema'
 import React, { useState, FormEvent, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import AllScheduledShiftsTable from '@/sprintFiles/AllScheduledShiftsTable'
+import AllScheduledShiftsTable from '@/features/scheduledShift/tables/AllScheduledShiftsTable'
 import { Box, Grid, Stack } from '@mui/material'
 import FilterSearchBar from '@/components/shared/searchBar/FilterSearchBar'
 import FilterShiftByDayBtn from '@/features/shift/buttons/FilterShiftByDayBtn'
@@ -24,7 +24,7 @@ const filterOptions: Days[] = [
 ]
 
 /**
- * 
+ *
  * @returns Renders the page for all of the shifts in the house (allows for filtering by day, category and shift name)
  */
 const ManagerAllShiftsTabContent = () => {
@@ -34,21 +34,19 @@ const ManagerAllShiftsTabContent = () => {
   // Stores the day filter
   const [dayFilter, setDayFilter] = useState<Days>('All')
   // The ids that are passed into the AllScheduledShifts Table to display
-  const [filteredShiftIDs, setFilteredShiftIDs] = useState<EntityId[]>();
-  
-  const {
-      data: scheduledShifts
-  } = useGetScheduledShiftsQuery(currentHouse.houseID)
+  const [filteredShiftIDs, setFilteredShiftIDs] = useState<EntityId[]>()
 
-  const {
-      data: shifts
-  } = useGetShiftsQuery(currentHouse.houseID);
+  const { data: scheduledShifts } = useGetScheduledShiftsQuery(
+    currentHouse.houseID
+  )
+
+  const { data: shifts } = useGetShiftsQuery(currentHouse.houseID)
 
   const handleSearchChange = (value: string) => {
     // console.log('search: ' + value)
     setSearchQuery(value)
   }
-  
+
   const handleSearchSubmit = (event: FormEvent) => {
     event.preventDefault()
     console.log('Search query:', searchQuery)
@@ -64,27 +62,29 @@ const ManagerAllShiftsTabContent = () => {
    */
   const handleFiltering = () => {
     if (scheduledShifts) {
-      let filteredCopy = [...scheduledShifts.ids];
+      let filteredCopy = [...scheduledShifts.ids]
       if (dayFilter !== 'All') {
         filteredCopy = filteredCopy.filter((id) => {
           const scheduledShift = scheduledShifts.entities[id]
           if (scheduledShift) {
-            let shiftCopy: Shift | undefined = undefined;
+            let shiftCopy: Shift | undefined = undefined
             if ('shiftCopy' in scheduledShift) {
-                shiftCopy = scheduledShift['shiftCopy'] as Shift;
+              shiftCopy = scheduledShift['shiftCopy'] as Shift
             } else {
-                let innerShiftID = scheduledShift.shiftID;
-                if (shifts === undefined) {
-                  return false;
-                }
-                shiftCopy = shifts.entities[innerShiftID] as Shift;
+              let innerShiftID = scheduledShift.shiftID
+              if (shifts === undefined) {
+                return false
+              }
+              shiftCopy = shifts.entities[innerShiftID] as Shift
             }
             if (shiftCopy === undefined) {
-                return false;
+              return false
             }
-            return shiftCopy.assignedDay.toLowerCase() === dayFilter.toLowerCase();
+            return (
+              shiftCopy.assignedDay.toLowerCase() === dayFilter.toLowerCase()
+            )
           }
-          return false;
+          return false
         })
       }
       if (searchQuery !== '') {
@@ -92,31 +92,38 @@ const ManagerAllShiftsTabContent = () => {
           const scheduledShift = scheduledShifts.entities[id]
           if (scheduledShift) {
             // DO NAME FILTERING, WILL PROBABLY HAVE TO FETCH NAME FROM INNER SHIFT OBJECT LIKE IN ALLSSCHEDULED SHIFTS
-            let shiftCopy: Shift | undefined = undefined;
+            let shiftCopy: Shift | undefined = undefined
             if ('shiftCopy' in scheduledShift) {
-                shiftCopy = scheduledShift['shiftCopy'] as Shift;
+              shiftCopy = scheduledShift['shiftCopy'] as Shift
             } else {
-                let innerShiftID = scheduledShift.shiftID;
-                if (shifts === undefined) {
-                  return false;
-                }
-                shiftCopy = shifts.entities[innerShiftID] as Shift;
+              let innerShiftID = scheduledShift.shiftID
+              if (shifts === undefined) {
+                return false
+              }
+              shiftCopy = shifts.entities[innerShiftID] as Shift
             }
             if (shiftCopy === undefined) {
-                return false;
+              return false
             }
-            return shiftCopy.name.toLowerCase().includes(searchQuery.toLowerCase()) || shiftCopy.category.toLowerCase().includes(searchQuery.toLowerCase());
+            return (
+              shiftCopy.name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase()) ||
+              shiftCopy.category
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
+            )
           }
         })
       }
-      setFilteredShiftIDs(filteredCopy);
+      setFilteredShiftIDs(filteredCopy)
     }
   }
 
   useEffect(() => {
-    handleFiltering(); 
-  }, [scheduledShifts, dayFilter, searchQuery]) 
-  
+    handleFiltering()
+  }, [scheduledShifts, dayFilter, searchQuery])
+
   return (
     <React.Fragment>
       <Stack direction={'row'}>
@@ -137,11 +144,14 @@ const ManagerAllShiftsTabContent = () => {
           <QuickShiftButton />
         </Box> */}
       </Stack>
-        {scheduledShifts && filteredShiftIDs && 
-            <AllScheduledShiftsTable scheduledShiftIDs={filteredShiftIDs} scheduledShiftDictionary = {scheduledShifts.entities}/>
-        }
-    </React.Fragment> 
+      {scheduledShifts && filteredShiftIDs && (
+        <AllScheduledShiftsTable
+          scheduledShiftIDs={filteredShiftIDs}
+          scheduledShiftDictionary={scheduledShifts.entities}
+        />
+      )}
+    </React.Fragment>
   )
 }
 
-export default ManagerAllShiftsTabContent 
+export default ManagerAllShiftsTabContent
