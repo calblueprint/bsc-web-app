@@ -9,8 +9,17 @@ import {
   updateDoc,
   QuerySnapshot,
   DocumentSnapshot,
+  query,
+  where,
+  WhereFilterOp,
+  Query,
+  DocumentData,
 } from 'firebase/firestore'
 import type { BaseQueryFn } from '@reduxjs/toolkit/query'
+
+type ParamsProps = {
+  filter: { fieldPath: string; optStr: WhereFilterOp; value: string }
+}
 
 const customBaseQuery: BaseQueryFn<
   unknown,
@@ -25,12 +34,12 @@ const customBaseQuery: BaseQueryFn<
     url,
     method,
     body,
-  }: // params,
-  {
+    params,
+  }: {
     url: string
     method: string
     body: object
-    // params: object
+    params: ParamsProps
   }) => {
     // console.log('method: ', method)
     // console.log('url: ', url)
@@ -40,6 +49,7 @@ const customBaseQuery: BaseQueryFn<
     const pathArray = url.split('/').filter((p: string) => p.length > 0)
     const resObj: unknown[] = []
     let isCollection = false
+    let hasFilter = params?.filter ? true : false
     // console.log(pathArray)
     if (pathArray.length === 0) {
       return {
@@ -66,10 +76,23 @@ const customBaseQuery: BaseQueryFn<
         case 'GET':
           //** Check weather the request is a collection or a document */
           if (isCollection) {
+            //** Get the collection to be query */
+            console.log('filter: ', params)
+            let queryColl = collection(firestore, path)
+            let queryRef: Query<DocumentData> | undefined = undefined
+            if (hasFilter) {
+              //** If the query is a collection and has a filter use where function */
+              const { fieldPath, optStr, value } = params.filter
+              queryRef = query(
+                queryColl,
+                where(fieldPath, optStr, value)
+              )
+            }
             //** If the query is a collection, get the full collection from the firebase */
             // console.log(path)
-            const query = collection(firestore, path)
-            const querySnapshot: QuerySnapshot<unknown> = await getDocs(query)
+            const querySnapshot: QuerySnapshot<unknown> = await getDocs(
+              queryRef ? queryRef : queryColl
+            )
 
             // console.log('Collection SnapShot.docs: ', querySnapshot.docs)
             //** Verify that the object exist */
@@ -183,7 +206,7 @@ const customBaseQuery: BaseQueryFn<
   }
   try {
     const res = await result(
-      arg as { url: string; method: string; body: object }
+      arg as { url: string; method: string; body: object; params: ParamsProps }
     )
     if (res?.data) {
       return { data: res?.data }

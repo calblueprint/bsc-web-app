@@ -8,10 +8,21 @@ import {
   selectCurrentUser,
 } from '@/features/auth/authSlice'
 import { Typography } from '@mui/material'
+import { useGetAuthorizedUsersQuery } from '@/features/authorizedUser/authorizedUserApiSlice'
 import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 
 const TestingPage = () => {
+  const authUser = useSelector(selectCurrentUser)
+  const { data: authHouseUsersData } = useGetAuthorizedUsersQuery('EUC')
+  // console.log(authUser)
+
+  useEffect(() => {
+    if (authHouseUsersData) {
+      console.log('Auth User', authHouseUsersData)
+    }
+  }, [authHouseUsersData])
+
   /**
    *  Here is an example of how I tested my ShiftInfoHeader component.
    *  Feel free to delete whatever here and replace with what you want to test!

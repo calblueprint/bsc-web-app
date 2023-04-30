@@ -3,7 +3,7 @@ import { AuthorizedUser, User } from '../../types/schema'
 import { apiSlice } from '../../store/api/apiSlice'
 import { RootState } from '../../store/store'
 
-const authorizedUsersAdapter = createEntityAdapter<User>({})
+const authorizedUsersAdapter = createEntityAdapter<AuthorizedUser>({})
 
 const initialState = authorizedUsersAdapter.getInitialState()
 
@@ -15,7 +15,36 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
         params: { queryType: 'authorized users' },
       }),
-      transformResponse: (responseData: User[]) => {
+      transformResponse: (responseData: AuthorizedUser[]) => {
+        const loadedAuthorizedUsers = responseData.map((entity) => {
+          entity.id = entity.id
+          return entity
+        })
+        console.debug(loadedAuthorizedUsers)
+        return authorizedUsersAdapter.setAll(
+          initialState,
+          loadedAuthorizedUsers
+        )
+      },
+      providesTags: (result) => {
+        if (result?.ids) {
+          return [
+            { type: 'AuthorizedUser', id: 'LIST' },
+            ...result.ids.map((id) => ({
+              type: 'AuthorizedUser' as const,
+              id,
+            })),
+          ]
+        } else return [{ type: 'AuthorizedUser', id: 'LIST' }]
+      },
+    }),
+    getHouseAuthorizedUsers: builder.query({
+      query: (value: string) => ({
+        url: `authorizedUsers`,
+        method: 'GET',
+        params: { filter: { fieldPath: 'houseID', opStr: '==', value } },
+      }),
+      transformResponse: (responseData: AuthorizedUser[]) => {
         const loadedAuthorizedUsers = responseData.map((entity) => {
           entity.id = entity.id
           return entity
@@ -49,10 +78,7 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'AuthorizedUser', id: 'LIST' }],
     }),
     updateAuthorizedUser: builder.mutation({
-      query: (data: {
-        userId: string, 
-        data: Partial<AuthorizedUser>
-      }) => ({
+      query: (data: { userId: string; data: Partial<AuthorizedUser> }) => ({
         url: `authorizedUsers/${data.userId}`,
         method: 'PATCH',
         body: {
@@ -71,6 +97,7 @@ export const {
   useGetAuthorizedUsersQuery,
   useAddNewAuthorizedUserMutation,
   useUpdateAuthorizedUserMutation,
+  useGetHouseAuthorizedUsersQuery,
 } = authorizedUsersApiSlice
 
 // Creates memoized selector to get normalized state based on the query parameter
