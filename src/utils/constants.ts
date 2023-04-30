@@ -110,3 +110,6 @@ export const DAYS = [
   'friday',
   'saturday',
 ]
+
+export const COMPLETE = 'Complete';
+export const INCOMPLETE = 'Incomplete';
