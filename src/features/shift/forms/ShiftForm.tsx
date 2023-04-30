@@ -1,6 +1,5 @@
 import { Formik, Form, FormikHelpers } from 'formik'
-import { Stack, Button, Box } from '@mui/material'
-import dayjs, { Dayjs } from 'dayjs'
+import { Stack, Button, Box, Typography } from '@mui/material'
 import * as Yup from 'yup'
 import {
   TextInput,
@@ -14,15 +13,10 @@ import {
 } from '../../shift/shiftApiSlice'
 import { useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
-import { formatMilitaryTime } from '../../../utils/utils'
 import { RootState } from '../../../store/store'
 import { EntityId } from '@reduxjs/toolkit'
-import { House, Shift, User } from '../../../types/schema'
-import {
-  selectCurrentHouse,
-  selectCurrentUser,
-} from '@/features/auth/authSlice'
-import TimeSelectField from '@/components/shared/forms/TimeSelectField'
+import { House, Shift } from '../../../types/schema'
+import { selectCurrentHouse } from '@/features/auth/authSlice'
 
 //** Custom Functions */
 import {
@@ -268,18 +262,24 @@ const ShiftForm = ({
         >
           {({ isSubmitting, values, setFieldValue }) => (
             <Form>
-              <TextInput name="name" label="Shift Name" />
+              <Box paddingBottom={'1%'}>
+                <Typography>Shift Name</Typography>
+                <TextInput name="name" label="" />
+              </Box>
 
-              <SelectInput
-                name="category"
-                label="Category"
-                labelid="category"
-                id="category"
-                options={houseCategories}
-                multiselect={false}
-              />
+              <Box paddingBottom={'1%'}>
+                <Typography>Category</Typography>
+                <SelectInput
+                  name="category"
+                  label=""
+                  labelid="category"
+                  id="category"
+                  options={houseCategories}
+                  multiselect={false}
+                />
+              </Box>
 
-              <Box display={'flex'}>
+              <Box display={'flex'} paddingBottom={'1%'}>
                 <TimeRangeComponent
                   startTimeValue={values.startTime}
                   endTimeValue={values.endTime}
@@ -287,24 +287,34 @@ const ShiftForm = ({
                   setError={handleError}
                 />
                 <Box marginRight={2}>
-                  <TextInput name="hours" label="Credit Hours For Shift" />
+                  <Typography>Value (hours)</Typography>
+                  <TextInput name="hours" label="" />
                 </Box>
                 <Box>
-                  <TextInput name="verificationBuffer" label="Buffer Hours" />
+                  <Typography>Buffer Hours</Typography>
+                  <TextInput name="verificationBuffer" label="" />
                 </Box>
               </Box>
 
-              <SelectInput
-                name="possibleDays"
-                label="Posible Days"
-                labelid="possibleDays"
-                id="possibleDays"
-                options={daysList}
-                multiselect={true}
-              />
-              <Box marginBottom={2}>
-                <TextInput name="description" label="Description" />
+              <Box paddingBottom={'1%'}>
+                <Typography>Possible Days</Typography>
+                <SelectInput
+                  name="possibleDays"
+                  label=""
+                  labelid="possibleDays"
+                  id="possibleDays"
+                  options={daysList}
+                  multiselect={true}
+                />
               </Box>
+
+              <Box paddingBottom={'1%'}>
+                <Typography>Description</Typography>
+                <Box marginBottom={2}>
+                  <TextInput name="description" label="" />
+                </Box>
+              </Box>
+
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Button
                   type="submit"

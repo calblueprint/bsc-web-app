@@ -11,17 +11,11 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import Divider from '@mui/material/Divider'
 import { Dictionary } from '@reduxjs/toolkit'
-import {
-  House,
-  Shift,
-  User,
-} from '@/types/schema'
+import { House, Shift, User } from '@/types/schema'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  selectCurrentUser,
-} from '@/features/auth/authSlice'
+import { selectCurrentUser } from '@/features/auth/authSlice'
 import { useEffect, useState } from 'react'
 import { Snackbar, Alert, Stack } from '@mui/material'
 import {
@@ -337,15 +331,11 @@ export default function PrefrencesItem(props: {
                     }
 
                     return (
-                      <TableRow key={id}>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          sx={{ textTransform: 'capitalize' }}
-                        >
+                      <TableRow key={id} sx={{ width: '100' }}>
+                        <TableCell component="th" style={{ width: '50%' }}>
                           {shiftEntities[id]?.name}
                         </TableCell>
-                        <TableCell align="right" sx={{ padding: 0, margin: 0 }}>
+                        <TableCell align="right">
                           {isEditing ? buttonGroup : displayContent}
                         </TableCell>
                       </TableRow>
