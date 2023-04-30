@@ -19,7 +19,7 @@ const SearchForMemberDisplay = () => {
           <PersonSearchIcon />
         </Grid>
         <Grid item xs={3}>
-            Search for a member's assigned shift schedule
+            Search for a member&apos;s shift schedule
         </Grid>   
     </Grid> 
   )
