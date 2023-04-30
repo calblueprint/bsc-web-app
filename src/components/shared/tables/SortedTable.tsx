@@ -17,6 +17,7 @@ import uuid from 'react-uuid'
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import { useSelector } from 'react-redux'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
+import { selectDrawerWidth } from '@/features/user/usersSlice'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -54,6 +55,8 @@ export default function SortedTable<
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof T>(headCells[0].id)
   const [selected, setSelected] = React.useState<readonly string[]>([])
+
+  const drawerWidth = useSelector(selectDrawerWidth)
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -98,6 +101,7 @@ export default function SortedTable<
             align={headCell.align}
             padding={'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ fontWeight: 'bold' }}
           >
             {headCell.isSortable && isSortable ? (
               <TableSortLabel
@@ -159,7 +163,7 @@ export default function SortedTable<
                 id={labelId}
                 scope="row"
                 align={cell.align}
-                sx={disable ? { backgroundColor: 'gray' } : {}}
+                sx={disable ? { backgroundColor: '#C0C0C0' } : {}}
               >
                 {cell.transformFn ? cell.transformFn(row) : row[cell.id]}
               </StyledTableCell>
@@ -169,7 +173,7 @@ export default function SortedTable<
               <StyledTableCell
                 key={uuid()}
                 align={cell.align}
-                sx={disable ? { backgroundColor: 'gray' } : {}}
+                sx={disable ? { backgroundColor: '#C0C0C0' } : {}}
               >
                 {cell.isButton && cell.button
                   ? cell.button({ handleButtonClick, id })
@@ -197,7 +201,7 @@ export default function SortedTable<
   })
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ maxWidth: `calc(100vw - ${drawerWidth}px)` }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table

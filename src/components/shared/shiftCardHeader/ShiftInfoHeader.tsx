@@ -13,6 +13,7 @@ import {
   shiftAssignInfo,
   shiftAssignTitle,
 } from '@/assets/StyleGuide'
+import { capitalizeFirstLetter } from '@/utils/utils'
 
 const ShiftInfoHeader = ({
   shiftId,
@@ -25,9 +26,13 @@ const ShiftInfoHeader = ({
 }) => {
   const authHouse = useSelector(selectCurrentHouse) as House
 
+  // const shift: Shift = useSelector(
+  //   (state: RootState) =>
+  //     selectShiftById(authHouse.houseID)(state, shiftId as EntityId) as Shift
+  // )
   const shift: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById(authHouse.houseID)(state, shiftId as EntityId) as Shift
+      selectShiftById()(state, shiftId as EntityId, authHouse.houseID) as Shift
   )
   return (
     <Box>
@@ -45,8 +50,7 @@ const ShiftInfoHeader = ({
         </Typography>
         <Typography sx={shiftAssignTitle}>Window</Typography>
         <Typography sx={shiftAssignInfo}>
-          {selectedDay[0].toUpperCase() + selectedDay.slice(1)}{' '}
-          {shift.timeWindowDisplay}
+          {capitalizeFirstLetter(selectedDay)} {shift.timeWindowDisplay}
         </Typography>
         <Typography sx={shiftAssignBuffer}>
           {shift.verificationBuffer} hour buffer
@@ -62,6 +66,58 @@ const ShiftInfoHeader = ({
           {shift.possibleDays.join(', ')}
         </Typography>
       </Stack>
+
+      {/* <Box sx={{ flexGrow: 1 }}>
+      <Grid container>
+        <Grid xs={'auto'} md={'auto'} lg={'auto'} textTransform={'capitalize'}>
+          <h1>{shift.name}</h1>
+        </Grid>
+        
+        <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
+          <CloseButton handleClick={handleClose} />
+        </Grid>
+      </Grid>
+      <Grid container spacing={4}>
+        <Grid container xs={'auto'} md={'auto'} lg={'auto'} spacing={2}>
+          <Grid xs={'auto'} lg={'auto'}>
+            <Typography fontFamily={'Inter'} color={'#ACACAC'}>
+              Worth
+            </Typography>
+          </Grid>
+          <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
+            <Typography>
+              {shift.hours} {shift.hours < 2 ? 'hour' : 'hours'}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container xs={'auto'} md={'auto'} lg={'auto'} spacing={2}>
+          <Grid xs={'auto'} lg={'auto'}>
+            <Typography fontFamily={'Inter'} color={'#ACACAC'}>
+              Window
+            </Typography>
+          </Grid>
+          <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
+            <Typography>
+              {capitalizeFirstLetter(selectedDay)} {shift.timeWindowDisplay}
+            </Typography>
+          </Grid>
+          <Grid xs={'auto'} md={'auto'} lg={'auto'}>
+            <Typography bgcolor={'#F3F3F3'}>
+              {shift.verificationBuffer} hour buffer
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container xs={'auto'} md={'auto'} lg={'auto'} spacing={2}>
+          <Grid xs={'auto'} lg={'auto'}>
+            <Typography fontFamily={'Inter'} color={'#ACACAC'}>
+              Also available on
+            </Typography>
+          </Grid>
+          <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
+            <Typography>{shift.possibleDays.join(', ')}</Typography>
+          </Grid>
+        </Grid>
+      </Grid> */}
     </Box>
   )
 }

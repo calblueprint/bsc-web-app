@@ -32,6 +32,7 @@ const usersSlice = createSlice({
       saturday: [],
       sunday: [],
     },
+    drawerWidth: 280,
   },
   reducers: {
     setMemberNavState: (state, action) => {
@@ -45,6 +46,10 @@ const usersSlice = createSlice({
     },
     setTabValue: (state, action) => {
       state.tabValue = action.payload
+    },
+    setDrawerWidth: (state, action) => {
+      // console.log(action.payload)
+      state.drawerWidth = action.payload ? 280 : 50
     },
     // setMemberAvailability: (state, action) => {
     //   state.memberAvailability = action.payload
@@ -67,6 +72,7 @@ export const {
   setManagerNavState,
   setSupervisorNavState,
   setTabValue,
+  setDrawerWidth,
   // setMemberAvailability,
   // setMemberAvailabilityDay,
 } = usersSlice.actions
@@ -78,6 +84,7 @@ export const selectManagerNavState = (state: RootState) =>
 export const selectSupervisorNavState = (state: RootState) =>
   state.users.supervisorNavState
 export const selectTabValue = (state: RootState) => state.users.tabValue
+export const selectDrawerWidth = (state: RootState) => state.users.drawerWidth
 // export const selectMemberAvailability = (state: RootState) =>
 //   state.users.memberAvailability
 
