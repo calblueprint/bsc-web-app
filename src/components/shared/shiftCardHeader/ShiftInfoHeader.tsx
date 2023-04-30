@@ -37,7 +37,7 @@ const ShiftInfoHeader = ({
   return (
     <Box>
       <Box display={'flex'} justifyContent={'space-between'}>
-        <DialogTitle variant="h4" component="h2">
+        <DialogTitle variant="h4" component="h2" textTransform={'capitalize'}>
           {shift.name}
         </DialogTitle>
         <CloseIcon fontSize="large" onClick={handleClose} />
@@ -49,7 +49,7 @@ const ShiftInfoHeader = ({
           {shift.hours < 2 ? ' hour' : ' hours'}
         </Typography>
         <Typography sx={shiftAssignTitle}>Window</Typography>
-        <Typography sx={shiftAssignInfo}>
+        <Typography sx={shiftAssignInfo} textTransform={'capitalize'}>
           {capitalizeFirstLetter(selectedDay)} {shift.timeWindowDisplay}
         </Typography>
         <Typography sx={shiftAssignBuffer}>
@@ -58,11 +58,11 @@ const ShiftInfoHeader = ({
       </Stack>
       <Stack direction={'row'} sx={{ marginLeft: '3%' }}>
         <Typography sx={shiftAssignTitle}>Assigned</Typography>
-        <Typography sx={shiftAssignInfo}>
+        <Typography sx={shiftAssignInfo} textTransform={'capitalize'}>
           {shift.assignedUser == null ? '0 members' : '1 member'}
         </Typography>
         <Typography sx={shiftAssignTitle}>Variants</Typography>
-        <Typography sx={shiftAssignInfo}>
+        <Typography sx={shiftAssignInfo} textTransform={'capitalize'}>
           {shift.possibleDays.join(', ')}
         </Typography>
       </Stack>
