@@ -255,19 +255,19 @@ const QuickShiftForm = ({
   const [userOptions, setUserOptions] = useState([{ label: '', id: '' }])
   type labeledUser = {
     label: string
-    id: String
+    id: string
   }
   const [targetUser, setTargetUser] = useState<labeledUser>(userOptions[0])
 
   useEffect(() => {
     // console.log({ ents: users?.entities, ids: users?.ids, targuser: targetUser, userOpt: Val: inputValue})
     {
-      const tempOptions = []
+      const tempOptions: labeledUser[] = []
       if (users == undefined) return
       users.ids?.map((id: EntityId) => {
         let user = users?.entities[id]
         if (user != undefined) {
-          let userWithLabel = {
+          let userWithLabel: labeledUser = {
             label: user.displayName,
             id: user.id,
           } //TODO: add an ID here as well.
