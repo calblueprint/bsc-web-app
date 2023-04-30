@@ -1,9 +1,9 @@
 import { createSelector, createEntityAdapter, EntityId } from '@reduxjs/toolkit'
-import { AuthorizedUser, User } from '../../types/schema'
+import { AuthorizedUser } from '../../types/schema'
 import { apiSlice } from '../../store/api/apiSlice'
 import { RootState } from '../../store/store'
 
-const authorizedUsersAdapter = createEntityAdapter<User>({})
+const authorizedUsersAdapter = createEntityAdapter<AuthorizedUser>({})
 
 const initialState = authorizedUsersAdapter.getInitialState()
 
@@ -15,7 +15,7 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
         params: { queryType: 'authorized users' },
       }),
-      transformResponse: (responseData: User[]) => {
+      transformResponse: (responseData: AuthorizedUser[]) => {
         const loadedAuthorizedUsers = responseData.map((entity) => {
           entity.id = entity.id
           return entity
