@@ -21,14 +21,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import AvailabilityItem from '../items/AvailabilityItem'
 
 //** Redux state imports */
-import { selectIsAvailabilityError, selectMemberAvailability, setMemberAvailability } from '../../userAvailability/userAvailabilitySlice'
+import {
+  selectIsAvailabilityError,
+  selectMemberAvailability,
+  setMemberAvailability,
+} from '../../userAvailability/userAvailabilitySlice'
 import { selectCurrentUser } from '@/features/auth/authSlice'
 
 //** Redux Api imports */
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
-import {
-  useUpdateUserAvailabilityMutation,
-} from '../../userAvailability/userAvailabilityApiSlice'
+import { useUpdateUserAvailabilityMutation } from '../../userAvailability/userAvailabilityApiSlice'
 
 //** Typescript types */
 import { User } from '@/types/schema'
@@ -37,33 +39,34 @@ import { User } from '@/types/schema'
 import { DAYS } from '@/utils/constants'
 import { validateAvailability } from '@/utils/utils'
 
-import Stack from '@mui/material/Stack';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Stack from '@mui/material/Stack'
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
-  ref,
+  ref
 ) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 /**
  * @description Displays and edits the current logged in user
- * 
+ *
  */
 export default function AvailabilityTable() {
   //** Get Logged In user from redux */
   const authUser = useSelector(selectCurrentUser) as User
   //** Get Logged In user availability */
-  const userAvailability = useSelector(selectMemberAvailability) as User['availabilities']
+  const userAvailability = useSelector(
+    selectMemberAvailability
+  ) as User['availabilities']
   //** Get error from availability */
   const IsAvailabilityError = useSelector(selectIsAvailabilityError)
-   
+
   //**  Hooks */
   const dispatch = useDispatch()
-  
+
   //** Function from Redux to update user abailability in the backEnd */
   const [
     updateUserAvailability,
@@ -81,13 +84,13 @@ export default function AvailabilityTable() {
   const handleCancel = () => {
     setIsEditing(false)
     // dispatch(setResetStateError({}))
-    dispatch(setMemberAvailability(validateAvailability(authUser.availabilities)))
+    dispatch(
+      setMemberAvailability(validateAvailability(authUser.availabilities))
+    )
   }
-
 
   //** It saves the changes made to the memberAvailability redux state to the backEnd */
   const handleSave = async () => {
-
     // Verify that the authUser is logged in
     if (!authUser) {
       console.log('[ERROR]: authUser is not defined')
@@ -100,12 +103,11 @@ export default function AvailabilityTable() {
       return false
     }
 
-    if(IsAvailabilityError) {
+    if (IsAvailabilityError) {
       console.log('[ERROR]: There is an error in the userAvailability')
       setOpenErrorMsg(true)
       return false
     }
-    
 
     try {
       // make sure userId is defined
@@ -133,27 +135,31 @@ export default function AvailabilityTable() {
   }
 
   //** if true it opens the Succes message window */
-  const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
+  const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false)
   //** if true it opens the Error message window */
   const [openErrorMsg, setOpenErrorMsg] = React.useState(false)
 
   //** Handles closing both success and error windows. */
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === 'clickaway') {
-      return;
+      return
     }
-    setOpenSuccessMsg(false);
+    setOpenSuccessMsg(false)
     setOpenErrorMsg(false)
-  };
+  }
 
   //** Watch authUser for changes */
   useEffect(() => {
     // Make sure authUser and authUser's availability are defined
     if (authUser && authUser.availabilities) {
-    
       // make a copy of the current user availabilities in order to mute it
-      let availabilitiesCopy = {...userAvailability ,...authUser.availabilities }
-      
+      let availabilitiesCopy = {
+        ...userAvailability,
+        ...authUser.availabilities,
+      }
 
       // Sort each day's availability by startTime
       Object.keys(availabilitiesCopy).map((dayKey) => {
@@ -170,20 +176,17 @@ export default function AvailabilityTable() {
       // dispatch(setResetStateError({}))
       dispatch(setMemberAvailability(validateAvailability(availabilitiesCopy)))
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser, dispatch])
 
-  useEffect (()=> {
+  useEffect(() => {
     // console.log('authUserChecking')
     if (!authUser.availabilities) {
       handleSave()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[authUser])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser])
 
-  
-
-  
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -244,27 +247,38 @@ export default function AvailabilityTable() {
                         key={uuid()}
                         day={day}
                         isEditing={isEditing}
-                        
                       />
                     )
                   })
-                :null}
+                : null}
             </TableBody>
           </Table>
         </TableContainer>
       </Paper>
       {/* <Stack spacing={2} sx={{ width: '100%' }}> */}
-     
-      <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical:'top', horizontal:'center' }}>
+
+      <Snackbar
+        open={openSuccessMsg}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
           Availability updated successfully!
         </Alert>
       </Snackbar>
-      <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical:'top', horizontal:'center' }}>
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>To save availability please fix time blocks!</Alert>
+      <Snackbar
+        open={openErrorMsg}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          To save availability please fix time blocks!
+        </Alert>
       </Snackbar>
-     
-    {/* </Stack> */}
+
+      {/* </Stack> */}
     </Box>
   )
 }

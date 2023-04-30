@@ -36,11 +36,7 @@ export const userAvailabilityApiSlice = apiSlice.injectEndpoints({
         }
       },
     }),
-   
   }),
 })
 
-export const {
-  useUpdateUserAvailabilityMutation,
-} = userAvailabilityApiSlice
-
+export const { useUpdateUserAvailabilityMutation } = userAvailabilityApiSlice

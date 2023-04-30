@@ -3,19 +3,18 @@ import { User } from '@/types/schema'
 import { validateAvailability } from '@/utils/utils'
 import { createSlice } from '@reduxjs/toolkit'
 
-const memberAvailability:User['availabilities'] = {
-      monday: [],
-      tuesday: [],
-      wednesday: [],
-      thursday: [],
-      friday: [],
-      saturday: [],
-      sunday: [],
+const memberAvailability: User['availabilities'] = {
+  monday: [],
+  tuesday: [],
+  wednesday: [],
+  thursday: [],
+  friday: [],
+  saturday: [],
+  sunday: [],
 }
 
-const isInvalid:Record<string, boolean> = {}
-const isOverlap:Record<string, boolean> = {}
-
+const isInvalid: Record<string, boolean> = {}
+const isOverlap: Record<string, boolean> = {}
 
 const userAvailabilitySlice = createSlice({
   name: 'userAvailability',
@@ -37,7 +36,7 @@ const userAvailabilitySlice = createSlice({
       state.isInvalid = {}
       state.isOverlap = {}
       state.isAvailabilityError = false
-      
+
       const { day, availabilityDay } = action.payload
       // console.log(day, availabilityDay)
       const newAvailability = {
@@ -46,12 +45,11 @@ const userAvailabilitySlice = createSlice({
       }
       state.memberAvailability = newAvailability
     },
-    setIsInvalid: (state, action) => { 
-      
-      state.isInvalid = {...state.isInvalid, ...action.payload}
+    setIsInvalid: (state, action) => {
+      state.isInvalid = { ...state.isInvalid, ...action.payload }
     },
     setIsOverlap: (state, action) => {
-      state.isOverlap = {...state.isOverlap, ...action.payload}
+      state.isOverlap = { ...state.isOverlap, ...action.payload }
     },
     // setDeleteInvalid: (state, action) => {
     //   const obj = {...state.isInvalid}
@@ -83,7 +81,6 @@ const userAvailabilitySlice = createSlice({
 })
 
 export const {
-
   setMemberAvailability,
   setMemberAvailabilityDay,
   setIsInvalid,
@@ -94,12 +91,14 @@ export const {
   setIsAvailabilityError,
 } = userAvailabilitySlice.actions
 
-
 export const selectMemberAvailability = (state: RootState) =>
   state.userAvailability.memberAvailability
 
-export const selectIsInvalid = (state: RootState) => state.userAvailability.isInvalid
-export const selectIsOverlap = (state: RootState) => state.userAvailability.isOverlap
-export const selectIsAvailabilityError = (state: RootState) => state.userAvailability.isAvailabilityError
+export const selectIsInvalid = (state: RootState) =>
+  state.userAvailability.isInvalid
+export const selectIsOverlap = (state: RootState) =>
+  state.userAvailability.isOverlap
+export const selectIsAvailabilityError = (state: RootState) =>
+  state.userAvailability.isAvailabilityError
 
 export default userAvailabilitySlice.reducer

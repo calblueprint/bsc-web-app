@@ -36,10 +36,7 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
       },
     }),
     addNewScheduledShift: builder.mutation({
-      query: (data: {
-        houseId: string, 
-        data: Partial<ScheduledShift>
-      }) => ({
+      query: (data: { houseId: string; data: Partial<ScheduledShift> }) => ({
         url: `houses/${data.houseId}/scheduledShifts`,
         method: 'POST',
         body: {
@@ -50,8 +47,8 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
     }),
     updateScheduledShift: builder.mutation({
       query: (data: {
-        houseId: string,
-        shiftId: string, 
+        houseId: string
+        shiftId: string
         data: Partial<ScheduledShift>
       }) => ({
         url: `houses/${data.houseId}/scheduledShifts/${data.shiftId}`,
@@ -64,7 +61,6 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
         { type: 'ScheduledShift', id: arg.shiftId },
       ],
     }),
-
   }),
 })
 
