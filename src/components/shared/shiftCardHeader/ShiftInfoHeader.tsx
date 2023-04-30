@@ -7,6 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import { House, Shift } from '@/types/schema'
 import CloseButton from '../buttons/CloseButton'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
+import { capitalizeFirstLetter } from '@/utils/utils'
 
 const ShiftInfoHeader = ({
   shiftId,
@@ -31,7 +32,7 @@ const ShiftInfoHeader = ({
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container>
-        <Grid xs={'auto'} md={'auto'} lg={'auto'}>
+        <Grid xs={'auto'} md={'auto'} lg={'auto'} textTransform={'capitalize'}>
           <h1>{shift.name}</h1>
         </Grid>
         {/* <Grid xs /> */}
@@ -60,8 +61,7 @@ const ShiftInfoHeader = ({
           </Grid>
           <Grid smOffset={'auto'} mdOffset={'auto'} lgOffset={'auto'}>
             <Typography>
-              {selectedDay[0].toUpperCase() + selectedDay.slice(1)}{' '}
-              {shift.timeWindowDisplay}
+              {capitalizeFirstLetter(selectedDay)} {shift.timeWindowDisplay}
             </Typography>
           </Grid>
           <Grid xs={'auto'} md={'auto'} lg={'auto'}>

@@ -177,8 +177,10 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
 
   const assignSelectedUser = () => {
     let asgDay = day
-    if (shiftObject && shiftObject.possibleDays) {
-      asgDay = shiftObject.possibleDays[0]
+    if (asgDay === 'All') {
+      if (shiftObject && shiftObject.possibleDays) {
+        asgDay = shiftObject.possibleDays[0]
+      }
     }
     const userObject = usersData?.entities[selectedUserId]
     const shiftData = {

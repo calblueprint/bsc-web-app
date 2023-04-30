@@ -8,6 +8,8 @@ import SimpleShiftDisplay from './SimpleShiftDisplay'
 import { useSelector } from 'react-redux'
 import { selectEmptyShiftsByDay } from '../../scheduleSlice'
 import { RootState } from '@/store/store'
+import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
+import EditShiftCard from '@/features/shift/cards/EditShiftCard'
 
 type CellShiftsItmeProps = {
   dayId: string
@@ -21,8 +23,15 @@ const CellShiftsItme = (props: CellShiftsItmeProps) => {
     selectEmptyShiftsByDay(state, dayId)
   )
 
+  const [open, setOpen] = useState(false)
+  const [openEditShift, setOpenEditShift] = useState(false)
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   useEffect(() => {
-    console.log({ shiftIds: shiftIds })
+    // console.log({ shiftIds: shiftIds })
   }, [shiftIds])
 
   return (
@@ -36,9 +45,31 @@ const CellShiftsItme = (props: CellShiftsItmeProps) => {
     >
       <Box padding={0} sx={{ maxHeight: '100px', overflowY: 'scroll' }}>
         {Array.isArray(shiftIds)
-          ? shiftIds.map((shiftId) => (
-              <SimpleShiftDisplay key={shiftId} shiftId={shiftId} />
-            ))
+          ? shiftIds.map((shiftId) => {
+              const handleEditShift = (userId: string) => {
+                setOpenEditShift(true)
+              }
+              return (
+                <React.Fragment key={shiftId}>
+                  <SimpleShiftDisplay
+                    shiftId={shiftId}
+                    handleClick={() => setOpen(true)}
+                  />
+                  <ShiftAssignmentCard
+                    shiftId={shiftId}
+                    selectedDay={dayId}
+                    handleClose={handleClose}
+                    handleEditShift={handleEditShift}
+                    open={open}
+                  />
+                  <EditShiftCard
+                    shiftId={shiftId}
+                    setOpen={setOpenEditShift}
+                    open={openEditShift}
+                  />
+                </React.Fragment>
+              )
+            })
           : null}
       </Box>
     </TableCell>

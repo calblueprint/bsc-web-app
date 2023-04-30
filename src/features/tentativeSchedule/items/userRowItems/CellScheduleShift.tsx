@@ -17,6 +17,7 @@ import {
 } from '../../scheduleSlice'
 import ScheduleShiftDisplay from './ScheduleShiftDisplay'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
+import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 
 type CellScheduleShiftProps = {
   dayId: string
@@ -34,6 +35,12 @@ const CellScheduleShift = (props: CellScheduleShiftProps) => {
     selectAssignedUserShiftsByIdDay(state, userId, dayId)
   )
 
+  const [open, setOpen] = useState(false)
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   useEffect(() => {
     // console.log(assignedShifts)
     if (assignedShifts.length) {
@@ -48,9 +55,23 @@ const CellScheduleShift = (props: CellScheduleShiftProps) => {
         borderLeft: '1px solid black',
       }}
     >
-      {assignedShifts.map((shiftId) => (
-        <ScheduleShiftDisplay key={shiftId} shiftId={shiftId as string} />
-      ))}
+      {assignedShifts.map((shiftId) => {
+        return (
+          <React.Fragment key={shiftId}>
+            <ScheduleShiftDisplay
+              shiftId={shiftId as string}
+              handleClick={() => setOpen(true)}
+            />
+            <ShiftAssignmentCard
+              shiftId={shiftId}
+              selectedDay={dayId}
+              handleClose={handleClose}
+              // handleEditShift={handleEditShift}
+              open={open}
+            />
+          </React.Fragment>
+        )
+      })}
     </TableCell>
   )
 }

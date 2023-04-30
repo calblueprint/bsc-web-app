@@ -15,10 +15,11 @@ import { useSelector } from 'react-redux'
 
 type DynamicShiftDisplayProps = {
   shiftId: string
+  handleClick: () => void
 }
 
 const SimpleShiftDisplay = (props: DynamicShiftDisplayProps) => {
-  const { shiftId } = props
+  const { shiftId, handleClick } = props
 
   const houseId = useSelector(selectCurrentHouse)?.id ?? ''
   const shift = useSelector((state: RootState) =>
@@ -30,7 +31,7 @@ const SimpleShiftDisplay = (props: DynamicShiftDisplayProps) => {
   }, [shift])
 
   return shift ? (
-    <Box>
+    <Box onClick={handleClick}>
       <Box
         textTransform={'capitalize'}
         padding={0.5}
