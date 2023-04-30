@@ -26,6 +26,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    textTransform: 'capitalize',
   },
 }))
 
