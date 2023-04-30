@@ -15,6 +15,7 @@ import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
 import { Days, House } from '@/types/schema'
+import ScheduleTable from '@/features/tentativeSchedule/tables/ScheduleTable'
 import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 import { setSelectedUserId } from '@/features/userAssignment/userAssignmentSlice'
 
@@ -143,6 +144,7 @@ const ManagerAssignedTabContent = () => {
           handleRowClick={handleRowClick}
         />
       ) : null}
+
       <ShiftAssignmentCard
         shiftId={selectedShiftId}
         selectedDay={dayFilter}

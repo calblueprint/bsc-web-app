@@ -1,5 +1,3 @@
-
-
 export const memberTabs = {
   Schedule: [{ id: 'Individual' }, { id: 'All Shifts' }],
   Members: [{ id: 'Information' }],
@@ -12,7 +10,12 @@ export const memberTabs = {
 
 export const managerTabs = {
   Schedule: [{ id: 'All Shifts' }, { id: 'Individual' }],
-  Planner: [{ id: 'Unassigned' }, { id: 'Assigned' }, { id: 'Categories' }],
+  Planner: [
+    { id: 'Tentative Schedule' },
+    { id: 'Unassigned' },
+    { id: 'Assigned' },
+    { id: 'Categories' },
+  ],
   Members: [{ id: 'Information' }, { id: 'Availability' }],
 }
 export const supervisorTabs = {
@@ -30,13 +33,11 @@ export const memberCategories = [
         id: 'Schedule',
         path: '/account/member',
         active: 0,
-        
       },
       {
         id: 'Members',
         path: '/account/member',
         active: 1,
-        
       },
       {
         id: 'Settings',
@@ -55,13 +56,11 @@ export const managerCategories = [
         id: 'Schedule',
         path: '/account/manager',
         active: 0,
-        
       },
       {
         id: 'Planner',
         path: '/account/manager',
         active: 1,
-        
       },
       {
         id: 'Members',
@@ -80,13 +79,11 @@ export const supervisorCategories = [
         id: 'Schedule',
         path: '/account/supervisor',
         active: 0,
-        
       },
       {
         id: 'Planner',
         path: '/account/supervisor',
         active: 1,
-       
       },
       {
         id: 'Members',
@@ -97,9 +94,7 @@ export const supervisorCategories = [
   },
 ]
 
-
 export const ROLES = ['Manager', 'Member', 'Supervisor']
-
 
 export const DAYS = [
   'sunday',
@@ -111,5 +106,5 @@ export const DAYS = [
   'saturday',
 ]
 
-export const COMPLETE = 'Complete';
-export const INCOMPLETE = 'Incomplete';
+export const COMPLETE = 'Complete'
+export const INCOMPLETE = 'Incomplete'

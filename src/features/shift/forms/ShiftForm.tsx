@@ -97,9 +97,14 @@ const ShiftForm = ({
   )
 
   //** for editing shifts */
+  // const shift: Shift = useSelector(
+  //   (state: RootState) =>
+  //     selectShiftById(currentHouse.id)(state, shiftId as EntityId) as Shift
+  // )
+
   const shift: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById(currentHouse.id)(state, shiftId as EntityId) as Shift
+      selectShiftById()(state, shiftId as EntityId, currentHouse.id) as Shift
   )
 
   //** Holds the house shifts categories */

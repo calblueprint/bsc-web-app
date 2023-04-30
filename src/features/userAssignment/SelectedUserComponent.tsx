@@ -1,4 +1,6 @@
 import { Stack, Typography } from '@mui/material'
+import { Box, Paper } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2'
 import { EntityId } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUserById, useGetUsersQuery } from '../user/userApiSlice'
@@ -24,7 +26,7 @@ const SelectedUserComponent = () => {
   }
 
   return (
-    <Stack direction="row" sx={{marginBottom: '1%'}}>
+    <Stack direction="row" sx={{ marginBottom: '1%' }}>
       {user && selectedUserId ? (
         <>
           <Typography sx={shiftAssignTitle}>Selected User: </Typography>
@@ -40,6 +42,30 @@ const SelectedUserComponent = () => {
         <CloseButton handleClick={handleUnselectedUserId} />
       ) : null}
     </Stack>
+    // <Box
+    //   display={'flex'}
+    //   bgcolor={'#D1FAE5'}
+    //   component={Paper}
+    //   alignItems="center"
+    //   sx={{ flexGrow: 1, marginBottom: 2, minHeight: '50px' }}
+    // >
+    //   <Box>
+    //     {user && selectedUserId ? (
+    //       <Typography variant="h6" marginLeft={3}>
+    //         {user.displayName}
+    //       </Typography>
+    //     ) : (
+    //       <Typography variant="h6" marginLeft={3}>
+    //         No selected user
+    //       </Typography>
+    //     )}
+    //   </Box>
+    //   <Box sx={{ marginLeft: 'auto' }}>
+    //     {selectedUserId ? (
+    //       <CloseButton handleClick={handleUnselectedUserId} />
+    //     ) : null}
+    //   </Box>
+    // </Box>
   )
 }
 export default SelectedUserComponent

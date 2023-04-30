@@ -95,9 +95,14 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   // - update the user and shift objects when a user is assigned/unassigned
 
   // Stores the shiftObject of the give shift
-  const shiftObject = useSelector(
+  // const shiftObject = useSelector(
+  //   (state: RootState) =>
+  //     selectShiftById(houseID)(state, shiftID as EntityId) as Shift
+  // )
+
+  const shiftObject: Shift = useSelector(
     (state: RootState) =>
-      selectShiftById(houseID)(state, shiftID as EntityId) as Shift
+      selectShiftById()(state, shiftID as EntityId, houseID) as Shift
   )
 
   // shiftObject.hours = shiftObject.hours as number
@@ -171,9 +176,15 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   }, [selectedUserId])
 
   const assignSelectedUser = () => {
+    let asgDay = day
+    if (asgDay === 'All') {
+      if (shiftObject && shiftObject.possibleDays) {
+        asgDay = shiftObject.possibleDays[0]
+      }
+    }
     const userObject = usersData?.entities[selectedUserId]
     const shiftData = {
-      data: { assignedUser: selectedUserId, assignedDay: day },
+      data: { assignedUser: selectedUserId, assignedDay: asgDay },
       houseId: authHouse.houseID,
       shiftId: shiftObject.id,
     }
