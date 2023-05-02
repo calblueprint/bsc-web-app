@@ -8,7 +8,6 @@ import { selectShiftById } from '@/features/shift/shiftApiSlice'
 import { House } from '@/types/schema'
 import Paper from '@mui/material/Paper'
 import { useTheme } from '@mui/material/styles'
-import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 
 type ScheduleShiftDisplayProps = {
   shiftId: string
@@ -58,13 +57,6 @@ const ScheduleShiftDisplay = (props: ScheduleShiftDisplayProps) => {
           variant="caption"
         >{`Credit: ${shift.hours}hrs`}</Typography>
       </Box>
-      {/* <ShiftAssignmentCard
-        shiftId={shiftId}
-        selectedDay={shift.assignedDay ? shift.assignedDay : 'Day'}
-        handleClose={handleClose}
-        // handleEditShift={handleEditShift}
-        open={open}
-      /> */}
     </Box>
   ) : (
     <></>

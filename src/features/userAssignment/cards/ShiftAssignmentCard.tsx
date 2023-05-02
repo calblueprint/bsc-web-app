@@ -1,14 +1,23 @@
 import { useEffect, useState } from 'react'
-import { Box, Dialog, DialogContent, DialogTitle } from '@mui/material'
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+} from '@mui/material'
 import { EntityId } from '@reduxjs/toolkit'
 import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
 import SelectedUserComponent from '../SelectedUserComponent'
 import AvailableUsersTable from '../tables/AvailableUsersTable'
-import { Days, House } from '@/types/schema'
+import { Days, House, Shift } from '@/types/schema'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { useGetUsersQuery } from '@/features/user/userApiSlice'
 import { selectSelectedUserId, setSelectedUserId } from '../userAssignmentSlice'
+import { selectShiftById } from '@/features/shift/shiftApiSlice'
+import { RootState } from '@/store/store'
+import CloseIcon from '@mui/icons-material/Close'
 
 export const ShiftAssignmentCard = ({
   shiftId,
@@ -31,8 +40,13 @@ export const ShiftAssignmentCard = ({
   // const [unselect, setUnselect] = useState<boolean>(false)
   const [filteredUserIds, setFilteredUserIds] = useState<EntityId[]>([])
 
+  const shift: Shift = useSelector(
+    (state: RootState) =>
+      selectShiftById()(state, shiftId as EntityId, authHouse.houseID) as Shift
+  )
+
   let content = null
-  if (open) {
+  if (shift) {
     content = (
       <>
         <Dialog
@@ -42,28 +56,41 @@ export const ShiftAssignmentCard = ({
           onClose={handleClose}
           className="dialog"
         >
-          <Box sx={{ margin: '3%' }}>
-            <DialogTitle>
-              <ShiftInfoHeader
-                shiftId={shiftId}
-                selectedDay={selectedDay}
+          <DialogTitle>
+            <Box
+              display={'flex'}
+              justifyContent={'space-between'}
+              textTransform={'capitalize'}
+            >
+              {shift.name}
+
+              <IconButton
+                aria-label="expand row"
+                size="small"
+                onClick={handleClose}
+              >
+                <CloseIcon fontSize="large" />
+              </IconButton>
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <ShiftInfoHeader
+              shiftId={shiftId}
+              selectedDay={selectedDay}
+              handleClose={handleClose}
+            />
+            <SelectedUserComponent />
+            {userData ? (
+              <AvailableUsersTable
+                day={selectedDay}
+                houseID={authHouse.id}
+                shiftID={shiftId as string}
+                handleEditShift={handleEditShift}
                 handleClose={handleClose}
+                // unselect={unselect}
               />
-            </DialogTitle>
-            <DialogContent sx={{ marginLeft: '3%', marginTop: '1%' }}>
-              <SelectedUserComponent />
-              {userData ? (
-                <AvailableUsersTable
-                  day={selectedDay}
-                  houseID={authHouse.id}
-                  shiftID={shiftId as string}
-                  handleEditShift={handleEditShift}
-                  handleClose={handleClose}
-                  // unselect={unselect}
-                />
-              ) : null}
-            </DialogContent>
-          </Box>
+            ) : null}
+          </DialogContent>
         </Dialog>
       </>
     )
