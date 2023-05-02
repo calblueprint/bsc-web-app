@@ -44,7 +44,7 @@ const CellScheduleShift = (props: CellScheduleShiftProps) => {
   useEffect(() => {
     // console.log(assignedShifts)
     if (assignedShifts.length) {
-      console.log({ [userId]: assignedShifts })
+      // console.log({ [userId]: assignedShifts })
     }
   }, [assignedShifts])
 

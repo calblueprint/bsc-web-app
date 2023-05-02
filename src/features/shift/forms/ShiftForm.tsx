@@ -215,8 +215,8 @@ const ShiftForm = ({
     }
     data.houseId = currentHouse.id
     data.shiftId = shiftId ? shiftId : ''
-    // console.log('timeWindow:  ' + timeWindow.endTime)
-    // console.log('timeWindowDisplay:  ' + timeWindowDisplay)
+    console.log('timeWindow:  ' + timeWindow.endTime)
+    console.log('timeWindowDisplay:  ' + timeWindowDisplay)
     console.log('Type of: ', typeof Number(hours))
     // console.log('data: ', data)
     if (isNewShift || !shiftId) {
@@ -246,10 +246,10 @@ const ShiftForm = ({
             category: shift ? shift.category : emptyShift.category,
             hours: shift ? shift.hours : emptyShift.hours,
             startTime: shift
-              ? shift.timeWindow.startTime.toString() //dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
+              ? String(shift.timeWindow.startTime).padStart(4, '0') //dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
               : emptyShift.startTime,
             endTime: shift
-              ? shift.timeWindow.endTime.toString() //dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
+              ? String(shift.timeWindow.endTime).padStart(4, '0') //dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
               : emptyShift.endTime,
             possibleDays: shift
               ? shift.possibleDays

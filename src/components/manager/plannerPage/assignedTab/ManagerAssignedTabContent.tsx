@@ -56,7 +56,7 @@ const ManagerAssignedTabContent = () => {
   }
 
   const handleFilterChange = (selectedFilter: Days) => {
-    console.log('Selected filter:', selectedFilter)
+    // console.log('Selected filter:', selectedFilter)
     setDayFilter(selectedFilter)
   }
 

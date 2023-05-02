@@ -54,11 +54,11 @@ const ManagerUnassignedTabContent = () => {
 
   const handleSearchSubmit = (event: FormEvent) => {
     event.preventDefault()
-    console.log('Search query:', searchQuery)
+    // console.log('Search query:', searchQuery)
   }
 
   const handleFilterChange = (selectedFilter: Days) => {
-    console.log('Selected filter:', selectedFilter)
+    // console.log('Selected filter:', selectedFilter)
     setDayFilter(selectedFilter)
   }
 
