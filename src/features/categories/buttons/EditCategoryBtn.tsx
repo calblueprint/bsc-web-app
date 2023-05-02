@@ -69,7 +69,7 @@ const EditCategoryBtn = (props: EditCategoryBtnProps) => {
     }
 
     setOpen(false)
-    console.log('save')
+    // console.log('save')
   }
 
   //** Get the house categories */
