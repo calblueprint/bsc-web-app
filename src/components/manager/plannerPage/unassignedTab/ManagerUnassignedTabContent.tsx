@@ -54,11 +54,11 @@ const ManagerUnassignedTabContent = () => {
 
   const handleSearchSubmit = (event: FormEvent) => {
     event.preventDefault()
-    console.log('Search query:', searchQuery)
+    // console.log('Search query:', searchQuery)
   }
 
   const handleFilterChange = (selectedFilter: Days) => {
-    console.log('Selected filter:', selectedFilter)
+    // console.log('Selected filter:', selectedFilter)
     setDayFilter(selectedFilter)
   }
 
@@ -165,11 +165,11 @@ const ManagerUnassignedTabContent = () => {
         handleEditShift={handleEditShift}
         open={open}
       />
-      <EditShiftCard
+      {/* <EditShiftCard
         shiftId={editShiftId}
         setOpen={setOpenEditShift}
         open={openEditShift}
-      />
+      /> */}
     </React.Fragment>
   )
 }

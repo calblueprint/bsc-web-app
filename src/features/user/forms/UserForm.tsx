@@ -141,7 +141,7 @@ const UserForm = ({
       confirmPassword,
     } = values
     const data = { data: {}, houseId: '', userId: '' }
-    console.log('auth', auth.currentUser)
+    // console.log('auth', auth.currentUser)
     if (editType === 'Password' && auth.currentUser) {
       if (newPassword === confirmPassword) {
         var credential = EmailAuthProvider.credential(email, currentPassword)
@@ -171,7 +171,7 @@ const UserForm = ({
     }
     data.houseId = user.houseID ? user.houseID : 'EUC'
     data.userId = user.id ? user.id : ''
-    console.log('form ', userId)
+    // console.log('form ', userId)
     if (isNewUser || !userId) {
       result = await addNewUser(data)
     } else {

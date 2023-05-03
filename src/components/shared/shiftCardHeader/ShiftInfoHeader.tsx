@@ -1,4 +1,4 @@
-import { Box, DialogTitle, Stack, Typography } from '@mui/material'
+import { Box, DialogTitle, IconButton, Stack, Typography } from '@mui/material'
 import { EntityId } from '@reduxjs/toolkit'
 import { useSelector } from 'react-redux'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
@@ -36,12 +36,6 @@ const ShiftInfoHeader = ({
   )
   return (
     <Box>
-      <Box display={'flex'} justifyContent={'space-between'}>
-        <DialogTitle variant="h4" component="h2" textTransform={'capitalize'}>
-          {shift.name}
-        </DialogTitle>
-        <CloseIcon fontSize="large" onClick={handleClose} />
-      </Box>
       <Stack direction={'row'} sx={{ marginLeft: '3%', marginBottom: '1%' }}>
         <Typography sx={shiftAssignTitle}>Worth</Typography>
         <Typography sx={shiftAssignInfo}>

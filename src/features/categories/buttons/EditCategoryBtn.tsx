@@ -62,14 +62,14 @@ const EditCategoryBtn = (props: EditCategoryBtnProps) => {
         houseId: houseId,
         shiftId: shiftId as string,
       }
-      console.log('category', category)
+      // console.log('category', category)
       await updateShift(data)
     } catch (error) {
       console.log(error)
     }
 
     setOpen(false)
-    console.log('save')
+    // console.log('save')
   }
 
   //** Get the house categories */

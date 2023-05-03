@@ -32,7 +32,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
           // entity.id = entity.id
           return entity
         })
-        console.log(loaddedUsers)
+        // console.log(loaddedUsers)
         return usersAdapter.setAll(initialState, loaddedUsers)
       },
       providesTags: (result) => {

@@ -8,8 +8,8 @@ import SimpleShiftDisplay from './SimpleShiftDisplay'
 import { useSelector } from 'react-redux'
 import { selectEmptyShiftsByDay } from '../../scheduleSlice'
 import { RootState } from '@/store/store'
-import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 import EditShiftCard from '@/features/shift/cards/EditShiftCard'
+import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 
 type CellShiftsItmeProps = {
   dayId: string
@@ -24,10 +24,16 @@ const CellShiftsItme = (props: CellShiftsItmeProps) => {
   )
 
   const [open, setOpen] = useState(false)
-  const [openEditShift, setOpenEditShift] = useState(false)
+  const [clickedShiftId, setClickedShiftId] = useState('')
 
   const handleClose = () => {
     setOpen(false)
+    setClickedShiftId('')
+  }
+
+  const handleClick = (shiftId: string) => {
+    setClickedShiftId(shiftId)
+    setOpen(true)
   }
 
   useEffect(() => {
@@ -44,34 +50,26 @@ const CellShiftsItme = (props: CellShiftsItmeProps) => {
       }}
     >
       <Box padding={0} sx={{ maxHeight: '100px', overflowY: 'scroll' }}>
-        {Array.isArray(shiftIds)
-          ? shiftIds.map((shiftId) => {
-              const handleEditShift = (userId: string) => {
-                setOpenEditShift(true)
-              }
-              return (
-                <React.Fragment key={shiftId}>
+        <React.Fragment>
+          {Array.isArray(shiftIds)
+            ? shiftIds.map((shiftId) => {
+                return (
                   <SimpleShiftDisplay
+                    key={shiftId}
                     shiftId={shiftId}
-                    handleClick={() => setOpen(true)}
+                    handleClick={handleClick}
                   />
-                  <ShiftAssignmentCard
-                    shiftId={shiftId}
-                    selectedDay={dayId}
-                    handleClose={handleClose}
-                    handleEditShift={handleEditShift}
-                    open={open}
-                  />
-                  <EditShiftCard
-                    shiftId={shiftId}
-                    setOpen={setOpenEditShift}
-                    open={openEditShift}
-                  />
-                </React.Fragment>
-              )
-            })
-          : null}
+                )
+              })
+            : null}
+        </React.Fragment>
       </Box>
+      <ShiftAssignmentCard
+        shiftId={clickedShiftId}
+        selectedDay={dayId}
+        handleClose={handleClose}
+        open={open}
+      />
     </TableCell>
   )
 }

@@ -1,8 +1,7 @@
 import { selectCurrentHouse } from '@/features/auth/authSlice'
-import {
-  selectShiftById,
-  useGetShiftsQuery,
-} from '@/features/shift/shiftApiSlice'
+import EditShiftCard from '@/features/shift/cards/EditShiftCard'
+import { selectShiftById } from '@/features/shift/shiftApiSlice'
+import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 import { RootState } from '@/store/store'
 import { Shift } from '@/types/schema'
 import Box from '@mui/material/Box'
@@ -15,7 +14,7 @@ import { useSelector } from 'react-redux'
 
 type DynamicShiftDisplayProps = {
   shiftId: string
-  handleClick: () => void
+  handleClick: (shiftId: string) => void
 }
 
 const SimpleShiftDisplay = (props: DynamicShiftDisplayProps) => {
@@ -31,7 +30,7 @@ const SimpleShiftDisplay = (props: DynamicShiftDisplayProps) => {
   }, [shift])
 
   return shift ? (
-    <Box onClick={handleClick}>
+    <Box style={{ cursor: 'pointer' }} onClick={() => handleClick(shiftId)}>
       <Box
         textTransform={'capitalize'}
         padding={0.5}

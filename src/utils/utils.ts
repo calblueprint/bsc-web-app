@@ -433,7 +433,7 @@ export function findAssignedShiftsForUsers(
       }
 
       if (shift.assignedUser === userId) {
-        console.log(`Assigned User: ${shift.assignedUser} --> ${userId}`)
+        // console.log(`Assigned User: ${shift.assignedUser} --> ${userId}`)
         const lowerCaseDay = shift.assignedDay.toLowerCase()
         assignedShifts[userId][lowerCaseDay] ??= []
         assignedShifts[userId][lowerCaseDay].push(shiftId as string)

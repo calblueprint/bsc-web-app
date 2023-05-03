@@ -125,7 +125,7 @@ const NavBar = (props: DrawerProps) => {
     return () => {
       if (isSuccess) {
         // nav('/')
-        console.log('logged out successfully')
+        // console.log('logged out successfully')
         router.replace('/login')
       }
     }
