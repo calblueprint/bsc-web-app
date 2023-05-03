@@ -165,11 +165,11 @@ const ManagerUnassignedTabContent = () => {
         handleEditShift={handleEditShift}
         open={open}
       />
-      <EditShiftCard
+      {/* <EditShiftCard
         shiftId={editShiftId}
         setOpen={setOpenEditShift}
         open={openEditShift}
-      />
+      /> */}
     </React.Fragment>
   )
 }

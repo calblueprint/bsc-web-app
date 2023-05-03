@@ -7,28 +7,19 @@ import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
 import { House } from '@/types/schema'
 import Paper from '@mui/material/Paper'
-import { useTheme } from '@mui/material/styles'
 
 type ScheduleShiftDisplayProps = {
   shiftId: string
-  handleClick: () => void
+  handleClick: (shiftId: string) => void
 }
 
 const ScheduleShiftDisplay = (props: ScheduleShiftDisplayProps) => {
   const { shiftId, handleClick } = props
-  const theme = useTheme()
   const authHouse = useSelector(selectCurrentHouse) as House
 
   const shift = useSelector((state: RootState) =>
     selectShiftById()(state, shiftId, authHouse.id)
   )
-
-  // const [open, setOpen] = useState(false)
-
-  // const handleClose = () => {
-  //   setOpen(false)
-  // }
-  const handleEditShift = (shiftId: string) => {}
 
   return shift ? (
     <Box
@@ -41,7 +32,7 @@ const ScheduleShiftDisplay = (props: ScheduleShiftDisplayProps) => {
         marginBottom: 1,
         alignContent: 'center',
       }}
-      onClick={handleClick}
+      onClick={() => handleClick(shiftId)}
     >
       <Box>
         <Typography textAlign={'center'} textTransform={'capitalize'}>

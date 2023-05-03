@@ -1,9 +1,6 @@
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 import EditShiftCard from '@/features/shift/cards/EditShiftCard'
-import {
-  selectShiftById,
-  useGetShiftsQuery,
-} from '@/features/shift/shiftApiSlice'
+import { selectShiftById } from '@/features/shift/shiftApiSlice'
 import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 import { RootState } from '@/store/store'
 import { Shift } from '@/types/schema'
@@ -17,35 +14,23 @@ import { useSelector } from 'react-redux'
 
 type DynamicShiftDisplayProps = {
   shiftId: string
-  dayId: string
+  handleClick: (shiftId: string) => void
 }
 
 const SimpleShiftDisplay = (props: DynamicShiftDisplayProps) => {
-  const { shiftId, dayId } = props
+  const { shiftId, handleClick } = props
 
   const houseId = useSelector(selectCurrentHouse)?.id ?? ''
   const shift = useSelector((state: RootState) =>
     selectShiftById()(state, shiftId, houseId)
   )
 
-  const [open, setOpen] = useState(false)
-  const [openEditShift, setOpenEditShift] = useState(false)
-
-  const handleClose = () => {
-    console.log('handleClose activated')
-    setOpen(false)
-  }
-
-  const handleEditShift = (userId: string) => {
-    setOpenEditShift(true)
-  }
-
   useEffect(() => {
     // console.log({ shift: shift })
   }, [shift])
 
   return shift ? (
-    <Box onClick={() => setOpen(true)}>
+    <Box style={{ cursor: 'pointer' }} onClick={() => handleClick(shiftId)}>
       <Box
         textTransform={'capitalize'}
         padding={0.5}
@@ -62,18 +47,6 @@ const SimpleShiftDisplay = (props: DynamicShiftDisplayProps) => {
           {shift.name}
         </Typography>
       </Box>
-      <ShiftAssignmentCard
-        shiftId={shiftId}
-        selectedDay={dayId}
-        handleClose={handleClose}
-        handleEditShift={handleEditShift}
-        open={open}
-      />
-      <EditShiftCard
-        shiftId={shiftId}
-        setOpen={setOpenEditShift}
-        open={openEditShift}
-      />
     </Box>
   ) : null
 }

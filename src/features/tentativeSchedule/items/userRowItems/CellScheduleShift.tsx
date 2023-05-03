@@ -36,9 +36,16 @@ const CellScheduleShift = (props: CellScheduleShiftProps) => {
   )
 
   const [open, setOpen] = useState(false)
+  const [clickedShiftId, setClickedShiftId] = useState('')
 
   const handleClose = () => {
     setOpen(false)
+    setClickedShiftId('')
+  }
+
+  const handleClick = (shiftId: string) => {
+    setClickedShiftId(shiftId)
+    setOpen(true)
   }
 
   useEffect(() => {
@@ -55,23 +62,23 @@ const CellScheduleShift = (props: CellScheduleShiftProps) => {
         borderLeft: '1px solid black',
       }}
     >
-      {assignedShifts.map((shiftId) => {
-        return (
-          <React.Fragment key={shiftId}>
+      <React.Fragment>
+        {assignedShifts.map((shiftId) => {
+          return (
             <ScheduleShiftDisplay
+              key={shiftId}
               shiftId={shiftId as string}
-              handleClick={() => setOpen(true)}
+              handleClick={handleClick}
             />
-            <ShiftAssignmentCard
-              shiftId={shiftId}
-              selectedDay={dayId}
-              handleClose={handleClose}
-              // handleEditShift={handleEditShift}
-              open={open}
-            />
-          </React.Fragment>
-        )
-      })}
+          )
+        })}
+      </React.Fragment>
+      <ShiftAssignmentCard
+        shiftId={clickedShiftId}
+        selectedDay={dayId}
+        handleClose={handleClose}
+        open={open}
+      />
     </TableCell>
   )
 }

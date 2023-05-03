@@ -26,7 +26,7 @@ const SelectedUserComponent = () => {
   }
 
   return (
-    <Stack direction="row" sx={{ marginBottom: '1%' }}>
+    <Stack direction="row" sx={{ marginBottom: '1%', marginLeft: 3 }}>
       {user && selectedUserId ? (
         <>
           <Typography sx={shiftAssignTitle}>Selected User: </Typography>

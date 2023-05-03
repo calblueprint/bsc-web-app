@@ -18,16 +18,16 @@ import {
 } from '@/utils/utils'
 import { useEffect } from 'react'
 import { EntityId } from '@reduxjs/toolkit'
+import { selectCurrentHouse } from '@/features/auth/authSlice'
 
 const ManagerPlannerContent = () => {
   const managerNavState = useSelector(selectManagerNavState)
-  const { data: shifts } = useGetShiftsQuery('EUC')
+  const houseId = useSelector(selectCurrentHouse)?.id ?? ''
+  const { data: shifts } = useGetShiftsQuery(houseId)
   const { data: users } = useGetUsersQuery({})
   const dispatch = useDispatch()
   useEffect(() => {
     if (users && shifts) {
-      console.log()
-
       const usersSchedule = findAvailableShiftsForUsers(users, shifts)
       const assignedShifts = findAssignedShiftsForUsers(users, shifts)
       const emptyShifts = findEmptyShifts(shifts)

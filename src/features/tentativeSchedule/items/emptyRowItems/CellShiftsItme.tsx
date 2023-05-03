@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { selectEmptyShiftsByDay } from '../../scheduleSlice'
 import { RootState } from '@/store/store'
 import EditShiftCard from '@/features/shift/cards/EditShiftCard'
+import { ShiftAssignmentCard } from '@/features/userAssignment/cards/ShiftAssignmentCard'
 
 type CellShiftsItmeProps = {
   dayId: string
@@ -21,6 +22,19 @@ const CellShiftsItme = (props: CellShiftsItmeProps) => {
   const shiftIds = useSelector((state: RootState) =>
     selectEmptyShiftsByDay(state, dayId)
   )
+
+  const [open, setOpen] = useState(false)
+  const [clickedShiftId, setClickedShiftId] = useState('')
+
+  const handleClose = () => {
+    setOpen(false)
+    setClickedShiftId('')
+  }
+
+  const handleClick = (shiftId: string) => {
+    setClickedShiftId(shiftId)
+    setOpen(true)
+  }
 
   useEffect(() => {
     // console.log({ shiftIds: shiftIds })
@@ -36,16 +50,26 @@ const CellShiftsItme = (props: CellShiftsItmeProps) => {
       }}
     >
       <Box padding={0} sx={{ maxHeight: '100px', overflowY: 'scroll' }}>
-        {Array.isArray(shiftIds)
-          ? shiftIds.map((shiftId) => {
-              return (
-                <React.Fragment key={shiftId}>
-                  <SimpleShiftDisplay shiftId={shiftId} dayId={dayId} />
-                </React.Fragment>
-              )
-            })
-          : null}
+        <React.Fragment>
+          {Array.isArray(shiftIds)
+            ? shiftIds.map((shiftId) => {
+                return (
+                  <SimpleShiftDisplay
+                    key={shiftId}
+                    shiftId={shiftId}
+                    handleClick={handleClick}
+                  />
+                )
+              })
+            : null}
+        </React.Fragment>
       </Box>
+      <ShiftAssignmentCard
+        shiftId={clickedShiftId}
+        selectedDay={dayId}
+        handleClose={handleClose}
+        open={open}
+      />
     </TableCell>
   )
 }
