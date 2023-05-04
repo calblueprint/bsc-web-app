@@ -8,6 +8,19 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import DateRangeComponent from '@/components/shared/forms/DateRangeComponent'
 import { TextInput } from '@/components/shared/forms/CustomFormikFields'
+import { EntityState } from '@reduxjs/toolkit'
+import { House, ScheduledShift, Shift } from '@/types/schema'
+import {
+  AssignedUserShiftsType,
+  selectAssignedUserShifts,
+} from '@/features/tentativeSchedule/scheduleSlice'
+import weekday from 'dayjs/plugin/weekday'
+import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
+import { useSelector } from 'react-redux'
+import { selectCurrentHouse } from '@/features/auth/authSlice'
+import { useAddNewScheduledShiftBatchMutation } from '@/features/scheduledShift/scheduledShiftApiSlice'
+
+dayjs.extend(weekday)
 
 interface PublishScheduleFormValues {
   startDate: dayjs.Dayjs
@@ -23,6 +36,129 @@ const PublishScheduleSchema = Yup.object({
     .min(1, 'Schedule Name must have at least 1 characters'),
 })
 
+type CreateScheduleShiftsProps = {
+  shiftState: EntityState<Shift>
+  assignedShifts: AssignedUserShiftsType
+  startDate: dayjs.Dayjs
+  endDate: dayjs.Dayjs
+}
+
+const dayIdToNumber = (dayId: string): number | undefined => {
+  const days = {
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+    sunday: 7,
+  }
+
+  return days[dayId.toLowerCase() as keyof typeof days]
+}
+
+const createScheduleShifts = (
+  props: CreateScheduleShiftsProps
+): ScheduledShift[] => {
+  const { shiftState, assignedShifts, startDate, endDate } = props
+  if (!shiftState || !assignedShifts || !startDate || !endDate) {
+    console.log(
+      'Invalid inputs ---> shiftState: ',
+      shiftState,
+      '  assignedShift: ',
+      assignedShifts,
+      ' startDate: ',
+      startDate,
+      ' endDate: ',
+      endDate
+    )
+    return []
+  }
+
+  const entities = shiftState.entities
+  const createdShifts: ScheduledShift[] = []
+
+  for (const userId in assignedShifts) {
+    for (const dayId in assignedShifts[userId]) {
+      const shiftDay = dayIdToNumber(dayId)
+      if (shiftDay === undefined) {
+        continue
+      }
+
+      let firstOccurrence = startDate.clone().day(shiftDay)
+      if (firstOccurrence.isAfter(endDate)) {
+        continue
+      }
+      if (firstOccurrence.isBefore(startDate)) {
+        // console.log('Original date: ', firstOccurrence)
+        firstOccurrence = firstOccurrence.add(1, 'week')
+        // console.log('added a week: ', firstOccurrence)
+      }
+
+      for (const shiftId of assignedShifts[userId][dayId]) {
+        const shift = entities[shiftId]
+        if (!shift) {
+          continue
+        }
+
+        for (
+          let currentDate = firstOccurrence.clone();
+          currentDate.isBefore(endDate) || currentDate.isSame(endDate);
+          currentDate = currentDate.add(1, 'week')
+        ) {
+          createdShifts.push({
+            id: '',
+            shiftID: shiftId,
+            date: currentDate.format('MM/DD/YYYY'),
+            assignedUser: userId,
+            status: 'Assigned',
+            options: '',
+            verifiedBy: '',
+            verifiedAt: '',
+            unverifiedAt: '',
+            penaltyHours: 0,
+          })
+        }
+      }
+    }
+  }
+
+  return createdShifts
+}
+
+// const createScheduleShifts = (props: CreateScheduleShiftsProps) => {
+//   const { shiftState, assignedShifts, startDate, endDate } = props
+//   if (!shiftState || !assignedShifts || !startDate || !endDate) {
+//     console.log(
+//       'Invalid inputs ---> shiftState: ',
+//       shiftState,
+//       '  assignedShift: ',
+//       assignedShifts,
+//       ' startDate: ',
+//       startDate,
+//       ' endDate: ',
+//       endDate
+//     )
+//     return {}
+//   }
+
+//   const ids = shiftState.ids
+//   const entities = shiftState.entities
+//   const createdShifts: Record<string, ScheduledShift[]> = {}
+//   Object.keys(assignedShifts).forEach((userId) => {
+//     Object.keys(assignedShifts[userId]).forEach((dayId) => {
+//       assignedShifts[userId][dayId].forEach((shiftId) => {
+//         const shift = entities[shiftId]
+//         if (!shift) {
+//           return false
+//         }
+//       })
+//     })
+//   })
+
+//   return createdShifts
+// }
+
 type PublishScheduleFormProps = {
   setOpen: (value: React.SetStateAction<boolean>) => void
 }
@@ -30,7 +166,19 @@ type PublishScheduleFormProps = {
 function PublishScheduleForm(props: PublishScheduleFormProps) {
   const { setOpen } = props
   const [error, setError] = useState(false)
-  const onSubmit = (
+
+  const currentHouse = useSelector(selectCurrentHouse) as House
+
+  const assignedShifts = useSelector(selectAssignedUserShifts)
+
+  //** House shifts */
+  const { data: shiftsData, isSuccess: isShiftsSuccess } = useGetShiftsQuery(
+    currentHouse.id
+  )
+
+  const [addNewScheduledShiftBatch, {}] = useAddNewScheduledShiftBatchMutation()
+
+  const onSubmit = async (
     values: PublishScheduleFormValues,
     helpers: FormikHelpers<PublishScheduleFormValues>
   ) => {
@@ -41,6 +189,23 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
       console.log('Error: Form has an error')
       return
     }
+
+    const list = createScheduleShifts({
+      shiftState: shiftsData as EntityState<Shift>,
+      assignedShifts,
+      startDate: values.startDate,
+      endDate: values.endDate,
+    })
+
+    try {
+      await addNewScheduledShiftBatch({ houseId: currentHouse?.id, data: list })
+    } catch (error) {
+      console.log(error)
+    }
+    // console.log({
+    //   dates: { startDate: values.startDate, endDate: values.endDate },
+    // })
+    // console.log({ list: list })
     helpers.setSubmitting(false)
   }
 
