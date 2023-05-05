@@ -111,7 +111,7 @@ const customBaseQuery: BaseQueryFn<
               const data = doc.data()
               // console.log('firebase data: ', data)
               if (data) {
-                resObj.push({ id: doc.id.toString(), ...data })
+                resObj.push({ ...data, id: doc.id.toString() })
               }
               // console.log(doc.id, ' => ', doc.data())
             })

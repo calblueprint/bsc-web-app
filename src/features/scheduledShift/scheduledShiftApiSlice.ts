@@ -20,7 +20,7 @@ export const scheduledShiftsApiSlice = apiSlice.injectEndpoints({
           entity.id = entity.id
           return entity
         })
-        console.debug(loadedShifts)
+        // console.log(loadedShifts)
         return scheduledShiftsAdapter.setAll(initialState, loadedShifts)
       },
       providesTags: (result) => {
