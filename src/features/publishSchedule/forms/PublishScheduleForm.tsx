@@ -1,15 +1,20 @@
 import { Form, Formik, FormikHelpers } from 'formik'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, TextField, Typography, setRef } from '@mui/material'
 import DateRangeComponent from '@/components/shared/forms/DateRangeComponent'
 import { TextInput } from '@/components/shared/forms/CustomFormikFields'
 import { EntityState } from '@reduxjs/toolkit'
-import { House, ScheduledShift, Shift } from '@/types/schema'
+import {
+  House,
+  PublishedSchedulesType,
+  ScheduledShift,
+  Shift,
+} from '@/types/schema'
 import {
   AssignedUserShiftsType,
   selectAssignedUserShifts,
@@ -19,6 +24,7 @@ import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 import { useSelector } from 'react-redux'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { useAddNewScheduledShiftBatchMutation } from '@/features/scheduledShift/scheduledShiftApiSlice'
+import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
 
 dayjs.extend(weekday)
 
@@ -171,12 +177,44 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
 
   const assignedShifts = useSelector(selectAssignedUserShifts)
 
+  const [scheduleNames, setScheduleNames] = useState<string[] | undefined>(
+    undefined
+  )
+  const [dateRanges, setDateRanges] = useState<
+    Record<string, string> | undefined
+  >(undefined)
+
   //** House shifts */
   const { data: shiftsData, isSuccess: isShiftsSuccess } = useGetShiftsQuery(
     currentHouse.id
   )
 
-  const [addNewScheduledShiftBatch, {}] = useAddNewScheduledShiftBatchMutation()
+  const [addNewScheduledShiftBatch, { isLoading: batchIsLoading }] =
+    useAddNewScheduledShiftBatchMutation()
+
+  const [updateHouses, {}] = useUpdateHousesMutation()
+
+  const validateInputs = (values: PublishScheduleFormValues) => {
+    const { scheduleName, startDate, endDate } = values
+    if (!scheduleName || !startDate || !endDate) {
+      console.error('Invalid schedule inputs')
+      return false
+    }
+    if (!currentHouse) {
+      console.log('House is not defined')
+      return false
+    }
+    if (currentHouse.publishedSchedules) {
+      return true
+    }
+    const publishedSchedules: PublishedSchedulesType =
+      currentHouse.publishedSchedules
+
+    for (const name in publishedSchedules) {
+      if (name.toLowerCase === scheduleName.toLowerCase) {
+      }
+    }
+  }
 
   const onSubmit = async (
     values: PublishScheduleFormValues,
@@ -190,6 +228,16 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
       return
     }
 
+    validateInputs(values)
+
+    const publishedSchedules = {
+      [values.scheduleName]: {
+        startDate: values.startDate,
+        endDate: values.endDate,
+        assignedShifts: assignedShifts,
+      },
+    }
+
     const list = createScheduleShifts({
       shiftState: shiftsData as EntityState<Shift>,
       assignedShifts,
@@ -198,10 +246,14 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
     })
 
     try {
-      await addNewScheduledShiftBatch({ houseId: currentHouse?.id, data: list })
+      await addNewScheduledShiftBatch({
+        houseId: currentHouse?.id,
+        data: list,
+      }).unwrap()
     } catch (error) {
       console.log(error)
     }
+
     // console.log({
     //   dates: { startDate: values.startDate, endDate: values.endDate },
     // })
@@ -212,6 +264,20 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
   const handleError = (value: boolean) => {
     setError(value)
   }
+
+  useEffect(() => {
+    if (currentHouse && currentHouse.publishedSchedules) {
+      const sNames = []
+      let ranges = {}
+      for (const schedule in currentHouse.publishedSchedules) {
+        sNames.push(schedule)
+        const obj = currentHouse.publishedSchedules[schedule]
+        ranges = { ...ranges, [obj.startTime]: obj.endTime }
+      }
+      setScheduleNames(sNames)
+      setDateRanges(ranges)
+    }
+  }, [currentHouse])
 
   return (
     <Formik
@@ -236,6 +302,9 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
             >
               <Box display={'flex'} flexDirection={'column'} maxWidth={'470px'}>
                 <TextInput name="scheduleName" label="Schedule Name" />
+                <Typography marginLeft={1.5} variant="caption" color={'error'}>
+                  Name already exist
+                </Typography>
               </Box>
               <DateRangeComponent
                 startDateValue={values.startDate}

@@ -1,3 +1,5 @@
+import { AssignedUserShiftsType } from '@/features/tentativeSchedule/scheduleSlice'
+
 export type User = {
   // this id is to help the standard table generalize the id attribute
   id: string
@@ -105,6 +107,11 @@ export type ScheduledShift = {
   penaltyHours: number
 }
 
+export type PublishedSchedulesType = Record<
+  string,
+  { startTime: string; endTime: string; assignedShifts: AssignedUserShiftsType }
+>
+
 export type House = {
   id: string
   name: string
@@ -121,6 +128,7 @@ export type House = {
       isActive: boolean
     }
   }
+  publishedSchedules: PublishedSchedulesType
 }
 
 // export enum Days {
