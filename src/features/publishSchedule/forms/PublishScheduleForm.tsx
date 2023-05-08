@@ -109,15 +109,15 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
           .unix(),
         startDate.startOf('day').unix()
       )
-      console.log(start)
+      // console.log(start)
       const end = Math.min(
         dayjs(publishedSchedules[name].endDate, 'MM/DD/YYYY')
           .startOf('day')
           .unix(),
         endDate.startOf('day').unix()
       )
-      console.log(`range: ${start}-${end}`)
-      console.log(`range: ${end - start}`)
+      // console.log(`range: ${start}-${end}`)
+      // console.log(`range: ${end - start}`)
       if (end - start >= 0) {
         setErrorMsg(
           `Dates overlap with ${name} please choose a different range`
@@ -132,8 +132,8 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
     values: PublishScheduleFormValues,
     helpers: FormikHelpers<PublishScheduleFormValues>
   ) => {
-    console.log(values)
-    console.log(helpers)
+    // console.log(values)
+    // console.log(helpers)
     const scheduleName = `${values.scheduleName}-${values.startDate.format(
       'MM/DD/YYYY'
     )}-${values.endDate.format('MM/DD/YYYY')}`

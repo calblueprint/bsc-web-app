@@ -41,7 +41,7 @@ const categoriesSlice = createSlice({
       state.houseCategories = state.houseCategories.splice(index, 1)
     },
     setHouseId: (state, action) => {
-      console.log(action.payload.houseId)
+      // console.log(action.payload.houseId)
       state.houseId = action.payload.houseId
     },
   },
