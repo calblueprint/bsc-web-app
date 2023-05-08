@@ -99,6 +99,8 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   //   (state: RootState) =>
   //     selectShiftById(houseID)(state, shiftID as EntityId) as Shift
   // )
+  const selectedUserId = useSelector(selectSelectedUserId)
+  const authHouse = useSelector(selectCurrentHouse) as House
 
   const shiftObject: Shift = useSelector(
     (state: RootState) =>
@@ -107,23 +109,15 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
 
   // shiftObject.hours = shiftObject.hours as number
 
-  const selectedUserId = useSelector(selectSelectedUserId)
   const dispatch = useDispatch()
 
   // define state variables
-  const authHouse = useSelector(selectCurrentHouse) as House
   const [listOfUserIds, setLitsOfUserIds] = useState<EntityId[]>([])
   const [disableTable, setDisableTable] = useState(
     selectedUserId ? true : false
   )
 
   const originalAssignedUser = shiftObject.assignedUser
-
-  useEffect(() => {
-    dispatch(
-      setSelectedUserId({ selectedUserId: originalAssignedUser as string })
-    )
-  }, [])
 
   // Define the user queries
   const {
@@ -133,47 +127,15 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
     // isError: isUsersError,
   } = useGetUsersQuery({ houseID })
 
-  const [
-    updateShift,
-    {
-      // isLoading: isLoadingUpdateShift,
-      isSuccess: isSuccessUpdateShift,
-      // isError: isErrorUpdateShift,
-      // error: errorUpdateShift,
-    },
-  ] = useUpdateShiftMutation()
+  const [updateShift, {}] = useUpdateShiftMutation()
 
-  const [
-    updateUser,
-    {
-      // isLoading: isLoadingUpdateShift,
-      isSuccess: isSuccessUpdateUser,
-      // isError: isErrorUpdateShift,
-      // error: errorUpdateShift,
-    },
-  ] = useUpdateUserMutation()
+  const [updateUser, {}] = useUpdateUserMutation()
 
   const handleSelectUser = (event: React.MouseEvent<unknown>, id: EntityId) => {
     if (!disableTable) {
       dispatch(setSelectedUserId({ selectedUserId: id as string }))
     }
   }
-
-  useEffect(() => {
-    // would filter the userIds here, but not doing any filtering or sorting right now
-    if (isUsersDataSuccess && usersData) {
-      let userIds = usersData.ids
-      setLitsOfUserIds(userIds)
-    }
-  }, [isUsersDataSuccess, usersData])
-
-  useEffect(() => {
-    if (selectedUserId) {
-      setDisableTable(true)
-    } else {
-      setDisableTable(false)
-    }
-  }, [selectedUserId])
 
   const assignSelectedUser = () => {
     let asgDay = day
@@ -242,6 +204,29 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
     }
     handleClose()
   }
+
+  useEffect(() => {
+    // would filter the userIds here, but not doing any filtering or sorting right now
+    if (isUsersDataSuccess && usersData) {
+      let userIds = usersData.ids
+
+      setLitsOfUserIds(userIds)
+    }
+  }, [isUsersDataSuccess, usersData])
+
+  useEffect(() => {
+    if (selectedUserId) {
+      setDisableTable(true)
+    } else {
+      setDisableTable(false)
+    }
+  }, [selectedUserId])
+
+  useEffect(() => {
+    dispatch(
+      setSelectedUserId({ selectedUserId: originalAssignedUser as string })
+    )
+  }, [])
 
   return (
     <React.Fragment>

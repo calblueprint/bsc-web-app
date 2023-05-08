@@ -5,6 +5,10 @@ import { createSelector, createSlice } from '@reduxjs/toolkit'
 type UserScheduleType = {
   [key: string]: { [key: string]: string[] }
 }
+//** [ShiftId]:{[day]:Array<userIds>}  */
+type ShiftScheduleType = {
+  [key: string]: { [key: string]: string[] }
+}
 
 //** [day]:Array<shiftIds>  */
 type EmptyShiftsType = {
@@ -17,6 +21,7 @@ export type AssignedUserShiftsType = {
 }
 
 const userSchedule: UserScheduleType = {}
+const shiftSchedule: ShiftScheduleType = {}
 const emptyShifts: EmptyShiftsType = {}
 const assignedUserShifts: AssignedUserShiftsType = {}
 
@@ -24,6 +29,7 @@ const scheduleSlice = createSlice({
   name: 'schedule',
   initialState: {
     userSchedule,
+    shiftSchedule,
     emptyShifts,
     assignedUserShifts,
   },
@@ -73,6 +79,15 @@ const scheduleSlice = createSlice({
         }
       }
     },
+    setShiftsSchedule: (state, action) => {
+      const { shiftsSchedule } = action.payload
+      if (!shiftsSchedule) {
+        console.log('[scheduleSlice]: shiftsSchedule is undefined')
+        return
+      }
+      // console.log({ shiftsSchedule: shiftsSchedule })
+      state.shiftSchedule = shiftsSchedule
+    },
     setAssignedUserShifts: (state, action) => {
       state.assignedUserShifts = action.payload ?? assignedUserShifts
     },
@@ -84,6 +99,7 @@ const scheduleSlice = createSlice({
 
 export const {
   setUsersSchedule,
+  setShiftsSchedule,
   setUserSchedule,
   setUserWeekDaySchedule,
   setAssignedUserShifts,
@@ -92,6 +108,9 @@ export const {
 
 export const selectUserSchedule = (state: RootState) =>
   state.schedules.userSchedule
+
+export const selectShiftSchedule = (state: RootState) =>
+  state.schedules.shiftSchedule
 
 export const selectAssignedUserShifts = (state: RootState) =>
   state.schedules.assignedUserShifts ?? assignedUserShifts
@@ -104,6 +123,15 @@ const selectUserScheduleWithIdDay = (
   userId: string,
   dayId: string
 ) => state.schedules.userSchedule[userId]?.[dayId.toLowerCase()] ?? []
+
+const selectShiftScheduleWithId = (state: RootState, shiftId: string) =>
+  state.schedules.shiftSchedule[shiftId]
+
+const selectShiftScheduleWithIdDay = (
+  state: RootState,
+  shiftId: string,
+  dayId: string
+) => state.schedules.shiftSchedule[shiftId]?.[dayId.toLowerCase()] ?? []
 
 const selectAssignedUserShiftsWithId = (state: RootState, userId: string) =>
   state.schedules.assignedUserShifts[userId] ?? {}
@@ -124,6 +152,16 @@ export const selectUserScheduleById = createSelector(
 
 export const selectUserScheduleByIdDay = createSelector(
   [selectUserScheduleWithIdDay],
+  (daySchedule) => daySchedule ?? []
+)
+
+export const selectShiftScheduleById = createSelector(
+  [selectShiftScheduleWithId],
+  (shiftSchedule) => shiftSchedule ?? []
+)
+
+export const selectShiftScheduleByIdDay = createSelector(
+  [selectShiftScheduleWithIdDay],
   (daySchedule) => daySchedule ?? []
 )
 

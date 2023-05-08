@@ -402,6 +402,83 @@ export function findAvailableShiftsForUsers(
   return availableShifts
 }
 
+export function findAvailableUsersForShifts(
+  userState: EntityState<User>,
+  shiftState: EntityState<Shift>
+): Record<string, Record<string, string[]>> {
+  const users = userState.ids.map((id) => userState.entities[id]) as User[]
+  const shifts = shiftState.ids.map((id) => shiftState.entities[id]) as Shift[]
+
+  const availableUsers: Record<string, Record<string, string[]>> = {}
+
+  // Helper function to check if there is enough overlap between two time intervals
+  function hasEnoughOverlap(
+    interval1: TimeInterval,
+    interval2: TimeInterval,
+    requiredDuration: number
+  ): boolean {
+    const startTime = Math.max(
+      dayjs(interval1.startTime, 'HHmm').unix(),
+      dayjs(interval2.startTime, 'HHmm').unix()
+    )
+    const endTime = Math.min(
+      dayjs(interval1.endTime, 'HHmm').unix(),
+      dayjs(interval2.endTime, 'HHmm').unix()
+    )
+
+    return endTime - startTime >= requiredDuration * 60 * 60
+  }
+
+  for (const shift of shifts) {
+    if (
+      !shift.id ||
+      !shift.possibleDays ||
+      !shift.timeWindow ||
+      !shift.hours ||
+      shift.hours < 0
+    ) {
+      throw new Error('Invalid shift object')
+    }
+
+    availableUsers[shift.id] = {}
+
+    for (const day of shift.possibleDays) {
+      const lowerCaseDay = day.toLowerCase()
+
+      for (const user of users) {
+        if (!user.id || !user.availabilities) {
+          throw new Error('Invalid user object')
+        }
+
+        const userAvailability = user.availabilities[lowerCaseDay]
+
+        if (userAvailability) {
+          for (const userTime of userAvailability) {
+            if (
+              hasEnoughOverlap(
+                userTime,
+                {
+                  startTime: String(shift.timeWindow.startTime),
+                  endTime: String(shift.timeWindow.endTime),
+                },
+                shift.hours
+              )
+            ) {
+              if (!availableUsers[shift.id][lowerCaseDay]) {
+                availableUsers[shift.id][lowerCaseDay] = []
+              }
+              availableUsers[shift.id][lowerCaseDay].push(user.id)
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return availableUsers
+}
+
 export function findAssignedShiftsForUsers(
   userState: EntityState<User>,
   shiftState: EntityState<Shift>
