@@ -109,7 +109,7 @@ export type ScheduledShift = {
 
 export type PublishedSchedulesType = Record<
   string,
-  { startTime: string; endTime: string; assignedShifts: AssignedUserShiftsType }
+  { startDate: string; endDate: string; assignedShifts: AssignedUserShiftsType }
 >
 
 export type House = {

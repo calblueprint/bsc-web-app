@@ -5,7 +5,14 @@ import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { Box, Button, TextField, Typography, setRef } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContentText,
+  TextField,
+  Typography,
+} from '@mui/material'
 import DateRangeComponent from '@/components/shared/forms/DateRangeComponent'
 import { TextInput } from '@/components/shared/forms/CustomFormikFields'
 import { EntityState } from '@reduxjs/toolkit'
@@ -184,6 +191,9 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
     Record<string, string> | undefined
   >(undefined)
 
+  const [errorMsg, setErrorMsg] = useState('')
+  const [openErrorMsg, setOpenErrorMsg] = useState(false)
+
   //** House shifts */
   const { data: shiftsData, isSuccess: isShiftsSuccess } = useGetShiftsQuery(
     currentHouse.id
@@ -198,22 +208,37 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
     const { scheduleName, startDate, endDate } = values
     if (!scheduleName || !startDate || !endDate) {
       console.error('Invalid schedule inputs')
+      setErrorMsg('Invalid schedule inputs')
       return false
     }
     if (!currentHouse) {
       console.log('House is not defined')
+      setErrorMsg('House is not defined')
       return false
     }
-    if (currentHouse.publishedSchedules) {
+    if (!currentHouse.publishedSchedules) {
       return true
     }
     const publishedSchedules: PublishedSchedulesType =
       currentHouse.publishedSchedules
 
     for (const name in publishedSchedules) {
-      if (name.toLowerCase === scheduleName.toLowerCase) {
+      const start = Math.max(
+        dayjs(publishedSchedules[name].startDate, 'MM/DD/YYYY').unix(),
+        startDate.unix()
+      )
+      const end = Math.min(
+        dayjs(publishedSchedules[name].endDate, 'MM/DD/YYYY').unix(),
+        endDate.unix()
+      )
+      if (end - start < 0) {
+        setErrorMsg(
+          `Dates overlap with ${name} please choose a different range`
+        )
+        return false
       }
     }
+    return true
   }
 
   const onSubmit = async (
@@ -228,12 +253,16 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
       return
     }
 
-    validateInputs(values)
+    if (!validateInputs(values)) {
+      console.log('invalid inputs')
+      setOpenErrorMsg(true)
+      return
+    }
 
-    const publishedSchedules = {
+    const publishedSchedules: PublishedSchedulesType = {
       [values.scheduleName]: {
-        startDate: values.startDate,
-        endDate: values.endDate,
+        startDate: values.startDate.format('MM/DD/YYYY'),
+        endDate: values.endDate.format('MM/DD/YYYY'),
         assignedShifts: assignedShifts,
       },
     }
@@ -245,14 +274,27 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
       endDate: values.endDate,
     })
 
+    console.log('shifts created: ++++++')
+
     try {
-      await addNewScheduledShiftBatch({
-        houseId: currentHouse?.id,
-        data: list,
-      }).unwrap()
+      const data = {
+        houseId: currentHouse.id,
+        data: { publishedSchedules },
+      }
+
+      updateHouses(data)
     } catch (error) {
       console.log(error)
     }
+
+    // try {
+    //   await addNewScheduledShiftBatch({
+    //     houseId: currentHouse?.id,
+    //     data: list,
+    //   }).unwrap()
+    // } catch (error) {
+    //   console.log(error)
+    // }
 
     // console.log({
     //   dates: { startDate: values.startDate, endDate: values.endDate },
@@ -272,7 +314,7 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
       for (const schedule in currentHouse.publishedSchedules) {
         sNames.push(schedule)
         const obj = currentHouse.publishedSchedules[schedule]
-        ranges = { ...ranges, [obj.startTime]: obj.endTime }
+        ranges = { ...ranges, [obj.startDate]: obj.endDate }
       }
       setScheduleNames(sNames)
       setDateRanges(ranges)
@@ -280,62 +322,71 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
   }, [currentHouse])
 
   return (
-    <Formik
-      validationSchema={PublishScheduleSchema}
-      initialValues={{
-        startDate: dayjs(),
-        endDate: dayjs().add(1, 'week'),
-        scheduleName: '',
-      }}
-      onSubmit={onSubmit}
-    >
-      {({ isSubmitting, values, setFieldValue }) => {
-        return (
-          <Form>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'left',
-                gap: '1rem',
-              }}
-            >
-              <Box display={'flex'} flexDirection={'column'} maxWidth={'470px'}>
-                <TextInput name="scheduleName" label="Schedule Name" />
-                <Typography marginLeft={1.5} variant="caption" color={'error'}>
+    <React.Fragment>
+      <Formik
+        validationSchema={PublishScheduleSchema}
+        initialValues={{
+          startDate: dayjs(),
+          endDate: dayjs().add(1, 'week'),
+          scheduleName: '',
+        }}
+        onSubmit={onSubmit}
+      >
+        {({ isSubmitting, values, setFieldValue }) => {
+          return (
+            <Form>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'left',
+                  gap: '1rem',
+                }}
+              >
+                <Box
+                  display={'flex'}
+                  flexDirection={'column'}
+                  maxWidth={'470px'}
+                >
+                  <TextInput name="scheduleName" label="Schedule Name" />
+                  {/* <Typography marginLeft={1.5} variant="caption" color={'error'}>
                   Name already exist
-                </Typography>
+                </Typography> */}
+                </Box>
+                <DateRangeComponent
+                  startDateValue={values.startDate}
+                  endDateValue={values.endDate}
+                  setFieldValue={setFieldValue}
+                  setError={handleError}
+                />
+                <Box mt={2}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => setOpen(false)}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={isSubmitting || error}
+                    sx={{ marginLeft: 2 }}
+                  >
+                    Create
+                  </Button>
+                </Box>
               </Box>
-              <DateRangeComponent
-                startDateValue={values.startDate}
-                endDateValue={values.endDate}
-                setFieldValue={setFieldValue}
-                setError={handleError}
-              />
-              <Box mt={2}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => setOpen(false)}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={isSubmitting || error}
-                  sx={{ marginLeft: 2 }}
-                >
-                  Create
-                </Button>
-              </Box>
-            </Box>
-          </Form>
-        )
-      }}
-    </Formik>
+            </Form>
+          )
+        }}
+      </Formik>
+      <Dialog open={openErrorMsg}>
+        <DialogContentText>{`${errorMsg}`}</DialogContentText>
+      </Dialog>
+    </React.Fragment>
   )
 }
 
