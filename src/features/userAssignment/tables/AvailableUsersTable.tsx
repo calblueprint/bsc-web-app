@@ -18,6 +18,7 @@ import { RootState } from '@/store/store'
 import SortedTable from '@/components/shared/tables/SortedTable'
 import { selectSelectedUserId, setSelectedUserId } from '../userAssignmentSlice'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
+import { selectShiftScheduleByIdDay } from '@/features/tentativeSchedule/scheduleSlice'
 
 type AvailableUsersTableProps = {
   day: string
@@ -101,6 +102,9 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
   // )
   const selectedUserId = useSelector(selectSelectedUserId)
   const authHouse = useSelector(selectCurrentHouse) as House
+  const availableUsersByDay = useSelector((state: RootState) =>
+    selectShiftScheduleByIdDay(state, shiftID, day)
+  )
 
   const shiftObject: Shift = useSelector(
     (state: RootState) =>
@@ -207,12 +211,11 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
 
   useEffect(() => {
     // would filter the userIds here, but not doing any filtering or sorting right now
-    if (isUsersDataSuccess && usersData) {
-      let userIds = usersData.ids
-
-      setLitsOfUserIds(userIds)
+    if (isUsersDataSuccess && usersData && availableUsersByDay) {
+      // let userIds = usersData.ids
+      setLitsOfUserIds(availableUsersByDay)
     }
-  }, [isUsersDataSuccess, usersData])
+  }, [isUsersDataSuccess, usersData, availableUsersByDay])
 
   useEffect(() => {
     if (selectedUserId) {
