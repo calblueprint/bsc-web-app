@@ -203,7 +203,7 @@ export default function SortedTable<
   return (
     <Box sx={{ maxWidth: `calc(100vw - ${drawerWidth}px)` }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer sx={{ maxHeight: 640 }}>
           <Table
             stickyHeader
             sx={{ minWidth: 750 }}

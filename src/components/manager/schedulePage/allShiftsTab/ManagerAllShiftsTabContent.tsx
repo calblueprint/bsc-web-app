@@ -121,6 +121,7 @@ const ManagerAllShiftsTabContent = () => {
   }
 
   useEffect(() => {
+    // console.log(scheduledShifts)
     handleFiltering()
   }, [scheduledShifts, dayFilter, searchQuery])
 
