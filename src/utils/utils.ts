@@ -1,9 +1,10 @@
 import { EntityId, Dictionary, EntityState } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import { House, Shift, User } from '../types/schema'
+import { House, ScheduledShift, Shift, User } from '../types/schema'
 import { DAYS } from './constants'
 import duration from 'dayjs/plugin/duration'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { AssignedUserShiftsType } from '@/features/tentativeSchedule/scheduleSlice'
 
 dayjs.extend(duration)
 dayjs.extend(customParseFormat)
@@ -535,4 +536,92 @@ export const pluralizeHours = (hours: number) => {
     return hours + ' hour'
   }
   return hours + ' hours'
+}
+
+type CreateScheduleShiftsProps = {
+  shiftState: EntityState<Shift>
+  assignedShifts: AssignedUserShiftsType
+  startDate: dayjs.Dayjs
+  endDate: dayjs.Dayjs
+}
+
+const dayIdToNumber = (dayId: string): number | undefined => {
+  const days = {
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+    sunday: 7,
+  }
+
+  return days[dayId.toLowerCase() as keyof typeof days]
+}
+
+export const createScheduleShifts = (
+  props: CreateScheduleShiftsProps
+): ScheduledShift[] => {
+  const { shiftState, assignedShifts, startDate, endDate } = props
+  if (!shiftState || !assignedShifts || !startDate || !endDate) {
+    console.log(
+      'Invalid inputs ---> shiftState: ',
+      shiftState,
+      '  assignedShift: ',
+      assignedShifts,
+      ' startDate: ',
+      startDate,
+      ' endDate: ',
+      endDate
+    )
+    return []
+  }
+
+  const entities = shiftState.entities
+  const createdShifts: ScheduledShift[] = []
+
+  for (const userId in assignedShifts) {
+    for (const dayId in assignedShifts[userId]) {
+      const shiftDay = dayIdToNumber(dayId)
+      if (shiftDay === undefined) {
+        continue
+      }
+
+      let firstOccurrence = startDate.clone().day(shiftDay)
+      if (firstOccurrence.isAfter(endDate)) {
+        continue
+      }
+      if (firstOccurrence.isBefore(startDate)) {
+        firstOccurrence = firstOccurrence.add(1, 'week')
+      }
+
+      for (const shiftId of assignedShifts[userId][dayId]) {
+        const shift = entities[shiftId]
+        if (!shift) {
+          continue
+        }
+
+        for (
+          let currentDate = firstOccurrence.clone();
+          currentDate.isBefore(endDate) || currentDate.isSame(endDate);
+          currentDate = currentDate.add(1, 'week')
+        ) {
+          createdShifts.push({
+            id: '',
+            shiftID: shiftId,
+            date: currentDate.format('MM/DD/YYYY'),
+            assignedUser: userId,
+            status: 'Assigned',
+            options: '',
+            verifiedBy: '',
+            verifiedAt: '',
+            unverifiedAt: '',
+            penaltyHours: 0,
+          })
+        }
+      }
+    }
+  }
+
+  return createdShifts
 }

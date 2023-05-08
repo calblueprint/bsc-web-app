@@ -44,10 +44,20 @@ export const ShiftAssignmentCard = ({
   )
 
   const [openEditShift, setOpenEditShift] = useState(false)
+  const [assignedDay, setAssignedDay] = useState('')
 
   const handleEditShift1 = () => {
     setOpenEditShift(true)
   }
+  useEffect(() => {
+    if (shift) {
+      if (selectedDay === 'All') {
+        setAssignedDay(shift.possibleDays[0])
+      } else {
+        setAssignedDay(selectedDay)
+      }
+    }
+  }, [shift])
 
   let content = null
   if (shift) {
@@ -82,7 +92,7 @@ export const ShiftAssignmentCard = ({
           <DialogContent>
             <ShiftInfoHeader
               shiftId={shiftId}
-              selectedDay={selectedDay}
+              selectedDay={assignedDay}
               handleClose={handleClose}
             />
             <Divider sx={{ marginY: 1 }} />
@@ -92,7 +102,7 @@ export const ShiftAssignmentCard = ({
 
             {userData ? (
               <AvailableUsersTable
-                day={selectedDay}
+                day={assignedDay}
                 houseID={authHouse.id}
                 shiftID={shiftId as string}
                 handleEditShift={handleEditShift1}

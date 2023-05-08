@@ -12,7 +12,7 @@ type EmptyShiftsType = {
 }
 
 //** [userId]: {[day]: Array<shiftIds>} */
-type AssignedUserShiftsType = {
+export type AssignedUserShiftsType = {
   [key: string]: { [key: string]: Array<string> }
 }
 
@@ -92,6 +92,9 @@ export const {
 
 export const selectUserSchedule = (state: RootState) =>
   state.schedules.userSchedule
+
+export const selectAssignedUserShifts = (state: RootState) =>
+  state.schedules.assignedUserShifts ?? assignedUserShifts
 
 const selectUserScheduleWithId = (state: RootState, userId: string) =>
   state.schedules.userSchedule[userId]

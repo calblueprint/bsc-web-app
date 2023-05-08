@@ -76,7 +76,7 @@ const UnassignedShiftsTable = ({
   // }
 
   useEffect(() => {
-    console.log('changed ids in unassigned table')
+    // console.log('changed ids in unassigned table')
     if (shiftEntities && shiftIds) {
       const newIds = shiftIds.filter((id: EntityId) => {
         const user = shiftEntities[id]?.assignedUser

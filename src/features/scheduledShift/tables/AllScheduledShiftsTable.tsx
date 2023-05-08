@@ -10,6 +10,11 @@ import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
+const displayDateAndTime = (value: ScheduledShiftDisplayObject) => {
+  const date = `${value.date} \n ${value.timeWindow}`
+  return date
+}
+
 const headCells: HeadCell<
   ScheduledShiftDisplayObject & {
     [key in keyof ScheduledShiftDisplayObject]: string
@@ -26,6 +31,13 @@ const headCells: HeadCell<
     id: 'category',
     isNumeric: false,
     label: 'Category',
+    isSortable: true,
+    align: 'left',
+  },
+  {
+    id: 'date',
+    isNumeric: false,
+    label: 'Date',
     isSortable: true,
     align: 'left',
   },
@@ -58,6 +70,7 @@ type ScheduledShiftDisplayObject = {
   timeWindow: string
   creditHours: string
   status: string
+  date: string
 }
 
 /**
@@ -121,6 +134,7 @@ const AllScheduledShiftsTable = ({
         shiftName: shiftCopy.name,
         category: shiftCopy.category,
         timeWindow: shiftCopy.timeWindowDisplay,
+        date: scheduledShiftObject.date,
         creditHours: pluralizeHours(shiftCopy.hours),
         status: scheduledShiftObject.status,
       }
