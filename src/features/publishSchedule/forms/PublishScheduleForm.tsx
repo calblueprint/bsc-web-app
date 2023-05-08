@@ -1,17 +1,16 @@
 import { Form, Formik, FormikHelpers } from 'formik'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 import dayjs from 'dayjs'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DatePicker } from '@mui/x-date-pickers'
+
 import {
   Box,
   Button,
   Dialog,
+  DialogContent,
   DialogContentText,
-  TextField,
-  Typography,
+  DialogTitle,
+  Divider,
 } from '@mui/material'
 import DateRangeComponent from '@/components/shared/forms/DateRangeComponent'
 import { TextInput } from '@/components/shared/forms/CustomFormikFields'
@@ -21,6 +20,7 @@ import {
   PublishedSchedulesType,
   ScheduledShift,
   Shift,
+  User,
 } from '@/types/schema'
 import {
   AssignedUserShiftsType,
@@ -29,16 +29,27 @@ import {
 import weekday from 'dayjs/plugin/weekday'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 import { useSelector } from 'react-redux'
-import { selectCurrentHouse } from '@/features/auth/authSlice'
+import {
+  selectCurrentHouse,
+  selectCurrentUser,
+} from '@/features/auth/authSlice'
 import { useAddNewScheduledShiftBatchMutation } from '@/features/scheduledShift/scheduledShiftApiSlice'
 import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
+import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
+import isBetween from 'dayjs/plugin/isBetween'
+import { createScheduleShifts } from '@/utils/utils'
 
+dayjs.extend(isBetween) // extend Day.js with the isBetween plugin
 dayjs.extend(weekday)
 
 interface PublishScheduleFormValues {
   startDate: dayjs.Dayjs
   endDate: dayjs.Dayjs
   scheduleName: string
+}
+
+type PublishScheduleFormProps = {
+  setOpen: (value: React.SetStateAction<boolean>) => void
 }
 
 const PublishScheduleSchema = Yup.object({
@@ -49,148 +60,14 @@ const PublishScheduleSchema = Yup.object({
     .min(1, 'Schedule Name must have at least 1 characters'),
 })
 
-type CreateScheduleShiftsProps = {
-  shiftState: EntityState<Shift>
-  assignedShifts: AssignedUserShiftsType
-  startDate: dayjs.Dayjs
-  endDate: dayjs.Dayjs
-}
-
-const dayIdToNumber = (dayId: string): number | undefined => {
-  const days = {
-    monday: 1,
-    tuesday: 2,
-    wednesday: 3,
-    thursday: 4,
-    friday: 5,
-    saturday: 6,
-    sunday: 7,
-  }
-
-  return days[dayId.toLowerCase() as keyof typeof days]
-}
-
-const createScheduleShifts = (
-  props: CreateScheduleShiftsProps
-): ScheduledShift[] => {
-  const { shiftState, assignedShifts, startDate, endDate } = props
-  if (!shiftState || !assignedShifts || !startDate || !endDate) {
-    console.log(
-      'Invalid inputs ---> shiftState: ',
-      shiftState,
-      '  assignedShift: ',
-      assignedShifts,
-      ' startDate: ',
-      startDate,
-      ' endDate: ',
-      endDate
-    )
-    return []
-  }
-
-  const entities = shiftState.entities
-  const createdShifts: ScheduledShift[] = []
-
-  for (const userId in assignedShifts) {
-    for (const dayId in assignedShifts[userId]) {
-      const shiftDay = dayIdToNumber(dayId)
-      if (shiftDay === undefined) {
-        continue
-      }
-
-      let firstOccurrence = startDate.clone().day(shiftDay)
-      if (firstOccurrence.isAfter(endDate)) {
-        continue
-      }
-      if (firstOccurrence.isBefore(startDate)) {
-        // console.log('Original date: ', firstOccurrence)
-        firstOccurrence = firstOccurrence.add(1, 'week')
-        // console.log('added a week: ', firstOccurrence)
-      }
-
-      for (const shiftId of assignedShifts[userId][dayId]) {
-        const shift = entities[shiftId]
-        if (!shift) {
-          continue
-        }
-
-        for (
-          let currentDate = firstOccurrence.clone();
-          currentDate.isBefore(endDate) || currentDate.isSame(endDate);
-          currentDate = currentDate.add(1, 'week')
-        ) {
-          createdShifts.push({
-            id: '',
-            shiftID: shiftId,
-            date: currentDate.format('MM/DD/YYYY'),
-            assignedUser: userId,
-            status: 'Assigned',
-            options: '',
-            verifiedBy: '',
-            verifiedAt: '',
-            unverifiedAt: '',
-            penaltyHours: 0,
-          })
-        }
-      }
-    }
-  }
-
-  return createdShifts
-}
-
-// const createScheduleShifts = (props: CreateScheduleShiftsProps) => {
-//   const { shiftState, assignedShifts, startDate, endDate } = props
-//   if (!shiftState || !assignedShifts || !startDate || !endDate) {
-//     console.log(
-//       'Invalid inputs ---> shiftState: ',
-//       shiftState,
-//       '  assignedShift: ',
-//       assignedShifts,
-//       ' startDate: ',
-//       startDate,
-//       ' endDate: ',
-//       endDate
-//     )
-//     return {}
-//   }
-
-//   const ids = shiftState.ids
-//   const entities = shiftState.entities
-//   const createdShifts: Record<string, ScheduledShift[]> = {}
-//   Object.keys(assignedShifts).forEach((userId) => {
-//     Object.keys(assignedShifts[userId]).forEach((dayId) => {
-//       assignedShifts[userId][dayId].forEach((shiftId) => {
-//         const shift = entities[shiftId]
-//         if (!shift) {
-//           return false
-//         }
-//       })
-//     })
-//   })
-
-//   return createdShifts
-// }
-
-type PublishScheduleFormProps = {
-  setOpen: (value: React.SetStateAction<boolean>) => void
-}
-
 function PublishScheduleForm(props: PublishScheduleFormProps) {
   const { setOpen } = props
-  const [error, setError] = useState(false)
 
+  const authUser = useSelector(selectCurrentUser) as User
   const currentHouse = useSelector(selectCurrentHouse) as House
-
   const assignedShifts = useSelector(selectAssignedUserShifts)
 
-  const [scheduleNames, setScheduleNames] = useState<string[] | undefined>(
-    undefined
-  )
-  const [dateRanges, setDateRanges] = useState<
-    Record<string, string> | undefined
-  >(undefined)
-
+  const [error, setError] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [openErrorMsg, setOpenErrorMsg] = useState(false)
 
@@ -199,13 +76,15 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
     currentHouse.id
   )
 
-  const [addNewScheduledShiftBatch, { isLoading: batchIsLoading }] =
-    useAddNewScheduledShiftBatchMutation()
-
+  const [addNewScheduledShiftBatch, {}] = useAddNewScheduledShiftBatchMutation()
   const [updateHouses, {}] = useUpdateHousesMutation()
+  const [establishContext, {}] = useEstablishContextMutation()
 
-  const validateInputs = (values: PublishScheduleFormValues) => {
-    const { scheduleName, startDate, endDate } = values
+  const validateInputs = (
+    scheduleName: string,
+    startDate: dayjs.Dayjs,
+    endDate: dayjs.Dayjs
+  ) => {
     if (!scheduleName || !startDate || !endDate) {
       console.error('Invalid schedule inputs')
       setErrorMsg('Invalid schedule inputs')
@@ -217,6 +96,7 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
       return false
     }
     if (!currentHouse.publishedSchedules) {
+      console.log('Schedules are not defined')
       return true
     }
     const publishedSchedules: PublishedSchedulesType =
@@ -224,14 +104,21 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
 
     for (const name in publishedSchedules) {
       const start = Math.max(
-        dayjs(publishedSchedules[name].startDate, 'MM/DD/YYYY').unix(),
-        startDate.unix()
+        dayjs(publishedSchedules[name].startDate, 'MM/DD/YYYY')
+          .startOf('day')
+          .unix(),
+        startDate.startOf('day').unix()
       )
+      console.log(start)
       const end = Math.min(
-        dayjs(publishedSchedules[name].endDate, 'MM/DD/YYYY').unix(),
-        endDate.unix()
+        dayjs(publishedSchedules[name].endDate, 'MM/DD/YYYY')
+          .startOf('day')
+          .unix(),
+        endDate.startOf('day').unix()
       )
-      if (end - start < 0) {
+      console.log(`range: ${start}-${end}`)
+      console.log(`range: ${end - start}`)
+      if (end - start >= 0) {
         setErrorMsg(
           `Dates overlap with ${name} please choose a different range`
         )
@@ -247,24 +134,33 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
   ) => {
     console.log(values)
     console.log(helpers)
+    const scheduleName = `${values.scheduleName}-${values.startDate.format(
+      'MM/DD/YYYY'
+    )}-${values.endDate.format('MM/DD/YYYY')}`
 
     if (error) {
       console.log('Error: Form has an error')
       return
     }
 
-    if (!validateInputs(values)) {
+    if (!validateInputs(scheduleName, values.startDate, values.endDate)) {
       console.log('invalid inputs')
       setOpenErrorMsg(true)
       return
     }
 
-    const publishedSchedules: PublishedSchedulesType = {
-      [values.scheduleName]: {
+    let publishedSchedules: PublishedSchedulesType = {
+      [scheduleName]: {
         startDate: values.startDate.format('MM/DD/YYYY'),
         endDate: values.endDate.format('MM/DD/YYYY'),
         assignedShifts: assignedShifts,
       },
+    }
+    if (currentHouse.publishedSchedules) {
+      publishedSchedules = {
+        ...currentHouse.publishedSchedules,
+        ...publishedSchedules,
+      }
     }
 
     const list = createScheduleShifts({
@@ -282,51 +178,40 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
         data: { publishedSchedules },
       }
 
-      updateHouses(data)
+      await updateHouses(data)
+      await establishContext(authUser.id)
     } catch (error) {
       console.log(error)
     }
 
-    // try {
-    //   await addNewScheduledShiftBatch({
-    //     houseId: currentHouse?.id,
-    //     data: list,
-    //   }).unwrap()
-    // } catch (error) {
-    //   console.log(error)
-    // }
+    try {
+      await addNewScheduledShiftBatch({
+        houseId: currentHouse?.id,
+        data: list,
+      }).unwrap()
+    } catch (error) {
+      console.log(error)
+    }
 
     // console.log({
     //   dates: { startDate: values.startDate, endDate: values.endDate },
     // })
     // console.log({ list: list })
     helpers.setSubmitting(false)
+    helpers.resetForm()
+    setOpen(false)
   }
 
   const handleError = (value: boolean) => {
     setError(value)
   }
 
-  useEffect(() => {
-    if (currentHouse && currentHouse.publishedSchedules) {
-      const sNames = []
-      let ranges = {}
-      for (const schedule in currentHouse.publishedSchedules) {
-        sNames.push(schedule)
-        const obj = currentHouse.publishedSchedules[schedule]
-        ranges = { ...ranges, [obj.startDate]: obj.endDate }
-      }
-      setScheduleNames(sNames)
-      setDateRanges(ranges)
-    }
-  }, [currentHouse])
-
   return (
     <React.Fragment>
       <Formik
         validationSchema={PublishScheduleSchema}
         initialValues={{
-          startDate: dayjs(),
+          startDate: dayjs().add(1, 'day'),
           endDate: dayjs().add(1, 'week'),
           scheduleName: '',
         }}
@@ -383,8 +268,17 @@ function PublishScheduleForm(props: PublishScheduleFormProps) {
           )
         }}
       </Formik>
-      <Dialog open={openErrorMsg}>
-        <DialogContentText>{`${errorMsg}`}</DialogContentText>
+      <Dialog
+        fullWidth
+        maxWidth="sm"
+        open={openErrorMsg}
+        onClose={() => setOpenErrorMsg(false)}
+      >
+        <DialogTitle>Schedule Conflict</DialogTitle>
+        <Divider />
+        <DialogContent>
+          <DialogContentText>{`${errorMsg}`}</DialogContentText>
+        </DialogContent>
       </Dialog>
     </React.Fragment>
   )
