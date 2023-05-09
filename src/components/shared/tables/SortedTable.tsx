@@ -164,9 +164,9 @@ export default function SortedTable<
     const id: string = entityId as string
     const isItemSelected = isSelected(id)
     const isUserIdSelected = isUserSelected(id)
-    console.log(hightlightRowId)
-    console.log(id)
-    console.log('isUserIdSelected: ', isItemSelected)
+    // console.log(hightlightRowId)
+    // console.log(id)
+    // console.log('isUserIdSelected: ', isItemSelected)
     const labelId = `enhanced-table-checkbox-${index}`
 
     const row = entities[id]
