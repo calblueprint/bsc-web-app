@@ -1,0 +1,2119 @@
+[
+  {
+    "id": "student-1",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0900", "endTime": "1200" },
+        { "startTime": "1700", "endTime": "2000" }
+      ],
+      "Monday": [{ "startTime": "0000", "endTime": "0300" }],
+      "Tuesday": [
+        { "startTime": "0830", "endTime": "1030" },
+        { "startTime": "1100", "endTime": "1400" }
+      ],
+      "Wednesday": [{ "startTime": "1900", "endTime": "2200" }],
+      "Thursday": [
+        { "startTime": "1400", "endTime": "1600" },
+        { "startTime": "0130", "endTime": "0330" }
+      ],
+      "Friday": [
+        { "startTime": "1030", "endTime": "1130" },
+        { "startTime": "1200", "endTime": "1300" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-2",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1830", "endTime": "1930" },
+        { "startTime": "1630", "endTime": "1830" },
+        { "startTime": "1230", "endTime": "1430" }
+      ],
+      "Monday": [
+        { "startTime": "1630", "endTime": "1830" },
+        { "startTime": "1130", "endTime": "1430" },
+        { "startTime": "1330", "endTime": "1530" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [{ "startTime": "0030", "endTime": "0330" }],
+      "Thursday": [
+        { "startTime": "2030", "endTime": "2330" },
+        { "startTime": "1000", "endTime": "1100" },
+        { "startTime": "1530", "endTime": "1630" }
+      ],
+      "Friday": [
+        { "startTime": "1930", "endTime": "2230" },
+        { "startTime": "2230", "endTime": "0030" },
+        { "startTime": "1700", "endTime": "1800" }
+      ],
+      "Saturday": [
+        { "startTime": "0600", "endTime": "0700" },
+        { "startTime": "0930", "endTime": "1230" },
+        { "startTime": "1030", "endTime": "1130" }
+      ]
+    }
+  },
+  {
+    "id": "student-3",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1100", "endTime": "1300" },
+        { "startTime": "0130", "endTime": "0430" },
+        { "startTime": "1200", "endTime": "1400" }
+      ],
+      "Monday": [
+        { "startTime": "2200", "endTime": "0000" },
+        { "startTime": "1400", "endTime": "1700" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [
+        { "startTime": "0530", "endTime": "0830" },
+        { "startTime": "1030", "endTime": "1230" },
+        { "startTime": "1930", "endTime": "2230" }
+      ],
+      "Thursday": [],
+      "Friday": [
+        { "startTime": "1800", "endTime": "1900" },
+        { "startTime": "0130", "endTime": "0330" },
+        { "startTime": "1530", "endTime": "1830" }
+      ],
+      "Saturday": [
+        { "startTime": "0730", "endTime": "0930" },
+        { "startTime": "1530", "endTime": "1630" },
+        { "startTime": "0330", "endTime": "0430" }
+      ]
+    }
+  },
+  {
+    "id": "student-4",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "0400", "endTime": "0700" },
+        { "startTime": "1200", "endTime": "1300" },
+        { "startTime": "1300", "endTime": "1500" }
+      ],
+      "Wednesday": [{ "startTime": "1630", "endTime": "1930" }],
+      "Thursday": [],
+      "Friday": [
+        { "startTime": "0430", "endTime": "0630" },
+        { "startTime": "1600", "endTime": "1700" },
+        { "startTime": "1100", "endTime": "1300" }
+      ],
+      "Saturday": [
+        { "startTime": "1300", "endTime": "1600" },
+        { "startTime": "1800", "endTime": "2000" },
+        { "startTime": "0030", "endTime": "0230" }
+      ]
+    }
+  },
+  {
+    "id": "student-5",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1900", "endTime": "2200" },
+        { "startTime": "1330", "endTime": "1430" }
+      ],
+      "Monday": [
+        { "startTime": "1300", "endTime": "1400" },
+        { "startTime": "0730", "endTime": "1030" },
+        { "startTime": "2200", "endTime": "0100" }
+      ],
+      "Tuesday": [
+        { "startTime": "0830", "endTime": "1030" },
+        { "startTime": "2130", "endTime": "0030" }
+      ],
+      "Wednesday": [],
+      "Thursday": [{ "startTime": "0300", "endTime": "0600" }],
+      "Friday": [
+        { "startTime": "1030", "endTime": "1230" },
+        { "startTime": "1630", "endTime": "1730" },
+        { "startTime": "1400", "endTime": "1600" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-6",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0700", "endTime": "0900" },
+        { "startTime": "0300", "endTime": "0600" }
+      ],
+      "Monday": [
+        { "startTime": "1300", "endTime": "1500" },
+        { "startTime": "0900", "endTime": "1100" }
+      ],
+      "Tuesday": [{ "startTime": "2000", "endTime": "2100" }],
+      "Wednesday": [],
+      "Thursday": [],
+      "Friday": [],
+      "Saturday": [
+        { "startTime": "0500", "endTime": "0800" },
+        { "startTime": "0030", "endTime": "0130" }
+      ]
+    }
+  },
+  {
+    "id": "student-7",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [{ "startTime": "1500", "endTime": "1600" }],
+      "Tuesday": [{ "startTime": "1030", "endTime": "1130" }],
+      "Wednesday": [
+        { "startTime": "0200", "endTime": "0500" },
+        { "startTime": "0530", "endTime": "0630" },
+        { "startTime": "0430", "endTime": "0630" }
+      ],
+      "Thursday": [],
+      "Friday": [
+        { "startTime": "0730", "endTime": "1030" },
+        { "startTime": "1000", "endTime": "1300" }
+      ],
+      "Saturday": [{ "startTime": "0730", "endTime": "0930" }]
+    }
+  },
+  {
+    "id": "student-8",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1930", "endTime": "2130" },
+        { "startTime": "0230", "endTime": "0430" }
+      ],
+      "Monday": [
+        { "startTime": "0030", "endTime": "0130" },
+        { "startTime": "0400", "endTime": "0600" },
+        { "startTime": "1800", "endTime": "2100" }
+      ],
+      "Tuesday": [{ "startTime": "1500", "endTime": "1700" }],
+      "Wednesday": [
+        { "startTime": "1730", "endTime": "1930" },
+        { "startTime": "1500", "endTime": "1600" },
+        { "startTime": "0400", "endTime": "0500" }
+      ],
+      "Thursday": [
+        { "startTime": "1630", "endTime": "1930" },
+        { "startTime": "0500", "endTime": "0700" }
+      ],
+      "Friday": [
+        { "startTime": "0900", "endTime": "1100" },
+        { "startTime": "0030", "endTime": "0330" },
+        { "startTime": "0330", "endTime": "0630" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-9",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0700", "endTime": "1000" },
+        { "startTime": "1100", "endTime": "1200" }
+      ],
+      "Monday": [{ "startTime": "0700", "endTime": "0800" }],
+      "Tuesday": [
+        { "startTime": "0830", "endTime": "0930" },
+        { "startTime": "0030", "endTime": "0130" },
+        { "startTime": "0130", "endTime": "0330" }
+      ],
+      "Wednesday": [
+        { "startTime": "0300", "endTime": "0600" },
+        { "startTime": "1100", "endTime": "1300" }
+      ],
+      "Thursday": [
+        { "startTime": "0100", "endTime": "0300" },
+        { "startTime": "0400", "endTime": "0700" },
+        { "startTime": "1700", "endTime": "2000" }
+      ],
+      "Friday": [
+        { "startTime": "1000", "endTime": "1300" },
+        { "startTime": "0000", "endTime": "0300" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-10",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0800", "endTime": "1000" },
+        { "startTime": "0600", "endTime": "0700" },
+        { "startTime": "2100", "endTime": "2200" }
+      ],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "1200", "endTime": "1400" },
+        { "startTime": "0030", "endTime": "0230" }
+      ],
+      "Wednesday": [{ "startTime": "1930", "endTime": "2230" }],
+      "Thursday": [
+        { "startTime": "1100", "endTime": "1400" },
+        { "startTime": "2100", "endTime": "2300" },
+        { "startTime": "2130", "endTime": "2330" }
+      ],
+      "Friday": [],
+      "Saturday": [
+        { "startTime": "1400", "endTime": "1700" },
+        { "startTime": "1500", "endTime": "1700" },
+        { "startTime": "1500", "endTime": "1700" }
+      ]
+    }
+  },
+  {
+    "id": "student-11",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1830", "endTime": "2130" },
+        { "startTime": "0930", "endTime": "1230" },
+        { "startTime": "0630", "endTime": "0930" }
+      ],
+      "Monday": [
+        { "startTime": "1230", "endTime": "1530" },
+        { "startTime": "2130", "endTime": "0030" },
+        { "startTime": "1400", "endTime": "1500" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [{ "startTime": "2130", "endTime": "2230" }],
+      "Thursday": [
+        { "startTime": "0600", "endTime": "0900" },
+        { "startTime": "0230", "endTime": "0330" },
+        { "startTime": "2030", "endTime": "2330" }
+      ],
+      "Friday": [
+        { "startTime": "0900", "endTime": "1100" },
+        { "startTime": "0700", "endTime": "0800" },
+        { "startTime": "0130", "endTime": "0330" }
+      ],
+      "Saturday": [{ "startTime": "1200", "endTime": "1300" }]
+    }
+  },
+  {
+    "id": "student-12",
+    "availabilities": {
+      "Sunday": [{ "startTime": "0430", "endTime": "0730" }],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "1000", "endTime": "1100" },
+        { "startTime": "0330", "endTime": "0430" },
+        { "startTime": "2200", "endTime": "0100" }
+      ],
+      "Wednesday": [
+        { "startTime": "1630", "endTime": "1730" },
+        { "startTime": "0330", "endTime": "0630" }
+      ],
+      "Thursday": [
+        { "startTime": "1930", "endTime": "2130" },
+        { "startTime": "1130", "endTime": "1230" },
+        { "startTime": "0500", "endTime": "0700" }
+      ],
+      "Friday": [
+        { "startTime": "1930", "endTime": "2130" },
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "0230", "endTime": "0430" }
+      ],
+      "Saturday": [
+        { "startTime": "0300", "endTime": "0500" },
+        { "startTime": "2030", "endTime": "2130" }
+      ]
+    }
+  },
+  {
+    "id": "student-13",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [
+        { "startTime": "0530", "endTime": "0730" },
+        { "startTime": "0900", "endTime": "1000" },
+        { "startTime": "0100", "endTime": "0200" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [],
+      "Thursday": [
+        { "startTime": "0430", "endTime": "0530" },
+        { "startTime": "0000", "endTime": "0300" },
+        { "startTime": "2200", "endTime": "0100" }
+      ],
+      "Friday": [{ "startTime": "1000", "endTime": "1300" }],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-14",
+    "availabilities": {
+      "Sunday": [{ "startTime": "2200", "endTime": "0000" }],
+      "Monday": [{ "startTime": "0230", "endTime": "0530" }],
+      "Tuesday": [
+        { "startTime": "1000", "endTime": "1100" },
+        { "startTime": "1130", "endTime": "1230" },
+        { "startTime": "0730", "endTime": "1030" }
+      ],
+      "Wednesday": [
+        { "startTime": "0100", "endTime": "0200" },
+        { "startTime": "1430", "endTime": "1630" },
+        { "startTime": "0230", "endTime": "0530" }
+      ],
+      "Thursday": [
+        { "startTime": "1000", "endTime": "1300" },
+        { "startTime": "0400", "endTime": "0500" }
+      ],
+      "Friday": [
+        { "startTime": "2000", "endTime": "2100" },
+        { "startTime": "1900", "endTime": "2000" },
+        { "startTime": "0730", "endTime": "0930" }
+      ],
+      "Saturday": [{ "startTime": "1030", "endTime": "1230" }]
+    }
+  },
+  {
+    "id": "student-15",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1830", "endTime": "2130" },
+        { "startTime": "0930", "endTime": "1030" }
+      ],
+      "Monday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1800", "endTime": "2100" },
+        { "startTime": "1500", "endTime": "1600" }
+      ],
+      "Tuesday": [{ "startTime": "0330", "endTime": "0530" }],
+      "Wednesday": [],
+      "Thursday": [],
+      "Friday": [{ "startTime": "1700", "endTime": "1900" }],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-16",
+    "availabilities": {
+      "Sunday": [{ "startTime": "0400", "endTime": "0700" }],
+      "Monday": [{ "startTime": "0600", "endTime": "0900" }],
+      "Tuesday": [
+        { "startTime": "2030", "endTime": "2330" },
+        { "startTime": "0530", "endTime": "0730" },
+        { "startTime": "0100", "endTime": "0400" }
+      ],
+      "Wednesday": [{ "startTime": "0930", "endTime": "1230" }],
+      "Thursday": [
+        { "startTime": "0530", "endTime": "0630" },
+        { "startTime": "1830", "endTime": "2030" },
+        { "startTime": "0300", "endTime": "0400" }
+      ],
+      "Friday": [
+        { "startTime": "1900", "endTime": "2000" },
+        { "startTime": "2130", "endTime": "2330" },
+        { "startTime": "1900", "endTime": "2000" }
+      ],
+      "Saturday": [
+        { "startTime": "2100", "endTime": "2300" },
+        { "startTime": "1330", "endTime": "1630" },
+        { "startTime": "0230", "endTime": "0530" }
+      ]
+    }
+  },
+  {
+    "id": "student-17",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "2000", "endTime": "2300" },
+        { "startTime": "0030", "endTime": "0130" },
+        { "startTime": "1400", "endTime": "1500" }
+      ],
+      "Monday": [
+        { "startTime": "0230", "endTime": "0430" },
+        { "startTime": "1630", "endTime": "1830" },
+        { "startTime": "0700", "endTime": "0900" }
+      ],
+      "Tuesday": [{ "startTime": "0100", "endTime": "0300" }],
+      "Wednesday": [{ "startTime": "0600", "endTime": "0900" }],
+      "Thursday": [{ "startTime": "1430", "endTime": "1730" }],
+      "Friday": [
+        { "startTime": "2230", "endTime": "0130" },
+        { "startTime": "1230", "endTime": "1330" },
+        { "startTime": "0730", "endTime": "0930" }
+      ],
+      "Saturday": [{ "startTime": "0830", "endTime": "0930" }]
+    }
+  },
+  {
+    "id": "student-18",
+    "availabilities": {
+      "Sunday": [{ "startTime": "2130", "endTime": "2330" }],
+      "Monday": [{ "startTime": "0700", "endTime": "0800" }],
+      "Tuesday": [],
+      "Wednesday": [{ "startTime": "1200", "endTime": "1500" }],
+      "Thursday": [
+        { "startTime": "1500", "endTime": "1700" },
+        { "startTime": "1830", "endTime": "1930" },
+        { "startTime": "1400", "endTime": "1600" }
+      ],
+      "Friday": [
+        { "startTime": "1630", "endTime": "1730" },
+        { "startTime": "2130", "endTime": "2330" },
+        { "startTime": "0200", "endTime": "0500" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-19",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0100", "endTime": "0300" },
+        { "startTime": "1030", "endTime": "1330" },
+        { "startTime": "1900", "endTime": "2100" }
+      ],
+      "Monday": [
+        { "startTime": "1830", "endTime": "2030" },
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1030", "endTime": "1330" }
+      ],
+      "Tuesday": [
+        { "startTime": "0130", "endTime": "0330" },
+        { "startTime": "2100", "endTime": "2200" }
+      ],
+      "Wednesday": [
+        { "startTime": "0700", "endTime": "0800" },
+        { "startTime": "2200", "endTime": "0100" },
+        { "startTime": "1900", "endTime": "2200" }
+      ],
+      "Thursday": [{ "startTime": "0600", "endTime": "0900" }],
+      "Friday": [
+        { "startTime": "2230", "endTime": "2330" },
+        { "startTime": "1330", "endTime": "1630" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-20",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "2130", "endTime": "2330" },
+        { "startTime": "2130", "endTime": "2230" }
+      ],
+      "Monday": [{ "startTime": "0230", "endTime": "0330" }],
+      "Tuesday": [
+        { "startTime": "0130", "endTime": "0330" },
+        { "startTime": "0700", "endTime": "0800" }
+      ],
+      "Wednesday": [
+        { "startTime": "0000", "endTime": "0200" },
+        { "startTime": "2200", "endTime": "0000" }
+      ],
+      "Thursday": [],
+      "Friday": [{ "startTime": "1830", "endTime": "2030" }],
+      "Saturday": [
+        { "startTime": "0000", "endTime": "0100" },
+        { "startTime": "1530", "endTime": "1630" },
+        { "startTime": "1830", "endTime": "1930" }
+      ]
+    }
+  },
+  {
+    "id": "student-21",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [{ "startTime": "2100", "endTime": "0000" }],
+      "Tuesday": [
+        { "startTime": "2130", "endTime": "0030" },
+        { "startTime": "1900", "endTime": "2200" },
+        { "startTime": "0800", "endTime": "1100" }
+      ],
+      "Wednesday": [
+        { "startTime": "1530", "endTime": "1830" },
+        { "startTime": "0830", "endTime": "1130" }
+      ],
+      "Thursday": [
+        { "startTime": "0100", "endTime": "0400" },
+        { "startTime": "0400", "endTime": "0600" }
+      ],
+      "Friday": [
+        { "startTime": "0730", "endTime": "0830" },
+        { "startTime": "0430", "endTime": "0530" },
+        { "startTime": "0830", "endTime": "0930" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-22",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "2200", "endTime": "0000" },
+        { "startTime": "1130", "endTime": "1430" },
+        { "startTime": "1430", "endTime": "1730" }
+      ],
+      "Monday": [
+        { "startTime": "0800", "endTime": "1000" },
+        { "startTime": "0030", "endTime": "0330" }
+      ],
+      "Tuesday": [
+        { "startTime": "0430", "endTime": "0630" },
+        { "startTime": "1000", "endTime": "1300" }
+      ],
+      "Wednesday": [
+        { "startTime": "0330", "endTime": "0630" },
+        { "startTime": "1630", "endTime": "1730" },
+        { "startTime": "0830", "endTime": "1130" }
+      ],
+      "Thursday": [{ "startTime": "1300", "endTime": "1500" }],
+      "Friday": [
+        { "startTime": "0830", "endTime": "0930" },
+        { "startTime": "1800", "endTime": "1900" },
+        { "startTime": "2100", "endTime": "2300" }
+      ],
+      "Saturday": [{ "startTime": "0100", "endTime": "0200" }]
+    }
+  },
+  {
+    "id": "student-23",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "2130", "endTime": "0030" },
+        { "startTime": "0630", "endTime": "0930" }
+      ],
+      "Monday": [
+        { "startTime": "0500", "endTime": "0600" },
+        { "startTime": "0230", "endTime": "0430" },
+        { "startTime": "0500", "endTime": "0700" }
+      ],
+      "Tuesday": [
+        { "startTime": "1930", "endTime": "2230" },
+        { "startTime": "1100", "endTime": "1400" },
+        { "startTime": "1130", "endTime": "1230" }
+      ],
+      "Wednesday": [{ "startTime": "1330", "endTime": "1430" }],
+      "Thursday": [
+        { "startTime": "1000", "endTime": "1300" },
+        { "startTime": "2130", "endTime": "2230" }
+      ],
+      "Friday": [{ "startTime": "1200", "endTime": "1400" }],
+      "Saturday": [
+        { "startTime": "1700", "endTime": "2000" },
+        { "startTime": "1830", "endTime": "2030" },
+        { "startTime": "0830", "endTime": "0930" }
+      ]
+    }
+  },
+  {
+    "id": "student-1",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0900", "endTime": "1000" },
+        { "startTime": "2100", "endTime": "2300" }
+      ],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "0300", "endTime": "0600" },
+        { "startTime": "2100", "endTime": "2200" }
+      ],
+      "Wednesday": [],
+      "Thursday": [{ "startTime": "1700", "endTime": "2000" }],
+      "Friday": [{ "startTime": "0700", "endTime": "1000" }],
+      "Saturday": [{ "startTime": "0300", "endTime": "0500" }]
+    }
+  },
+  {
+    "id": "student-2",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [],
+      "Tuesday": [{ "startTime": "2130", "endTime": "2330" }],
+      "Wednesday": [
+        { "startTime": "1130", "endTime": "1430" },
+        { "startTime": "1600", "endTime": "1900" }
+      ],
+      "Thursday": [{ "startTime": "1500", "endTime": "1700" }],
+      "Friday": [
+        { "startTime": "0000", "endTime": "0100" },
+        { "startTime": "0600", "endTime": "0800" },
+        { "startTime": "2030", "endTime": "2330" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-3",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0130", "endTime": "0330" },
+        { "startTime": "1200", "endTime": "1500" }
+      ],
+      "Monday": [],
+      "Tuesday": [{ "startTime": "0930", "endTime": "1030" }],
+      "Wednesday": [],
+      "Thursday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1630", "endTime": "1930" }
+      ],
+      "Friday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1330", "endTime": "1430" },
+        { "startTime": "1530", "endTime": "1730" }
+      ],
+      "Saturday": [
+        { "startTime": "1200", "endTime": "1300" },
+        { "startTime": "1330", "endTime": "1430" },
+        { "startTime": "2000", "endTime": "2100" }
+      ]
+    }
+  },
+  {
+    "id": "student-4",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1000", "endTime": "1200" },
+        { "startTime": "1630", "endTime": "1930" }
+      ],
+      "Monday": [],
+      "Tuesday": [{ "startTime": "0700", "endTime": "0800" }],
+      "Wednesday": [
+        { "startTime": "0000", "endTime": "0300" },
+        { "startTime": "1630", "endTime": "1830" }
+      ],
+      "Thursday": [{ "startTime": "0230", "endTime": "0330" }],
+      "Friday": [],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-5",
+    "availabilities": {
+      "Sunday": [{ "startTime": "0430", "endTime": "0730" }],
+      "Monday": [{ "startTime": "1800", "endTime": "2100" }],
+      "Tuesday": [
+        { "startTime": "0100", "endTime": "0400" },
+        { "startTime": "1330", "endTime": "1430" }
+      ],
+      "Wednesday": [{ "startTime": "1330", "endTime": "1430" }],
+      "Thursday": [{ "startTime": "0430", "endTime": "0530" }],
+      "Friday": [],
+      "Saturday": [{ "startTime": "1030", "endTime": "1330" }]
+    }
+  },
+  {
+    "id": "student-6",
+    "availabilities": {
+      "Sunday": [{ "startTime": "0600", "endTime": "0800" }],
+      "Monday": [{ "startTime": "0430", "endTime": "0630" }],
+      "Tuesday": [{ "startTime": "0230", "endTime": "0900" }],
+      "Wednesday": [],
+      "Thursday": [],
+      "Friday": [],
+      "Saturday": [{ "startTime": "2030", "endTime": "2330" }]
+    }
+  },
+  {
+    "id": "student-7",
+    "availabilities": {
+      "Sunday": [{ "startTime": "0830", "endTime": "0930" }],
+      "Monday": [
+        { "startTime": "0330", "endTime": "0900" },
+        { "startTime": "1100", "endTime": "1200" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "1230", "endTime": "1330" }
+      ],
+      "Thursday": [
+        { "startTime": "1330", "endTime": "1430" },
+        { "startTime": "2030", "endTime": "2230" }
+      ],
+      "Friday": [
+        { "startTime": "0200", "endTime": "0500" },
+        { "startTime": "1530", "endTime": "2030" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-8",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0700", "endTime": "0900" },
+        { "startTime": "1030", "endTime": "1230" }
+      ],
+      "Monday": [{ "startTime": "0030", "endTime": "0230" }],
+      "Tuesday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1700", "endTime": "1900" }
+      ],
+      "Wednesday": [{ "startTime": "0730", "endTime": "0830" }],
+      "Thursday": [
+        { "startTime": "0300", "endTime": "0600" },
+        { "startTime": "1030", "endTime": "1130" }
+      ],
+      "Friday": [{ "startTime": "0630", "endTime": "0730" }],
+      "Saturday": [{ "startTime": "2130", "endTime": "2230" }]
+    }
+  },
+  {
+    "id": "student-9",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [],
+      "Tuesday": [],
+      "Wednesday": [
+        { "startTime": "0900", "endTime": "1100" },
+        { "startTime": "1800", "endTime": "2100" }
+      ],
+      "Thursday": [
+        { "startTime": "0700", "endTime": "1000" },
+        { "startTime": "1500", "endTime": "1800" }
+      ],
+      "Friday": [
+        { "startTime": "0130", "endTime": "0430" },
+        { "startTime": "1100", "endTime": "1300" },
+        { "startTime": "1430", "endTime": "1630" }
+      ],
+      "Saturday": [{ "startTime": "1900", "endTime": "2200" }]
+    }
+  },
+  {
+    "id": "student-10",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0100", "endTime": "0200" },
+        { "startTime": "0830", "endTime": "1030" },
+        { "startTime": "2130", "endTime": "0030" }
+      ],
+      "Monday": [{ "startTime": "1930", "endTime": "2130" }],
+      "Tuesday": [],
+      "Wednesday": [
+        { "startTime": "0100", "endTime": "0400" },
+        { "startTime": "0430", "endTime": "0530" },
+        { "startTime": "1300", "endTime": "1400" }
+      ],
+      "Thursday": [{ "startTime": "0100", "endTime": "0300" }],
+      "Friday": [
+        { "startTime": "0500", "endTime": "0800" },
+        { "startTime": "1100", "endTime": "1200" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-11",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "1300", "endTime": "1400" }
+      ],
+      "Monday": [
+        { "startTime": "0000", "endTime": "0100" },
+        { "startTime": "1030", "endTime": "1330" }
+      ],
+      "Tuesday": [{ "startTime": "1430", "endTime": "1530" }],
+      "Wednesday": [
+        { "startTime": "0430", "endTime": "0730" },
+        { "startTime": "1600", "endTime": "1900" },
+        { "startTime": "2100", "endTime": "2200" }
+      ],
+      "Thursday": [{ "startTime": "1530", "endTime": "2000" }],
+      "Friday": [
+        { "startTime": "0130", "endTime": "0330" },
+        { "startTime": "0600", "endTime": "0700" },
+        { "startTime": "1500", "endTime": "1800" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-12",
+    "availabilities": {
+      "Sunday": [{ "startTime": "1030", "endTime": "1230" }],
+      "Monday": [
+        { "startTime": "0930", "endTime": "1230" },
+        { "startTime": "1730", "endTime": "2030" }
+      ],
+      "Tuesday": [
+        { "startTime": "0700", "endTime": "0800" },
+        { "startTime": "0930", "endTime": "1030" },
+        { "startTime": "1500", "endTime": "1800" }
+      ],
+      "Wednesday": [
+        { "startTime": "0300", "endTime": "0600" },
+        { "startTime": "1330", "endTime": "1430" },
+        { "startTime": "2100", "endTime": "0000" }
+      ],
+      "Thursday": [],
+      "Friday": [{ "startTime": "0130", "endTime": "0230" }],
+      "Saturday": [
+        { "startTime": "0330", "endTime": "0530" },
+        { "startTime": "0700", "endTime": "1000" }
+      ]
+    }
+  },
+  {
+    "id": "student-13",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1330", "endTime": "1630" },
+        { "startTime": "2130", "endTime": "0030" }
+      ],
+      "Monday": [
+        { "startTime": "0830", "endTime": "1200" },
+        { "startTime": "1500", "endTime": "1600" }
+      ],
+      "Tuesday": [
+        { "startTime": "1100", "endTime": "1300" },
+        { "startTime": "1430", "endTime": "1630" }
+      ],
+      "Wednesday": [
+        { "startTime": "0530", "endTime": "0830" },
+        { "startTime": "1000", "endTime": "1400" }
+      ],
+      "Thursday": [
+        { "startTime": "0230", "endTime": "0630" },
+        { "startTime": "0930", "endTime": "1230" }
+      ],
+      "Friday": [
+        { "startTime": "0000", "endTime": "0100" },
+        { "startTime": "0500", "endTime": "0700" },
+        { "startTime": "0800", "endTime": "0900" }
+      ],
+      "Saturday": [
+        { "startTime": "0100", "endTime": "0200" },
+        { "startTime": "0530", "endTime": "0830" },
+        { "startTime": "1200", "endTime": "1300" }
+      ]
+    }
+  },
+  {
+    "id": "student-14",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0630", "endTime": "0830" },
+        { "startTime": "1030", "endTime": "1330" }
+      ],
+      "Monday": [{ "startTime": "2000", "endTime": "2200" }],
+      "Tuesday": [
+        { "startTime": "1100", "endTime": "1300" },
+        { "startTime": "1930", "endTime": "2030" }
+      ],
+      "Wednesday": [
+        { "startTime": "0200", "endTime": "0500" },
+        { "startTime": "0700", "endTime": "1000" },
+        { "startTime": "1130", "endTime": "1230" }
+      ],
+      "Thursday": [
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "1430", "endTime": "1730" }
+      ],
+      "Friday": [],
+      "Saturday": [
+        { "startTime": "0600", "endTime": "0700" },
+        { "startTime": "1330", "endTime": "1530" }
+      ]
+    }
+  },
+  {
+    "id": "student-15",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "0130", "endTime": "0430" },
+        { "startTime": "1300", "endTime": "1400" }
+      ],
+      "Wednesday": [{ "startTime": "1100", "endTime": "1400" }],
+      "Thursday": [],
+      "Friday": [{ "startTime": "0300", "endTime": "0730" }],
+      "Saturday": [{ "startTime": "2000", "endTime": "2300" }]
+    }
+  },
+  {
+    "id": "student-16",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0300", "endTime": "0400" },
+        { "startTime": "0930", "endTime": "1230" },
+        { "startTime": "1830", "endTime": "2130" }
+      ],
+      "Monday": [
+        { "startTime": "1000", "endTime": "1200" },
+        { "startTime": "1230", "endTime": "1430" }
+      ],
+      "Tuesday": [{ "startTime": "1530", "endTime": "1630" }],
+      "Wednesday": [
+        { "startTime": "0130", "endTime": "0430" },
+        { "startTime": "1330", "endTime": "1630" }
+      ],
+      "Thursday": [],
+      "Friday": [{ "startTime": "0530", "endTime": "0830" }],
+      "Saturday": [
+        { "startTime": "0800", "endTime": "1100" },
+        { "startTime": "1230", "endTime": "1330" },
+        { "startTime": "1830", "endTime": "1930" }
+      ]
+    }
+  },
+  {
+    "id": "student-17",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [{ "startTime": "0230", "endTime": "0530" }],
+      "Tuesday": [
+        { "startTime": "1300", "endTime": "1600" },
+        { "startTime": "1830", "endTime": "1930" }
+      ],
+      "Wednesday": [{ "startTime": "0330", "endTime": "0430" }],
+      "Thursday": [
+        { "startTime": "0300", "endTime": "0500" },
+        { "startTime": "1530", "endTime": "1730" }
+      ],
+      "Friday": [
+        { "startTime": "0530", "endTime": "0830" },
+        { "startTime": "0900", "endTime": "1000" },
+        { "startTime": "1830", "endTime": "2030" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-18",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1330", "endTime": "1630" },
+        { "startTime": "2130", "endTime": "2230" }
+      ],
+      "Monday": [{ "startTime": "2030", "endTime": "2330" }],
+      "Tuesday": [{ "startTime": "0230", "endTime": "0430" }],
+      "Wednesday": [{ "startTime": "0130", "endTime": "0630" }],
+      "Thursday": [{ "startTime": "1130", "endTime": "1430" }],
+      "Friday": [{ "startTime": "0800", "endTime": "1000" }],
+      "Saturday": [{ "startTime": "0100", "endTime": "0300" }]
+    }
+  },
+  {
+    "id": "student-19",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [
+        { "startTime": "0800", "endTime": "1000" },
+        { "startTime": "1300", "endTime": "1600" }
+      ],
+      "Tuesday": [
+        { "startTime": "0600", "endTime": "0700" },
+        { "startTime": "1100", "endTime": "1300" }
+      ],
+      "Wednesday": [],
+      "Thursday": [
+        { "startTime": "0400", "endTime": "0700" },
+        { "startTime": "0900", "endTime": "1100" },
+        { "startTime": "1630", "endTime": "1730" }
+      ],
+      "Friday": [{ "startTime": "0200", "endTime": "0300" }],
+      "Saturday": [{ "startTime": "1230", "endTime": "1530" }]
+    }
+  },
+  {
+    "id": "student-20",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0330", "endTime": "0530" },
+        { "startTime": "0700", "endTime": "0800" },
+        { "startTime": "1000", "endTime": "1300" }
+      ],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "0330", "endTime": "0830" },
+        { "startTime": "1130", "endTime": "1230" }
+      ],
+      "Wednesday": [{ "startTime": "0030", "endTime": "0330" }],
+      "Thursday": [{ "startTime": "1700", "endTime": "1800" }],
+      "Friday": [{ "startTime": "0230", "endTime": "0330" }],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-21",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1230", "endTime": "1330" },
+        { "startTime": "1500", "endTime": "1700" },
+        { "startTime": "1730", "endTime": "1930" }
+      ],
+      "Monday": [
+        { "startTime": "0400", "endTime": "0700" },
+        { "startTime": "1030", "endTime": "1130" },
+        { "startTime": "2030", "endTime": "2330" }
+      ],
+      "Tuesday": [
+        { "startTime": "1130", "endTime": "1430" },
+        { "startTime": "1730", "endTime": "1930" }
+      ],
+      "Wednesday": [
+        { "startTime": "0130", "endTime": "0330" },
+        { "startTime": "0630", "endTime": "0730" }
+      ],
+      "Thursday": [
+        { "startTime": "0400", "endTime": "0700" },
+        { "startTime": "1900", "endTime": "2100" }
+      ],
+      "Friday": [],
+      "Saturday": [
+        { "startTime": "0430", "endTime": "0530" },
+        { "startTime": "1030", "endTime": "1230" }
+      ]
+    }
+  },
+  {
+    "id": "student-22",
+    "availabilities": {
+      "Sunday": [{ "startTime": "1900", "endTime": "2200" }],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "0100", "endTime": "0400" },
+        { "startTime": "1030", "endTime": "1130" },
+        { "startTime": "1830", "endTime": "2130" }
+      ],
+      "Wednesday": [
+        { "startTime": "0130", "endTime": "0430" },
+        { "startTime": "0500", "endTime": "0800" }
+      ],
+      "Thursday": [
+        { "startTime": "0900", "endTime": "1200" },
+        { "startTime": "1630", "endTime": "1930" },
+        { "startTime": "2030", "endTime": "2130" }
+      ],
+      "Friday": [
+        { "startTime": "0700", "endTime": "0900" },
+        { "startTime": "0930", "endTime": "1230" },
+        { "startTime": "1530", "endTime": "1630" }
+      ],
+      "Saturday": [
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "1300", "endTime": "1600" }
+      ]
+    }
+  },
+  {
+    "id": "student-23",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1300", "endTime": "1500" },
+        { "startTime": "1630", "endTime": "1830" }
+      ],
+      "Monday": [{ "startTime": "1000", "endTime": "1530" }],
+      "Tuesday": [
+        { "startTime": "0930", "endTime": "1230" },
+        { "startTime": "1400", "endTime": "1600" },
+        { "startTime": "1930", "endTime": "2030" }
+      ],
+      "Wednesday": [
+        { "startTime": "0330", "endTime": "0630" },
+        { "startTime": "1230", "endTime": "1530" }
+      ],
+      "Thursday": [{ "startTime": "2000", "endTime": "2100" }],
+      "Friday": [{ "startTime": "1630", "endTime": "1930" }],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-1",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1230", "endTime": "1530" },
+        { "startTime": "1900", "endTime": "2200" }
+      ],
+      "Monday": [],
+      "Tuesday": [{ "startTime": "1530", "endTime": "1830" }],
+      "Wednesday": [
+        { "startTime": "0130", "endTime": "0430" },
+        { "startTime": "1700", "endTime": "1900" }
+      ],
+      "Thursday": [{ "startTime": "1630", "endTime": "1730" }],
+      "Friday": [
+        { "startTime": "0000", "endTime": "0300" },
+        { "startTime": "1200", "endTime": "1300" },
+        { "startTime": "1600", "endTime": "1800" }
+      ],
+      "Saturday": [{ "startTime": "1830", "endTime": "1930" }]
+    }
+  },
+  {
+    "id": "student-2",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0300", "endTime": "0500" },
+        { "startTime": "1130", "endTime": "1330" },
+        { "startTime": "2000", "endTime": "2300" }
+      ],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "0630", "endTime": "0730" },
+        { "startTime": "1300", "endTime": "1600" }
+      ],
+      "Wednesday": [],
+      "Thursday": [
+        { "startTime": "0430", "endTime": "0830" },
+        { "startTime": "0900", "endTime": "1000" }
+      ],
+      "Friday": [{ "startTime": "0830", "endTime": "1030" }],
+      "Saturday": [{ "startTime": "1830", "endTime": "1930" }]
+    }
+  },
+  {
+    "id": "student-3",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [
+        { "startTime": "0100", "endTime": "0200" },
+        { "startTime": "0330", "endTime": "0530" },
+        { "startTime": "1230", "endTime": "1430" }
+      ],
+      "Tuesday": [{ "startTime": "1600", "endTime": "1700" }],
+      "Wednesday": [{ "startTime": "2130", "endTime": "0030" }],
+      "Thursday": [
+        { "startTime": "1530", "endTime": "1830" },
+        { "startTime": "2030", "endTime": "2330" }
+      ],
+      "Friday": [
+        { "startTime": "0830", "endTime": "1130" },
+        { "startTime": "1930", "endTime": "2230" }
+      ],
+      "Saturday": [{ "startTime": "1200", "endTime": "1500" }]
+    }
+  },
+  {
+    "id": "student-4",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [{ "startTime": "1630", "endTime": "1930" }],
+      "Tuesday": [
+        { "startTime": "0230", "endTime": "0530" },
+        { "startTime": "0800", "endTime": "1100" },
+        { "startTime": "1230", "endTime": "1330" }
+      ],
+      "Wednesday": [{ "startTime": "1230", "endTime": "1530" }],
+      "Thursday": [
+        { "startTime": "0900", "endTime": "1000" },
+        { "startTime": "1900", "endTime": "2230" }
+      ],
+      "Friday": [
+        { "startTime": "0730", "endTime": "1030" },
+        { "startTime": "1830", "endTime": "2130" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-5",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [
+        { "startTime": "0530", "endTime": "0730" },
+        { "startTime": "1100", "endTime": "1400" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [],
+      "Thursday": [],
+      "Friday": [],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-6",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [
+        { "startTime": "0630", "endTime": "0730" },
+        { "startTime": "0900", "endTime": "1000" }
+      ],
+      "Tuesday": [{ "startTime": "1500", "endTime": "1800" }],
+      "Wednesday": [{ "startTime": "2100", "endTime": "0000" }],
+      "Thursday": [{ "startTime": "1430", "endTime": "1630" }],
+      "Friday": [
+        { "startTime": "0100", "endTime": "0300" },
+        { "startTime": "1500", "endTime": "1600" }
+      ],
+      "Saturday": [
+        { "startTime": "0300", "endTime": "0400" },
+        { "startTime": "0430", "endTime": "0730" }
+      ]
+    }
+  },
+  {
+    "id": "student-7",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1030", "endTime": "1230" },
+        { "startTime": "1430", "endTime": "1530" }
+      ],
+      "Monday": [{ "startTime": "0330", "endTime": "0630" }],
+      "Tuesday": [
+        { "startTime": "0100", "endTime": "0430" },
+        { "startTime": "0930", "endTime": "1130" }
+      ],
+      "Wednesday": [{ "startTime": "0700", "endTime": "0900" }],
+      "Thursday": [],
+      "Friday": [
+        { "startTime": "1230", "endTime": "1430" },
+        { "startTime": "2100", "endTime": "0000" }
+      ],
+      "Saturday": [
+        { "startTime": "1030", "endTime": "1230" },
+        { "startTime": "1430", "endTime": "1730" }
+      ]
+    }
+  },
+  {
+    "id": "student-8",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0900", "endTime": "1000" },
+        { "startTime": "1330", "endTime": "1430" },
+        { "startTime": "1530", "endTime": "1630" }
+      ],
+      "Monday": [],
+      "Tuesday": [],
+      "Wednesday": [],
+      "Thursday": [{ "startTime": "0100", "endTime": "0400" }],
+      "Friday": [{ "startTime": "1200", "endTime": "1300" }],
+      "Saturday": [
+        { "startTime": "0100", "endTime": "0400" },
+        { "startTime": "1030", "endTime": "1330" }
+      ]
+    }
+  },
+  {
+    "id": "student-9",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0400", "endTime": "0600" },
+        { "startTime": "1000", "endTime": "1100" }
+      ],
+      "Monday": [{ "startTime": "0500", "endTime": "0800" }],
+      "Tuesday": [
+        { "startTime": "0630", "endTime": "1200" },
+        { "startTime": "1730", "endTime": "2030" }
+      ],
+      "Wednesday": [],
+      "Thursday": [
+        { "startTime": "0330", "endTime": "0530" },
+        { "startTime": "0700", "endTime": "1000" },
+        { "startTime": "1630", "endTime": "1730" }
+      ],
+      "Friday": [
+        { "startTime": "1200", "endTime": "1400" },
+        { "startTime": "1500", "endTime": "1600" },
+        { "startTime": "2130", "endTime": "2230" }
+      ],
+      "Saturday": [{ "startTime": "0800", "endTime": "1100" }]
+    }
+  },
+  {
+    "id": "student-10",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0300", "endTime": "0400" },
+        { "startTime": "1100", "endTime": "1200" },
+        { "startTime": "2000", "endTime": "2300" }
+      ],
+      "Monday": [
+        { "startTime": "0700", "endTime": "0800" },
+        { "startTime": "1730", "endTime": "1830" },
+        { "startTime": "2000", "endTime": "2200" }
+      ],
+      "Tuesday": [
+        { "startTime": "0200", "endTime": "0300" },
+        { "startTime": "0430", "endTime": "0700" }
+      ],
+      "Wednesday": [
+        { "startTime": "0500", "endTime": "0700" },
+        { "startTime": "1200", "endTime": "1300" },
+        { "startTime": "1630", "endTime": "1930" }
+      ],
+      "Thursday": [
+        { "startTime": "0330", "endTime": "0630" },
+        { "startTime": "1030", "endTime": "1130" }
+      ],
+      "Friday": [{ "startTime": "0530", "endTime": "0830" }],
+      "Saturday": [
+        { "startTime": "0330", "endTime": "0530" },
+        { "startTime": "1330", "endTime": "1630" },
+        { "startTime": "2000", "endTime": "2300" }
+      ]
+    }
+  },
+  {
+    "id": "student-11",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [
+        { "startTime": "0730", "endTime": "0830" },
+        { "startTime": "1630", "endTime": "2000" }
+      ],
+      "Tuesday": [{ "startTime": "0900", "endTime": "1100" }],
+      "Wednesday": [{ "startTime": "0130", "endTime": "0230" }],
+      "Thursday": [
+        { "startTime": "0100", "endTime": "0200" },
+        { "startTime": "1330", "endTime": "1430" }
+      ],
+      "Friday": [{ "startTime": "2100", "endTime": "2300" }],
+      "Saturday": [{ "startTime": "0530", "endTime": "0830" }]
+    }
+  },
+  {
+    "id": "student-12",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [{ "startTime": "0200", "endTime": "0500" }],
+      "Tuesday": [],
+      "Wednesday": [
+        { "startTime": "0530", "endTime": "0730" },
+        { "startTime": "0930", "endTime": "1130" },
+        { "startTime": "1300", "endTime": "1400" }
+      ],
+      "Thursday": [],
+      "Friday": [
+        { "startTime": "0000", "endTime": "0300" },
+        { "startTime": "0430", "endTime": "0530" }
+      ],
+      "Saturday": [
+        { "startTime": "0500", "endTime": "0600" },
+        { "startTime": "0900", "endTime": "1100" },
+        { "startTime": "1300", "endTime": "1400" }
+      ]
+    }
+  },
+  {
+    "id": "student-13",
+    "availabilities": {
+      "Sunday": [{ "startTime": "1600", "endTime": "1700" }],
+      "Monday": [
+        { "startTime": "0000", "endTime": "0200" },
+        { "startTime": "0600", "endTime": "0700" }
+      ],
+      "Tuesday": [
+        { "startTime": "0300", "endTime": "0600" },
+        { "startTime": "2030", "endTime": "2230" }
+      ],
+      "Wednesday": [
+        { "startTime": "0730", "endTime": "0830" },
+        { "startTime": "1300", "endTime": "1400" },
+        { "startTime": "1500", "endTime": "1800" }
+      ],
+      "Thursday": [
+        { "startTime": "0900", "endTime": "1200" },
+        { "startTime": "1400", "endTime": "1600" }
+      ],
+      "Friday": [
+        { "startTime": "0530", "endTime": "0630" },
+        { "startTime": "0830", "endTime": "0930" }
+      ],
+      "Saturday": [
+        { "startTime": "0900", "endTime": "1000" },
+        { "startTime": "1530", "endTime": "1830" }
+      ]
+    }
+  },
+  {
+    "id": "student-14",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [],
+      "Tuesday": [],
+      "Wednesday": [
+        { "startTime": "0430", "endTime": "0730" },
+        { "startTime": "0830", "endTime": "0930" },
+        { "startTime": "1030", "endTime": "1130" }
+      ],
+      "Thursday": [
+        { "startTime": "1130", "endTime": "1230" },
+        { "startTime": "1500", "endTime": "1600" },
+        { "startTime": "1700", "endTime": "2000" }
+      ],
+      "Friday": [],
+      "Saturday": [
+        { "startTime": "1000", "endTime": "1300" },
+        { "startTime": "1430", "endTime": "1730" }
+      ]
+    }
+  },
+  {
+    "id": "student-15",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1100", "endTime": "1300" },
+        { "startTime": "1330", "endTime": "1430" }
+      ],
+      "Monday": [],
+      "Tuesday": [
+        { "startTime": "0530", "endTime": "0730" },
+        { "startTime": "0930", "endTime": "1030" }
+      ],
+      "Wednesday": [
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "1630", "endTime": "1830" }
+      ],
+      "Thursday": [
+        { "startTime": "0200", "endTime": "0500" },
+        { "startTime": "0830", "endTime": "1130" },
+        { "startTime": "2030", "endTime": "2230" }
+      ],
+      "Friday": [{ "startTime": "0700", "endTime": "0900" }],
+      "Saturday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1600", "endTime": "1900" },
+        { "startTime": "2000", "endTime": "2300" }
+      ]
+    }
+  },
+  {
+    "id": "student-16",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0300", "endTime": "0400" },
+        { "startTime": "2100", "endTime": "2300" }
+      ],
+      "Monday": [
+        { "startTime": "0230", "endTime": "0430" },
+        { "startTime": "0800", "endTime": "1100" },
+        { "startTime": "1800", "endTime": "1900" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [],
+      "Thursday": [],
+      "Friday": [{ "startTime": "0000", "endTime": "0200" }],
+      "Saturday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "0700", "endTime": "1000" },
+        { "startTime": "2030", "endTime": "2130" }
+      ]
+    }
+  },
+  {
+    "id": "student-17",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0800", "endTime": "1100" },
+        { "startTime": "1230", "endTime": "1530" }
+      ],
+      "Monday": [{ "startTime": "0730", "endTime": "1030" }],
+      "Tuesday": [],
+      "Wednesday": [],
+      "Thursday": [
+        { "startTime": "0500", "endTime": "0600" },
+        { "startTime": "0900", "endTime": "1200" }
+      ],
+      "Friday": [
+        { "startTime": "0600", "endTime": "0900" },
+        { "startTime": "1200", "endTime": "1300" }
+      ],
+      "Saturday": [{ "startTime": "1500", "endTime": "1700" }]
+    }
+  },
+  {
+    "id": "student-18",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0330", "endTime": "0630" },
+        { "startTime": "1000", "endTime": "1300" }
+      ],
+      "Monday": [],
+      "Tuesday": [{ "startTime": "0100", "endTime": "0300" }],
+      "Wednesday": [],
+      "Thursday": [
+        { "startTime": "0000", "endTime": "0200" },
+        { "startTime": "1100", "endTime": "1200" }
+      ],
+      "Friday": [
+        { "startTime": "0300", "endTime": "0600" },
+        { "startTime": "2030", "endTime": "2330" }
+      ],
+      "Saturday": [{ "startTime": "1630", "endTime": "2130" }]
+    }
+  },
+  {
+    "id": "student-19",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0530", "endTime": "0630" },
+        { "startTime": "2000", "endTime": "2300" }
+      ],
+      "Monday": [{ "startTime": "0030", "endTime": "0330" }],
+      "Tuesday": [{ "startTime": "1930", "endTime": "2300" }],
+      "Wednesday": [
+        { "startTime": "0200", "endTime": "0500" },
+        { "startTime": "0600", "endTime": "0900" }
+      ],
+      "Thursday": [
+        { "startTime": "0330", "endTime": "0430" },
+        { "startTime": "0830", "endTime": "0930" },
+        { "startTime": "2030", "endTime": "2330" }
+      ],
+      "Friday": [
+        { "startTime": "0100", "endTime": "0300" },
+        { "startTime": "0830", "endTime": "1130" },
+        { "startTime": "1530", "endTime": "1730" }
+      ],
+      "Saturday": []
+    }
+  },
+  {
+    "id": "student-20",
+    "availabilities": {
+      "Sunday": [{ "startTime": "0530", "endTime": "0730" }],
+      "Monday": [{ "startTime": "0930", "endTime": "1330" }],
+      "Tuesday": [
+        { "startTime": "0200", "endTime": "0300" },
+        { "startTime": "1200", "endTime": "1500" }
+      ],
+      "Wednesday": [{ "startTime": "2100", "endTime": "2300" }],
+      "Thursday": [
+        { "startTime": "0230", "endTime": "0430" },
+        { "startTime": "0800", "endTime": "1100" },
+        { "startTime": "1230", "endTime": "1530" }
+      ],
+      "Friday": [{ "startTime": "1030", "endTime": "1300" }],
+      "Saturday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "1030", "endTime": "1130" },
+        { "startTime": "1200", "endTime": "1400" }
+      ]
+    }
+  },
+  {
+    "id": "student-21",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "0330", "endTime": "0530" },
+        { "startTime": "1630", "endTime": "1730" },
+        { "startTime": "1900", "endTime": "2000" }
+      ],
+      "Monday": [
+        { "startTime": "1000", "endTime": "1300" },
+        { "startTime": "1530", "endTime": "1630" }
+      ],
+      "Tuesday": [],
+      "Wednesday": [{ "startTime": "0000", "endTime": "0100" }],
+      "Thursday": [
+        { "startTime": "0230", "endTime": "0430" },
+        { "startTime": "2000", "endTime": "2100" }
+      ],
+      "Friday": [
+        { "startTime": "0800", "endTime": "1000" },
+        { "startTime": "1830", "endTime": "1930" }
+      ],
+      "Saturday": [
+        { "startTime": "0030", "endTime": "0330" },
+        { "startTime": "0700", "endTime": "0900" },
+        { "startTime": "2030", "endTime": "2330" }
+      ]
+    }
+  },
+  {
+    "id": "student-22",
+    "availabilities": {
+      "Sunday": [],
+      "Monday": [
+        { "startTime": "0100", "endTime": "0200" },
+        { "startTime": "0600", "endTime": "0900" }
+      ],
+      "Tuesday": [{ "startTime": "2030", "endTime": "2230" }],
+      "Wednesday": [{ "startTime": "0630", "endTime": "0830" }],
+      "Thursday": [
+        { "startTime": "0130", "endTime": "0430" },
+        { "startTime": "1530", "endTime": "1630" },
+        { "startTime": "2100", "endTime": "0000" }
+      ],
+      "Friday": [
+        { "startTime": "0000", "endTime": "0200" },
+        { "startTime": "0930", "endTime": "1230" }
+      ],
+      "Saturday": [
+        { "startTime": "0830", "endTime": "1030" },
+        { "startTime": "1200", "endTime": "1500" },
+        { "startTime": "1730", "endTime": "2030" }
+      ]
+    }
+  },
+  {
+    "id": "student-23",
+    "availabilities": {
+      "Sunday": [
+        { "startTime": "1000", "endTime": "1300" },
+        { "startTime": "1930", "endTime": "2030" }
+      ],
+      "Monday": [{ "startTime": "1430", "endTime": "1630" }],
+      "Tuesday": [{ "startTime": "1400", "endTime": "1500" }],
+      "Wednesday": [
+        { "startTime": "0530", "endTime": "0730" },
+        { "startTime": "2000", "endTime": "2200" }
+      ],
+      "Thursday": [
+        { "startTime": "0500", "endTime": "0700" },
+        { "startTime": "1130", "endTime": "1230" },
+        { "startTime": "1400", "endTime": "1600" }
+      ],
+      "Friday": [{ "startTime": "2000", "endTime": "2100" }],
+      "Saturday": [{ "startTime": "0830", "endTime": "1130" }]
+    }
+  },
+  {
+    "id": "student-1",
+    "availabilities": {
+      "sunday": [],
+      "monday": [
+        { "startTime": "0230", "endTime": "0730" },
+        { "startTime": "0930", "endTime": "1300" }
+      ],
+      "tuesday": [{ "startTime": "1430", "endTime": "1800" }],
+      "wednesday": [
+        { "startTime": "0700", "endTime": "0900" },
+        { "startTime": "1230", "endTime": "1430" },
+        { "startTime": "1630", "endTime": "2030" }
+      ],
+      "thursday": [{ "startTime": "1430", "endTime": "1900" }],
+      "friday": [{ "startTime": "1300", "endTime": "1500" }],
+      "saturday": [
+        { "startTime": "0600", "endTime": "0730" },
+        { "startTime": "1300", "endTime": "1830" }
+      ]
+    }
+  },
+  {
+    "id": "student-2",
+    "availabilities": {
+      "sunday": [
+        { "startTime": "0000", "endTime": "0300" },
+        { "startTime": "1700", "endTime": "1830" }
+      ],
+      "monday": [
+        { "startTime": "0830", "endTime": "1330" },
+        { "startTime": "1600", "endTime": "1900" }
+      ],
+      "tuesday": [
+        { "startTime": "0400", "endTime": "0530" },
+        { "startTime": "1000", "endTime": "1400" },
+        { "startTime": "1700", "endTime": "1930" }
+      ],
+      "wednesday": [{ "startTime": "0500", "endTime": "0930" }],
+      "thursday": [{ "startTime": "0400", "endTime": "1000" }],
+      "friday": [{ "startTime": "0500", "endTime": "1130" }],
+      "saturday": [
+        { "startTime": "0900", "endTime": "1200" },
+        { "startTime": "1300", "endTime": "1530" }
+      ]
+    }
+  },
+  {
+    "id": "student-3",
+    "availabilities": {
+      "sunday": [{ "startTime": "0100", "endTime": "0500" }],
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [
+        { "startTime": "0200", "endTime": "0500" },
+        { "startTime": "1430", "endTime": "1930" }
+      ],
+      "thursday": [],
+      "friday": [{ "startTime": "0930", "endTime": "1100" }],
+      "saturday": [{ "startTime": "1600", "endTime": "1830" }]
+    }
+  },
+  {
+    "id": "student-4",
+    "availabilities": {
+      "sunday": [
+        { "startTime": "1300", "endTime": "1500" },
+        { "startTime": "1730", "endTime": "1900" }
+      ],
+      "monday": [{ "startTime": "0130", "endTime": "0300" }],
+      "tuesday": [
+        { "startTime": "0500", "endTime": "0930" },
+        { "startTime": "1230", "endTime": "1400" },
+        { "startTime": "1500", "endTime": "1700" }
+      ],
+      "wednesday": [],
+      "thursday": [],
+      "friday": [{ "startTime": "1030", "endTime": "1230" }],
+      "saturday": [{ "startTime": "1000", "endTime": "1430" }]
+    }
+  },
+  {
+    "id": "student-5",
+    "availabilities": {
+      "sunday": [{ "startTime": "0130", "endTime": "0430" }],
+      "monday": [],
+      "tuesday": [
+        { "startTime": "1030", "endTime": "1500" },
+        { "startTime": "1700", "endTime": "1900" }
+      ],
+      "wednesday": [{ "startTime": "0830", "endTime": "1030" }],
+      "thursday": [
+        { "startTime": "0500", "endTime": "1200" },
+        { "startTime": "1630", "endTime": "1730" }
+      ],
+      "friday": [{ "startTime": "0600", "endTime": "1030" }],
+      "saturday": [
+        { "startTime": "0130", "endTime": "0230" },
+        { "startTime": "1400", "endTime": "1830" }
+      ]
+    }
+  },
+  {
+    "id": "student-6",
+    "availabilities": {
+      "sunday": [],
+      "monday": [],
+      "tuesday": [
+        { "startTime": "0400", "endTime": "0700" },
+        { "startTime": "0900", "endTime": "1030" },
+        { "startTime": "1130", "endTime": "1500" }
+      ],
+      "wednesday": [
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "1530", "endTime": "2130" }
+      ],
+      "thursday": [{ "startTime": "0800", "endTime": "0900" }],
+      "friday": [
+        { "startTime": "0530", "endTime": "0630" },
+        { "startTime": "0700", "endTime": "0930" },
+        { "startTime": "1500", "endTime": "1900" }
+      ],
+      "saturday": []
+    }
+  },
+  {
+    "id": "student-7",
+    "availabilities": {
+      "sunday": [],
+      "monday": [],
+      "tuesday": [
+        { "startTime": "0130", "endTime": "0400" },
+        { "startTime": "1730", "endTime": "1830" }
+      ],
+      "wednesday": [{ "startTime": "1530", "endTime": "2000" }],
+      "thursday": [],
+      "friday": [
+        { "startTime": "0330", "endTime": "0630" },
+        { "startTime": "1730", "endTime": "1900" }
+      ],
+      "saturday": [{ "startTime": "0800", "endTime": "1230" }]
+    }
+  },
+  {
+    "id": "student-8",
+    "availabilities": {
+      "sunday": [
+        { "startTime": "0200", "endTime": "0400" },
+        { "startTime": "1100", "endTime": "1430" }
+      ],
+      "monday": [
+        { "startTime": "0930", "endTime": "1100" },
+        { "startTime": "1200", "endTime": "1630" }
+      ],
+      "tuesday": [{ "startTime": "0200", "endTime": "0800" }],
+      "wednesday": [
+        { "startTime": "0200", "endTime": "0500" },
+        { "startTime": "1200", "endTime": "1500" }
+      ],
+      "thursday": [{ "startTime": "0830", "endTime": "1500" }],
+      "friday": [],
+      "saturday": [{ "startTime": "0030", "endTime": "0400" }]
+    }
+  },
+  {
+    "id": "student-9",
+    "availabilities": {
+      "sunday": [{ "startTime": "0800", "endTime": "1400" }],
+      "monday": [{ "startTime": "0300", "endTime": "0630" }],
+      "tuesday": [
+        { "startTime": "0230", "endTime": "0400" },
+        { "startTime": "0430", "endTime": "0530" }
+      ],
+      "wednesday": [
+        { "startTime": "0030", "endTime": "0230" },
+        { "startTime": "0400", "endTime": "0630" },
+        { "startTime": "1130", "endTime": "1530" }
+      ],
+      "thursday": [],
+      "friday": [{ "startTime": "0830", "endTime": "1130" }],
+      "saturday": [{ "startTime": "0030", "endTime": "0300" }]
+    }
+  },
+  {
+    "id": "student-10",
+    "availabilities": {
+      "sunday": [{ "startTime": "1000", "endTime": "1400" }],
+      "monday": [{ "startTime": "1100", "endTime": "1600" }],
+      "tuesday": [],
+      "wednesday": [{ "startTime": "0700", "endTime": "1030" }],
+      "thursday": [
+        { "startTime": "0500", "endTime": "0630" },
+        { "startTime": "0800", "endTime": "1230" },
+        { "startTime": "1500", "endTime": "1830" }
+      ],
+      "friday": [
+        { "startTime": "0200", "endTime": "0600" },
+        { "startTime": "1530", "endTime": "1830" }
+      ],
+      "saturday": []
+    }
+  },
+  {
+    "id": "student-11",
+    "availabilities": {
+      "sunday": [{ "startTime": "1130", "endTime": "1400" }],
+      "monday": [
+        { "startTime": "0400", "endTime": "0730" },
+        { "startTime": "1330", "endTime": "1530" }
+      ],
+      "tuesday": [{ "startTime": "1200", "endTime": "1630" }],
+      "wednesday": [
+        { "startTime": "0700", "endTime": "0930" },
+        { "startTime": "1300", "endTime": "1430" }
+      ],
+      "thursday": [],
+      "friday": [
+        { "startTime": "0200", "endTime": "0300" },
+        { "startTime": "1000", "endTime": "1100" },
+        { "startTime": "1600", "endTime": "1700" }
+      ],
+      "saturday": [{ "startTime": "0330", "endTime": "0700" }]
+    }
+  },
+  {
+    "id": "student-12",
+    "availabilities": {
+      "sunday": [{ "startTime": "1230", "endTime": "1930" }],
+      "monday": [{ "startTime": "0600", "endTime": "0730" }],
+      "tuesday": [{ "startTime": "1130", "endTime": "1300" }],
+      "wednesday": [
+        { "startTime": "0130", "endTime": "0400" },
+        { "startTime": "1130", "endTime": "1230" },
+        { "startTime": "1300", "endTime": "1700" }
+      ],
+      "thursday": [{ "startTime": "1200", "endTime": "1430" }],
+      "friday": [{ "startTime": "0700", "endTime": "0830" }],
+      "saturday": [{ "startTime": "1400", "endTime": "1500" }]
+    }
+  },
+  {
+    "id": "student-13",
+    "availabilities": {
+      "sunday": [{ "startTime": "0730", "endTime": "1600" }],
+      "monday": [
+        { "startTime": "0700", "endTime": "0830" },
+        { "startTime": "1730", "endTime": "2200" }
+      ],
+      "tuesday": [
+        { "startTime": "0000", "endTime": "0630" },
+        { "startTime": "1030", "endTime": "1500" }
+      ],
+      "wednesday": [{ "startTime": "0600", "endTime": "0930" }],
+      "thursday": [{ "startTime": "1500", "endTime": "1800" }],
+      "friday": [
+        { "startTime": "1030", "endTime": "1200" },
+        { "startTime": "1730", "endTime": "2200" }
+      ],
+      "saturday": [
+        { "startTime": "0300", "endTime": "0730" },
+        { "startTime": "1730", "endTime": "2200" }
+      ]
+    }
+  },
+  {
+    "id": "student-14",
+    "availabilities": {
+      "sunday": [
+        { "startTime": "0530", "endTime": "0800" },
+        { "startTime": "1600", "endTime": "1700" }
+      ],
+      "monday": [{ "startTime": "0000", "endTime": "0430" }],
+      "tuesday": [],
+      "wednesday": [
+        { "startTime": "0600", "endTime": "0730" },
+        { "startTime": "1100", "endTime": "1500" }
+      ],
+      "thursday": [
+        { "startTime": "0100", "endTime": "0400" },
+        { "startTime": "0930", "endTime": "1030" }
+      ],
+      "friday": [{ "startTime": "0730", "endTime": "1200" }],
+      "saturday": [
+        { "startTime": "0200", "endTime": "0430" },
+        { "startTime": "1030", "endTime": "1500" }
+      ]
+    }
+  },
+  {
+    "id": "student-15",
+    "availabilities": {
+      "sunday": [
+        { "startTime": "0130", "endTime": "0330" },
+        { "startTime": "1230", "endTime": "1530" },
+        { "startTime": "1700", "endTime": "2030" }
+      ],
+      "monday": [{ "startTime": "1700", "endTime": "1930" }],
+      "tuesday": [{ "startTime": "1230", "endTime": "1530" }],
+      "wednesday": [{ "startTime": "0600", "endTime": "0700" }],
+      "thursday": [],
+      "friday": [{ "startTime": "1100", "endTime": "1430" }],
+      "saturday": [{ "startTime": "0130", "endTime": "0400" }]
+    }
+  },
+  {
+    "id": "student-16",
+    "availabilities": {
+      "sunday": [
+        { "startTime": "0500", "endTime": "0900" },
+        { "startTime": "1700", "endTime": "2000" }
+      ],
+      "monday": [{ "startTime": "0230", "endTime": "0500" }],
+      "tuesday": [
+        { "startTime": "0030", "endTime": "0500" },
+        { "startTime": "1030", "endTime": "1300" }
+      ],
+      "wednesday": [
+        { "startTime": "0530", "endTime": "0700" },
+        { "startTime": "1030", "endTime": "1400" },
+        { "startTime": "1430", "endTime": "1730" }
+      ],
+      "thursday": [
+        { "startTime": "0130", "endTime": "0500" },
+        { "startTime": "1330", "endTime": "1500" },
+        { "startTime": "1630", "endTime": "2000" }
+      ],
+      "friday": [
+        { "startTime": "0400", "endTime": "0600" },
+        { "startTime": "0930", "endTime": "1300" },
+        { "startTime": "1330", "endTime": "1800" }
+      ],
+      "saturday": [{ "startTime": "0530", "endTime": "0930" }]
+    }
+  },
+  {
+    "id": "student-17",
+    "availabilities": {
+      "sunday": [],
+      "monday": [{ "startTime": "0930", "endTime": "1230" }],
+      "tuesday": [],
+      "wednesday": [{ "startTime": "1500", "endTime": "1830" }],
+      "thursday": [],
+      "friday": [
+        { "startTime": "0000", "endTime": "0430" },
+        { "startTime": "0500", "endTime": "0600" }
+      ],
+      "saturday": [{ "startTime": "1430", "endTime": "1530" }]
+    }
+  },
+  {
+    "id": "student-18",
+    "availabilities": {
+      "sunday": [{ "startTime": "0600", "endTime": "1000" }],
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [
+        { "startTime": "0830", "endTime": "0930" },
+        { "startTime": "1030", "endTime": "1230" },
+        { "startTime": "1300", "endTime": "1730" }
+      ],
+      "thursday": [
+        { "startTime": "0030", "endTime": "0500" },
+        { "startTime": "0600", "endTime": "0930" },
+        { "startTime": "1300", "endTime": "1700" }
+      ],
+      "friday": [{ "startTime": "0200", "endTime": "0430" }],
+      "saturday": [{ "startTime": "1400", "endTime": "1630" }]
+    }
+  },
+  {
+    "id": "student-19",
+    "availabilities": {
+      "sunday": [],
+      "monday": [],
+      "tuesday": [
+        { "startTime": "0530", "endTime": "0900" },
+        { "startTime": "1030", "endTime": "1730" }
+      ],
+      "wednesday": [],
+      "thursday": [{ "startTime": "0930", "endTime": "1400" }],
+      "friday": [],
+      "saturday": [{ "startTime": "0800", "endTime": "1030" }]
+    }
+  },
+  {
+    "id": "student-20",
+    "availabilities": {
+      "sunday": [{ "startTime": "1530", "endTime": "2000" }],
+      "monday": [{ "startTime": "0600", "endTime": "0830" }],
+      "tuesday": [{ "startTime": "0830", "endTime": "1130" }],
+      "wednesday": [],
+      "thursday": [],
+      "friday": [],
+      "saturday": []
+    }
+  },
+  {
+    "id": "student-21",
+    "availabilities": {
+      "sunday": [
+        { "startTime": "0200", "endTime": "0600" },
+        { "startTime": "0830", "endTime": "1030" },
+        { "startTime": "1200", "endTime": "1600" }
+      ],
+      "monday": [
+        { "startTime": "0130", "endTime": "0530" },
+        { "startTime": "0630", "endTime": "1030" }
+      ],
+      "tuesday": [{ "startTime": "1330", "endTime": "1930" }],
+      "wednesday": [{ "startTime": "1030", "endTime": "1130" }],
+      "thursday": [{ "startTime": "0000", "endTime": "0430" }],
+      "friday": [],
+      "saturday": [{ "startTime": "0900", "endTime": "1200" }]
+    }
+  },
+  {
+    "id": "student-22",
+    "availabilities": {
+      "sunday": [],
+      "monday": [],
+      "tuesday": [
+        { "startTime": "0630", "endTime": "0730" },
+        { "startTime": "1130", "endTime": "1430" },
+        { "startTime": "1700", "endTime": "1900" }
+      ],
+      "wednesday": [],
+      "thursday": [
+        { "startTime": "0400", "endTime": "0830" },
+        { "startTime": "1300", "endTime": "1700" }
+      ],
+      "friday": [{ "startTime": "1130", "endTime": "1330" }],
+      "saturday": [
+        { "startTime": "0030", "endTime": "0400" },
+        { "startTime": "1030", "endTime": "1400" }
+      ]
+    }
+  },
+  {
+    "id": "student-23",
+    "availabilities": {
+      "sunday": [{ "startTime": "0600", "endTime": "1330" }],
+      "monday": [
+        { "startTime": "1030", "endTime": "1500" },
+        { "startTime": "1530", "endTime": "1700" }
+      ],
+      "tuesday": [],
+      "wednesday": [{ "startTime": "0030", "endTime": "0230" }],
+      "thursday": [],
+      "friday": [
+        { "startTime": "0030", "endTime": "0700" },
+        { "startTime": "0730", "endTime": "0830" }
+      ],
+      "saturday": [
+        { "startTime": "0930", "endTime": "1230" },
+        { "startTime": "1600", "endTime": "1730" }
+      ]
+    }
+  }
+]
