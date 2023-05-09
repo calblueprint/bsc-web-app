@@ -195,8 +195,8 @@ const ShiftForm = ({
     // const dayString = possibleDays.join('')
     let result
     const timeWindow = {
-      startTime: Number(startTime),
-      endTime: Number(endTime),
+      startTime,
+      endTime,
     }
     const timeWindowDisplay =
       timeOptions[startTime] + ' - ' + timeOptions[endTime]
@@ -246,10 +246,10 @@ const ShiftForm = ({
             category: shift ? shift.category : emptyShift.category,
             hours: shift ? shift.hours : emptyShift.hours,
             startTime: shift
-              ? String(shift.timeWindow.startTime).padStart(4, '0') //dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
+              ? shift.timeWindow.startTime //dayjs(shift.timeWindow.startTime.toString(), 'HHmm')
               : emptyShift.startTime,
             endTime: shift
-              ? String(shift.timeWindow.endTime).padStart(4, '0') //dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
+              ? shift.timeWindow.endTime //dayjs(shift.timeWindow.endTime.toString(), 'HHmm')
               : emptyShift.endTime,
             possibleDays: shift
               ? shift.possibleDays

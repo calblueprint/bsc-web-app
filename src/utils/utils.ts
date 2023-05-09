@@ -381,8 +381,8 @@ export function findAvailableShiftsForUsers(
               hasEnoughOverlap(
                 userTime,
                 {
-                  startTime: String(shift.timeWindow.startTime),
-                  endTime: String(shift.timeWindow.endTime),
+                  startTime: shift.timeWindow.startTime,
+                  endTime: shift.timeWindow.endTime,
                 },
                 shift.hours
               )
@@ -458,8 +458,8 @@ export function findAvailableUsersForShifts(
               hasEnoughOverlap(
                 userTime,
                 {
-                  startTime: String(shift.timeWindow.startTime),
-                  endTime: String(shift.timeWindow.endTime),
+                  startTime: shift.timeWindow.startTime,
+                  endTime: shift.timeWindow.endTime,
                 },
                 shift.hours
               )
