@@ -50,6 +50,14 @@ export const AuthState = ({ children }: Props) => {
     // console.log('[AuthState]: authUser: ', authUser)
   }, [authUser, isSuccess])
 
+  useEffect(() => {
+    if (isError) {
+      setIsAuthorized(false)
+      window.history.replaceState(null, 'Log In', '/login')
+      setIsProcessing(false)
+    }
+  }, [isError])
+
   let content = null
   if (isLoading) {
     content = <Loading />

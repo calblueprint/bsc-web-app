@@ -3,6 +3,7 @@ import { Shift } from '../../types/schema'
 import { apiSlice } from '../../store/api/apiSlice'
 import { RootState } from '../../store/store'
 import { formatMilitaryTime } from '../../utils/utils'
+import dayjs from 'dayjs'
 
 const shiftsAdapter = createEntityAdapter<Shift>({})
 
@@ -29,9 +30,9 @@ export const shiftsApiSlice = apiSlice.injectEndpoints({
           entity.id = entity.id
           if (!entity.timeWindowDisplay) {
             entity.timeWindowDisplay =
-              formatMilitaryTime(entity.timeWindow.startTime) +
+              dayjs(entity.timeWindow.startTime, 'HHMM').format('h:mmA') +
               ' - ' +
-              formatMilitaryTime(entity.timeWindow.endTime)
+              dayjs(entity.timeWindow.endTime, 'HHMM').format('h:mmA')
           }
           return entity
         })

@@ -18,6 +18,8 @@ import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import { useSelector } from 'react-redux'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
 import { selectDrawerWidth } from '@/features/user/usersSlice'
+import { useTheme, Theme } from '@mui/material/styles'
+import { Highlight } from '@mui/icons-material'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,6 +33,19 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }))
 
+const cellStyle = (theme: Theme, disable: boolean, isSelected: boolean) => {
+  if (disable && isSelected) {
+    return {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+    }
+  } else if (disable) {
+    return { backgroundColor: '#C0C0C0', opacity: 0.5 }
+  } else {
+    return {}
+  }
+}
+
 export default function SortedTable<
   T extends { [key in keyof T]: string | number | string[] | number[] }
 >({
@@ -40,6 +55,7 @@ export default function SortedTable<
   isCheckable,
   isSortable,
   disable,
+  hightlightRowId,
   handleRowClick,
   handleButtonClick,
 }: {
@@ -49,12 +65,15 @@ export default function SortedTable<
   isCheckable: boolean
   isSortable: boolean
   disable?: boolean
+  hightlightRowId?: string
   handleRowClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
   handleButtonClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
 }) {
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof T>(headCells[0].id)
   const [selected, setSelected] = React.useState<readonly string[]>([])
+  const [selectedUser, setSelectedUser] = React.useState<string>('')
+  const theme = useTheme()
 
   const drawerWidth = useSelector(selectDrawerWidth)
 
@@ -87,10 +106,16 @@ export default function SortedTable<
 
       setSelected(newSelected)
     }
+    if (selectedUser === id) {
+      setSelectedUser('')
+    } else {
+      setSelectedUser(id)
+    }
     handleRowClick ? handleRowClick(event, id) : null
   }
 
   const isSelected = (id: string) => selected.indexOf(id) !== -1
+  const isUserSelected = (id: string) => hightlightRowId === id
 
   const head = (
     <TableHead>
@@ -138,6 +163,10 @@ export default function SortedTable<
   const body = entityIds?.map((entityId, index) => {
     const id: string = entityId as string
     const isItemSelected = isSelected(id)
+    const isUserIdSelected = isUserSelected(id)
+    // console.log(hightlightRowId)
+    // console.log(id)
+    // console.log('isUserIdSelected: ', isItemSelected)
     const labelId = `enhanced-table-checkbox-${index}`
 
     const row = entities[id]
@@ -163,7 +192,11 @@ export default function SortedTable<
                 id={labelId}
                 scope="row"
                 align={cell.align}
-                sx={disable ? { backgroundColor: '#C0C0C0' } : {}}
+                sx={cellStyle(
+                  theme,
+                  disable ? disable : false,
+                  isUserIdSelected
+                )}
               >
                 {cell.transformFn ? cell.transformFn(row) : row[cell.id]}
               </StyledTableCell>
@@ -173,7 +206,11 @@ export default function SortedTable<
               <StyledTableCell
                 key={uuid()}
                 align={cell.align}
-                sx={disable ? { backgroundColor: '#C0C0C0' } : {}}
+                sx={cellStyle(
+                  theme,
+                  disable ? disable : false,
+                  isUserIdSelected
+                )}
               >
                 {cell.isButton && cell.button
                   ? cell.button({ handleButtonClick, id })

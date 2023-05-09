@@ -11,8 +11,6 @@ export const authApiSlice = apiSlice.injectEndpoints({
     login: builder.mutation({
       async queryFn({ email, password }) {
         try {
-          console.log('Email: ', email, ' Password: ', password)
-
           // firebase signIn function with email and passoword
           const userCredentials = await signInWithEmailAndPassword(
             auth,

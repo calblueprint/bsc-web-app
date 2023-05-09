@@ -8,12 +8,14 @@ import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 import {
   setAssignedUserShifts,
   setEmptyShifts,
+  setShiftsSchedule,
   setUsersSchedule,
 } from '@/features/tentativeSchedule/scheduleSlice'
 import { useGetUsersQuery } from '@/features/user/userApiSlice'
 import {
   findAssignedShiftsForUsers,
   findAvailableShiftsForUsers,
+  findAvailableUsersForShifts,
   findEmptyShifts,
 } from '@/utils/utils'
 import { useEffect } from 'react'
@@ -29,9 +31,11 @@ const ManagerPlannerContent = () => {
   useEffect(() => {
     if (users && shifts) {
       const usersSchedule = findAvailableShiftsForUsers(users, shifts)
+      const shiftsSchedule = findAvailableUsersForShifts(users, shifts)
       const assignedShifts = findAssignedShiftsForUsers(users, shifts)
       const emptyShifts = findEmptyShifts(shifts)
       dispatch(setUsersSchedule({ usersSchedule }))
+      dispatch(setShiftsSchedule({ shiftsSchedule }))
       dispatch(setAssignedUserShifts(assignedShifts))
       dispatch(setEmptyShifts(emptyShifts))
     }

@@ -16,6 +16,7 @@ import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import { EntityId } from '@reduxjs/toolkit'
 import { Days, House } from '@/types/schema'
+import SampleUserAvailability from '@/features/user/testing/SampleUserAvailability'
 
 const filterOptions: Days[] = [
   'All',
@@ -114,6 +115,8 @@ const UserTesting = () => {
           shiftEntities={shiftData?.entities}
         />
       ) : null}
+
+      <SampleUserAvailability />
     </React.Fragment>
   )
 }
