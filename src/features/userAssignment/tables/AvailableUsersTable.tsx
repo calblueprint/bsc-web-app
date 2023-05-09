@@ -244,6 +244,7 @@ const AvailableUsersTable: React.FC<AvailableUsersTableProps> = ({
         isCheckable={false}
         isSortable={false}
         disable={disableTable}
+        hightlightRowId={selectedUserId}
         handleRowClick={handleSelectUser}
       />
       <Grid container spacing={1} sx={{ flexGrow: 1 }}>
