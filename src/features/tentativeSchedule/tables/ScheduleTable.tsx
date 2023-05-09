@@ -128,44 +128,6 @@ const ScheduleTable = () => {
                       </TableCell>
                     ))
                   : null}
-
-                {/* <TableCell
-                  align="center"
-                  style={{ minWidth: 200, borderLeft: '1px solid black' }}
-                >
-                  Tuesday
-                </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ minWidth: 200, borderLeft: '1px solid black' }}
-                >
-                  Wednesday
-                </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ minWidth: 200, borderLeft: '1px solid black' }}
-                >
-                  Thursday
-                </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ minWidth: 200, borderLeft: '1px solid black' }}
-                >
-                  Friday
-                </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ minWidth: 200, borderLeft: '1px solid black' }}
-                >
-                  Saturday
-                </TableCell>
-                <TableCell
-                  align="center"
-                  style={{ minWidth: 200, borderLeft: '1px solid black' }}
-                >
-                  Sunday
-                </TableCell> */}
-                {/* Add more headers as needed */}
               </TableRow>
             </TableHead>
             <TableBody>
