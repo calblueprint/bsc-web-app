@@ -1,10 +1,9 @@
-import { MembersTableContent } from "@/sprintFiles/MembersTableContent"
+import { MembersTableContent } from '@/sprintFiles/MembersTableContent'
 
 const ManagerInformationTabContent = () => {
   return (
     <div>
-      <div>ManagerInformationTabContent</div>
-      <MembersTableContent/>
+      <MembersTableContent />
     </div>
   )
 }
