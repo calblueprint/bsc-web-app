@@ -42,6 +42,10 @@ import useUserRolePath from '../../../hooks/useUserRolePath'
 //** Custom Components */
 import HeaderTabs from './HeaderTabs'
 import { useRouter } from 'next/router'
+import WeekSelectComponent from '../items/WeekSelectComponent'
+import { selectHasWeekSelectBtn } from '@/features/scheduledShift/scheduledShiftSlice'
+import { selectHasPublishBtn } from '@/features/tentativeSchedule/scheduleSlice'
+import PublishBtn from '@/features/publishSchedule/buttons/PublishBtn'
 
 // import { NavP } from '../../interfaces/interfaces'
 
@@ -75,6 +79,9 @@ const Header = (props: HeaderProps) => {
   const [userName, setUserName] = React.useState('User')
 
   const { isManagerPath, isMemberPath, isSupervisorPath } = useUserRolePath()
+
+  const hasWeekSelectBtn = useSelector(selectHasWeekSelectBtn)
+  const hasPublishBtn = useSelector(selectHasPublishBtn)
 
   React.useEffect(() => {
     // console.log(user)
@@ -128,7 +135,12 @@ const Header = (props: HeaderProps) => {
         <Toolbar>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs>
-              <Typography color="inherit" variant="h5" component="h1">
+              <Typography
+                color="inherit"
+                variant="h5"
+                component="h1"
+                marginLeft={2}
+              >
                 {isMemberPath ? memberNavState.id : null}
                 {isManagerPath ? managerNavState.id : null}
                 {isSupervisorPath ? supervisorNavState.id : null}
@@ -136,7 +148,18 @@ const Header = (props: HeaderProps) => {
             </Grid>
           </Grid>
         </Toolbar>
-        <HeaderTabs />
+        <Toolbar>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs>
+              <HeaderTabs />
+            </Grid>
+            <Grid item />
+            <Grid item>
+              {hasWeekSelectBtn ? <WeekSelectComponent /> : null}
+              {hasPublishBtn ? <PublishBtn /> : null}
+            </Grid>
+          </Grid>
+        </Toolbar>
       </AppBar>
       {/* <AppBar
         // component="div"

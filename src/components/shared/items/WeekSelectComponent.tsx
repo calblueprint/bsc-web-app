@@ -11,31 +11,43 @@ import weekday from 'dayjs/plugin/weekday'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 
 import React, { useEffect, useState } from 'react'
-import Popover from '@mui/material/Popover/Popover'
+import Popover from '@mui/material/Popover'
 import { PickerSelectionState } from '@mui/x-date-pickers/internals'
 
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import IconButton from '@mui/material/IconButton'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  selectWeekDateSelected,
+  selectWeekNumberSelected,
+  setWeekDateSelected,
+  setWeekNumberSelected,
+} from '@/features/scheduledShift/scheduledShiftSlice'
 
 // Use the ISO week plugin
 dayjs.extend(isoWeek)
 dayjs.extend(weekday)
 dayjs.extend(weekOfYear)
 
-type WeekSelectComponentProps = {
-  handleSelectedWeek: (weekNumber: number) => void
-}
-
-const WeekSelectComponent = (props: WeekSelectComponentProps) => {
-  const { handleSelectedWeek } = props
+const WeekSelectComponent = () => {
+  const weekDate = useSelector(selectWeekDateSelected)
   const [selectedWeekDisplay, setSelectedWeekDisplay] = useState('Week')
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
+    dayjs(weekDate, 'MM/DD/YYYY')
+  )
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+
+  const dispatch = useDispatch()
 
   const shiftWeek = (numWeeks: number) => {
     if (selectedDate) {
       setSelectedDate(selectedDate.add(numWeeks, 'week'))
+      dispatch(
+        setWeekDateSelected(
+          selectedDate.add(numWeeks, 'week').format('MM/DD/YYYY')
+        )
+      )
     }
   }
   const handleWeekChange = (
@@ -46,7 +58,7 @@ const WeekSelectComponent = (props: WeekSelectComponentProps) => {
     // console.log('handleWeekChange: selectionState ' + selectionState)
     if (selectionState === 'finish' && value) {
       setSelectedDate(value)
-      handleSelectedWeek(value.week())
+      dispatch(setWeekDateSelected(value.format('MM/DD/YYYY')))
       handleClose()
     }
   }

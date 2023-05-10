@@ -702,3 +702,24 @@ export const createScheduleShifts = (
 
   return createdShifts
 }
+
+export function sortShiftsByWeekNumber(
+  state: EntityState<ScheduledShift>
+): Record<number, string[]> {
+  const shifts = state.ids.map((id) => state.entities[id]) as ScheduledShift[]
+
+  const sortedShifts: Record<number, string[]> = {}
+
+  for (const shift of shifts) {
+    if (!shift.date) continue
+    const date = dayjs(shift.date, 'MM/DD/YYYY')
+    if (!date) continue
+    const weekNum = date.week()
+    if (!sortedShifts.hasOwnProperty(weekNum)) {
+      sortedShifts[weekNum] = []
+    }
+    sortedShifts[weekNum].push(shift.id)
+  }
+
+  return sortedShifts
+}

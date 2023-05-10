@@ -13,6 +13,8 @@ import dayjs from 'dayjs'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 import WorkShiftsByWeek from '@/features/schedule/filters/WorkShiftsByWeek'
 import WeekSelectComponent from '@/components/shared/items/WeekSelectComponent'
+import { selectWeeklyScheduleShiftsByWeekNumber } from '@/features/scheduledShift/scheduledShiftSlice'
+import { RootState } from '@/store/store'
 
 const filterOptions: Days[] = [
   'All',
@@ -31,12 +33,20 @@ const filterOptions: Days[] = [
  */
 const ManagerAllShiftsTabContent = () => {
   const currentHouse: House = useSelector(selectCurrentHouse) as House
+  const weekScheduledShifts = useSelector(
+    selectWeeklyScheduleShiftsByWeekNumber
+  )
   // Stores the search query
   const [searchQuery, setSearchQuery] = useState<string>('')
   // Stores the day filter
   const [dayFilter, setDayFilter] = useState<Days>('All')
   // The ids that are passed into the AllScheduledShifts Table to display
-  const [filteredShiftIDs, setFilteredShiftIDs] = useState<EntityId[]>()
+  const [filteredShiftIDs, setFilteredShiftIDs] =
+    useState<EntityId[]>(weekScheduledShifts)
+
+  const [dayFilteredIDs, setDayFilteredIDs] = useState<EntityId[]>([])
+
+  const [finalFilteredIDs, setFinalFilteredIDs] = useState<EntityId[]>([])
 
   const [scheduleShiftsObj, setScheduleShiftObj] =
     useState<(ScheduledShift | undefined)[]>()
@@ -69,33 +79,12 @@ const ManagerAllShiftsTabContent = () => {
   /**
    * @returns Filters based on the day filter and search filter and sets the filteredShiftID
    */
-  const handleFiltering = () => {
-    if (scheduledShifts) {
-      let filteredCopy = [...scheduledShifts.ids]
-      if (dayFilter !== 'All') {
-        filteredCopy = filteredCopy.filter((id) => {
-          const scheduledShift = scheduledShifts.entities[id]
-          if (scheduledShift) {
-            let shiftCopy: Shift | undefined = undefined
-            if ('shiftCopy' in scheduledShift) {
-              shiftCopy = scheduledShift['shiftCopy'] as Shift
-            } else {
-              let innerShiftID = scheduledShift.shiftID
-              if (shifts === undefined) {
-                return false
-              }
-              shiftCopy = shifts.entities[innerShiftID] as Shift
-            }
-            if (shiftCopy === undefined) {
-              return false
-            }
-            return (
-              shiftCopy.assignedDay.toLowerCase() === dayFilter.toLowerCase()
-            )
-          }
-          return false
-        })
-      }
+  const handleFiltering = () => {}
+
+  useEffect(() => {
+    console.log('filtering finalFilter')
+    if (scheduledShifts && shifts) {
+      let filteredCopy = [...dayFilteredIDs]
       if (searchQuery !== '') {
         filteredCopy = filteredCopy.filter((id) => {
           const scheduledShift = scheduledShifts.entities[id]
@@ -125,40 +114,72 @@ const ManagerAllShiftsTabContent = () => {
           }
         })
       }
-      setFilteredShiftIDs(filteredCopy)
+      setFinalFilteredIDs(filteredCopy)
     }
-  }
+  }, [dayFilteredIDs, scheduledShifts, shifts, searchQuery])
 
   useEffect(() => {
-    // console.log(scheduledShifts)
-    handleFiltering()
-  }, [scheduledShifts, dayFilter, searchQuery])
+    console.log('filtering shiftIds')
+    if (scheduledShifts && shifts) {
+      let filteredCopy = [...filteredShiftIDs]
+      if (dayFilter !== 'All') {
+        filteredCopy = filteredCopy.filter((id) => {
+          const scheduledShift = scheduledShifts.entities[id]
+          if (scheduledShift) {
+            let shiftCopy: Shift | undefined = undefined
+            if ('shiftCopy' in scheduledShift) {
+              shiftCopy = scheduledShift['shiftCopy'] as Shift
+            } else {
+              let innerShiftID = scheduledShift.shiftID
+              if (shifts === undefined) {
+                return false
+              }
+              shiftCopy = shifts.entities[innerShiftID] as Shift
+            }
+            if (shiftCopy === undefined) {
+              return false
+            }
+            return (
+              shiftCopy.assignedDay.toLowerCase() === dayFilter.toLowerCase()
+            )
+          }
+          return false
+        })
+      }
+
+      setDayFilteredIDs(filteredCopy)
+    }
+  }, [filteredShiftIDs, scheduledShifts, shifts, dayFilter])
 
   useEffect(() => {
-    if (scheduledShifts) {
-      const shifts = scheduledShifts.ids.map(
-        (shiftId) => scheduledShifts.entities[shiftId]
-      )
-      setScheduleShiftObj(shifts)
+    console.log('filtering firstFilter')
+    if (weekScheduledShifts) {
+      setFilteredShiftIDs(weekScheduledShifts)
     }
-  }, [scheduledShifts])
+  }, [weekScheduledShifts])
+
+  // useEffect(() => {
+  //   if (scheduledShifts) {
+  //     const shifts = scheduledShifts.ids.map(
+  //       (shiftId) => scheduledShifts.entities[shiftId]
+  //     )
+  //     setScheduleShiftObj(shifts)
+  //   }
+  // }, [scheduledShifts])
 
   return (
     <React.Fragment>
       <Stack direction={'row'}>
-        <Box sx={{ flexGrow: 4 }}>
+        <Box sx={{ flexGrow: 3 }}>
           <FilterSearchBar
             onSearchChange={handleSearchChange}
             onSearchSubmit={handleSearchSubmit}
           />
         </Box>
         {/* <Box sx={{ flexGrow: 1 }} /> */}
-        <Box sx={{ flexGrow: 2 }}>
-          {/* <WorkShiftsByWeek shifts={scheduleShiftsObj as ScheduledShift[]} /> */}
-          <WeekSelectComponent handleSelectedWeek={handleSelectedWeek} />
-        </Box>
+
         {/* <Box sx={{ flexGrow: 1 }} /> */}
-        <Box sx={{ flexGrow: 2, marginX: 2, marginBottom: 2 }}>
+        <Box sx={{ flexGrow: 1, marginX: 2, marginBottom: 2 }}>
           <FilterShiftByDayBtn
             filterOptions={filterOptions}
             onFilterChange={handleFilterChange}
@@ -168,9 +189,9 @@ const ManagerAllShiftsTabContent = () => {
           <QuickShiftButton />
         </Box> */}
       </Stack>
-      {scheduledShifts && filteredShiftIDs && (
+      {scheduledShifts && finalFilteredIDs && (
         <AllScheduledShiftsTable
-          scheduledShiftIDs={filteredShiftIDs}
+          scheduledShiftIDs={finalFilteredIDs}
           scheduledShiftDictionary={scheduledShifts.entities}
         />
       )}
