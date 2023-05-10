@@ -11,9 +11,9 @@ import NewShiftBtn from '@/features/shift/buttons/NewShiftBtn'
 import { EntityId } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
-import WorkShiftsByWeek from '@/features/schedule/filters/WorkShiftsByWeek'
-import WeekSelectComponent from '@/components/shared/items/WeekSelectComponent'
+
 import { selectWeeklyScheduleShiftsByWeekNumber } from '@/features/scheduledShift/scheduledShiftSlice'
+
 import { RootState } from '@/store/store'
 
 const filterOptions: Days[] = [
@@ -33,7 +33,8 @@ const filterOptions: Days[] = [
  */
 const ManagerAllShiftsTabContent = () => {
   const currentHouse: House = useSelector(selectCurrentHouse) as House
-  const weekScheduledShifts = useSelector(
+
+  const weekScheduledShifts: string[] = useSelector(
     selectWeeklyScheduleShiftsByWeekNumber
   )
   // Stores the search query
@@ -42,7 +43,7 @@ const ManagerAllShiftsTabContent = () => {
   const [dayFilter, setDayFilter] = useState<Days>('All')
   // The ids that are passed into the AllScheduledShifts Table to display
   const [filteredShiftIDs, setFilteredShiftIDs] =
-    useState<EntityId[]>(weekScheduledShifts)
+    useState<string[]>(weekScheduledShifts)
 
   const [dayFilteredIDs, setDayFilteredIDs] = useState<EntityId[]>([])
 
