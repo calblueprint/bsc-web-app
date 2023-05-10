@@ -82,7 +82,7 @@ const ManagerAllShiftsTabContent = () => {
   const handleFiltering = () => {}
 
   useEffect(() => {
-    console.log('filtering finalFilter')
+    // console.log('filtering finalFilter')
     if (scheduledShifts && shifts) {
       let filteredCopy = [...dayFilteredIDs]
       if (searchQuery !== '') {
@@ -119,7 +119,7 @@ const ManagerAllShiftsTabContent = () => {
   }, [dayFilteredIDs, scheduledShifts, shifts, searchQuery])
 
   useEffect(() => {
-    console.log('filtering shiftIds')
+    // console.log('filtering shiftIds')
     if (scheduledShifts && shifts) {
       let filteredCopy = [...filteredShiftIDs]
       if (dayFilter !== 'All') {
@@ -152,7 +152,7 @@ const ManagerAllShiftsTabContent = () => {
   }, [filteredShiftIDs, scheduledShifts, shifts, dayFilter])
 
   useEffect(() => {
-    console.log('filtering firstFilter')
+    // console.log('filtering firstFilter')
     if (weekScheduledShifts) {
       setFilteredShiftIDs(weekScheduledShifts)
     }
