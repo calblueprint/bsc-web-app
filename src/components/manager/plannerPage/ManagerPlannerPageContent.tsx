@@ -8,6 +8,7 @@ import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
 import {
   setAssignedUserShifts,
   setEmptyShifts,
+  setHasPublishBtn,
   setShiftsSchedule,
   setUsersSchedule,
 } from '@/features/tentativeSchedule/scheduleSlice'
@@ -28,6 +29,14 @@ const ManagerPlannerContent = () => {
   const { data: shifts } = useGetShiftsQuery(houseId)
   const { data: users } = useGetUsersQuery({})
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(setHasPublishBtn(true))
+    return () => {
+      dispatch(setHasPublishBtn(false))
+    }
+  }, [dispatch])
+
   useEffect(() => {
     if (users && shifts) {
       const usersSchedule = findAvailableShiftsForUsers(users, shifts)

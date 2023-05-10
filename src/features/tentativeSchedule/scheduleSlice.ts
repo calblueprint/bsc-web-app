@@ -32,6 +32,7 @@ const scheduleSlice = createSlice({
     shiftSchedule,
     emptyShifts,
     assignedUserShifts,
+    hasPublishBtn: false,
   },
   reducers: {
     setUsersSchedule: (state, action) => {
@@ -94,6 +95,9 @@ const scheduleSlice = createSlice({
     setEmptyShifts: (state, action) => {
       state.emptyShifts = action.payload ?? emptyShifts
     },
+    setHasPublishBtn: (state, action) => {
+      state.hasPublishBtn = action.payload
+    },
   },
 })
 
@@ -104,7 +108,11 @@ export const {
   setUserWeekDaySchedule,
   setAssignedUserShifts,
   setEmptyShifts,
+  setHasPublishBtn,
 } = scheduleSlice.actions
+
+export const selectHasPublishBtn = (state: RootState) =>
+  state.schedules.hasPublishBtn
 
 export const selectUserSchedule = (state: RootState) =>
   state.schedules.userSchedule

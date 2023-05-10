@@ -201,69 +201,71 @@ const NavBar = (props: DrawerProps) => {
 
           <NavButtons />
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ bgcolor: '#101F33' }}>
-            <ListItem disablePadding>
-              <PopupState variant="popover" popupId="demo-popup-menu">
-                {(popupState) => (
-                  <React.Fragment>
-                    <ListItemButton
-                      sx={{ ...item, ...itemCategory }}
-                      {...bindTrigger(popupState)}
-                    >
-                      <ListItemIcon>
-                        <PersonIcon />
-                      </ListItemIcon>
-                      <ListItemText>Switch User Role</ListItemText>
-                    </ListItemButton>
+          {authUser?.roles.length > 1 ? (
+            <Box sx={{ bgcolor: '#101F33' }}>
+              <ListItem disablePadding>
+                <PopupState variant="popover" popupId="demo-popup-menu">
+                  {(popupState) => (
+                    <React.Fragment>
+                      <ListItemButton
+                        sx={{ ...item, ...itemCategory }}
+                        {...bindTrigger(popupState)}
+                      >
+                        <ListItemIcon>
+                          <PersonIcon />
+                        </ListItemIcon>
+                        <ListItemText>Switch User Role</ListItemText>
+                      </ListItemButton>
 
-                    <Menu
-                      {...bindMenu(popupState)}
-                      // anchorOrigin={{
-                      //     vertical: 'bottom',
-                      //     horizontal: 'left',
-                      // }}
-                      // transformOrigin={{
-                      //     vertical: 'top',
-                      //     horizontal: 'left',
-                      // }}
-                    >
-                      {isMember && !isMemberPath ? (
-                        <MenuItem
-                          onClick={() => {
-                            handleMemberClick()
-                            popupState.close
-                          }}
-                        >
-                          Member
-                        </MenuItem>
-                      ) : null}
-                      {isManager && !isManagerPath ? (
-                        <MenuItem
-                          onClick={() => {
-                            handleManagerClick()
-                            popupState.close
-                          }}
-                        >
-                          Manager
-                        </MenuItem>
-                      ) : null}
+                      <Menu
+                        {...bindMenu(popupState)}
+                        // anchorOrigin={{
+                        //     vertical: 'bottom',
+                        //     horizontal: 'left',
+                        // }}
+                        // transformOrigin={{
+                        //     vertical: 'top',
+                        //     horizontal: 'left',
+                        // }}
+                      >
+                        {isMember && !isMemberPath ? (
+                          <MenuItem
+                            onClick={() => {
+                              handleMemberClick()
+                              popupState.close
+                            }}
+                          >
+                            Member
+                          </MenuItem>
+                        ) : null}
+                        {isManager && !isManagerPath ? (
+                          <MenuItem
+                            onClick={() => {
+                              handleManagerClick()
+                              popupState.close
+                            }}
+                          >
+                            Manager
+                          </MenuItem>
+                        ) : null}
 
-                      {isSupervisor && !isSupervisorPath ? (
-                        <MenuItem
-                          onClick={() => {
-                            handleSupervisorClick()
-                            popupState.close()
-                          }}
-                        >
-                          Supervisor
-                        </MenuItem>
-                      ) : null}
-                    </Menu>
-                  </React.Fragment>
-                )}
-              </PopupState>
-            </ListItem>
-          </Box>
+                        {isSupervisor && !isSupervisorPath ? (
+                          <MenuItem
+                            onClick={() => {
+                              handleSupervisorClick()
+                              popupState.close()
+                            }}
+                          >
+                            Supervisor
+                          </MenuItem>
+                        ) : null}
+                      </Menu>
+                    </React.Fragment>
+                  )}
+                </PopupState>
+              </ListItem>
+            </Box>
+          ) : null}
 
           <Box sx={{ bgcolor: '#101F33' }}>
             <ListItem disablePadding onClick={handleLogout}>
