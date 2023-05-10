@@ -64,9 +64,9 @@ export const AuthState = ({ children }: Props) => {
   } else if (isError) {
     console.log(error)
     content = <Box>There was an Error </Box>
-  } else if (isSuccess && isAuthorized) {
+  } else if (!isProcessing && isAuthorized && isSuccess) {
     content = <React.Fragment>{authUser ? children : null}</React.Fragment>
-  } else if (!isProcessing && !isAuthorized) {
+  } else if (!isProcessing && !isAuthorized && !isLoading) {
     content = (
       <React.Fragment>
         <Login />

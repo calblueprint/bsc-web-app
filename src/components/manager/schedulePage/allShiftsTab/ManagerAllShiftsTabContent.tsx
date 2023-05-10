@@ -1,6 +1,6 @@
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { useGetScheduledShiftsQuery } from '@/features/scheduledShift/scheduledShiftApiSlice'
-import { Days, House, Shift } from '@/types/schema'
+import { Days, House, ScheduledShift, Shift } from '@/types/schema'
 import React, { useState, FormEvent, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import AllScheduledShiftsTable from '@/features/scheduledShift/tables/AllScheduledShiftsTable'
@@ -11,6 +11,8 @@ import NewShiftBtn from '@/features/shift/buttons/NewShiftBtn'
 import { EntityId } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
+import WorkShiftsByWeek from '@/features/schedule/filters/WorkShiftsByWeek'
+import WeekSelectComponent from '@/components/shared/items/WeekSelectComponent'
 
 const filterOptions: Days[] = [
   'All',
@@ -36,6 +38,9 @@ const ManagerAllShiftsTabContent = () => {
   // The ids that are passed into the AllScheduledShifts Table to display
   const [filteredShiftIDs, setFilteredShiftIDs] = useState<EntityId[]>()
 
+  const [scheduleShiftsObj, setScheduleShiftObj] =
+    useState<(ScheduledShift | undefined)[]>()
+
   const { data: scheduledShifts } = useGetScheduledShiftsQuery(
     currentHouse.houseID
   )
@@ -55,6 +60,10 @@ const ManagerAllShiftsTabContent = () => {
   const handleFilterChange = (selectedFilter: Days) => {
     // console.log('Selected filter:', selectedFilter)
     setDayFilter(selectedFilter)
+  }
+
+  const handleSelectedWeek = (weekNumber: number) => {
+    console.log('Selected week:', weekNumber)
   }
 
   /**
@@ -125,17 +134,31 @@ const ManagerAllShiftsTabContent = () => {
     handleFiltering()
   }, [scheduledShifts, dayFilter, searchQuery])
 
+  useEffect(() => {
+    if (scheduledShifts) {
+      const shifts = scheduledShifts.ids.map(
+        (shiftId) => scheduledShifts.entities[shiftId]
+      )
+      setScheduleShiftObj(shifts)
+    }
+  }, [scheduledShifts])
+
   return (
     <React.Fragment>
       <Stack direction={'row'}>
-        <Box sx={{ flexGrow: 3 }}>
+        <Box sx={{ flexGrow: 4 }}>
           <FilterSearchBar
             onSearchChange={handleSearchChange}
             onSearchSubmit={handleSearchSubmit}
           />
         </Box>
-        <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ flexGrow: 1, marginX: 2, marginBottom: 2 }}>
+        {/* <Box sx={{ flexGrow: 1 }} /> */}
+        <Box sx={{ flexGrow: 2 }}>
+          {/* <WorkShiftsByWeek shifts={scheduleShiftsObj as ScheduledShift[]} /> */}
+          <WeekSelectComponent handleSelectedWeek={handleSelectedWeek} />
+        </Box>
+        {/* <Box sx={{ flexGrow: 1 }} /> */}
+        <Box sx={{ flexGrow: 2, marginX: 2, marginBottom: 2 }}>
           <FilterShiftByDayBtn
             filterOptions={filterOptions}
             onFilterChange={handleFilterChange}
