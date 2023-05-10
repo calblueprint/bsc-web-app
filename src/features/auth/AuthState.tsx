@@ -50,15 +50,23 @@ export const AuthState = ({ children }: Props) => {
     // console.log('[AuthState]: authUser: ', authUser)
   }, [authUser, isSuccess])
 
+  useEffect(() => {
+    if (isError) {
+      setIsAuthorized(false)
+      window.history.replaceState(null, 'Log In', '/login')
+      setIsProcessing(false)
+    }
+  }, [isError])
+
   let content = null
   if (isLoading) {
     content = <Loading />
   } else if (isError) {
     console.log(error)
     content = <Box>There was an Error </Box>
-  } else if (isSuccess && isAuthorized) {
+  } else if (!isProcessing && isAuthorized && isSuccess) {
     content = <React.Fragment>{authUser ? children : null}</React.Fragment>
-  } else if (!isProcessing && !isAuthorized) {
+  } else if (!isProcessing && !isAuthorized && !isLoading) {
     content = (
       <React.Fragment>
         <Login />

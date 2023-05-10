@@ -17,26 +17,34 @@ import uuid from 'react-uuid'
 import { EntityId, Dictionary } from '@reduxjs/toolkit'
 import { useSelector } from 'react-redux'
 import { selectShiftById } from '@/features/shift/shiftApiSlice'
+import { selectDrawerWidth } from '@/features/user/usersSlice'
+import { useTheme, Theme } from '@mui/material/styles'
+import { Highlight } from '@mui/icons-material'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: 'secondary.main',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    textTransform: 'capitalize',
   },
 }))
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}))
+const cellStyle = (theme: Theme, disable: boolean, isSelected: boolean) => {
+  if (disable && isSelected) {
+    return {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+    }
+  } else if (disable) {
+    return { backgroundColor: '#C0C0C0', opacity: 0.5 }
+  } else {
+    return {}
+  }
+}
 
 export default function SortedTable<
   T extends { [key in keyof T]: string | number | string[] | number[] }
@@ -47,6 +55,7 @@ export default function SortedTable<
   isCheckable,
   isSortable,
   disable,
+  hightlightRowId,
   handleRowClick,
   handleButtonClick,
 }: {
@@ -56,12 +65,17 @@ export default function SortedTable<
   isCheckable: boolean
   isSortable: boolean
   disable?: boolean
+  hightlightRowId?: string
   handleRowClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
   handleButtonClick?: (event: React.MouseEvent<unknown>, id: EntityId) => void
 }) {
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof T>(headCells[0].id)
   const [selected, setSelected] = React.useState<readonly string[]>([])
+  const [selectedUser, setSelectedUser] = React.useState<string>('')
+  const theme = useTheme()
+
+  const drawerWidth = useSelector(selectDrawerWidth)
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -92,10 +106,16 @@ export default function SortedTable<
 
       setSelected(newSelected)
     }
+    if (selectedUser === id) {
+      setSelectedUser('')
+    } else {
+      setSelectedUser(id)
+    }
     handleRowClick ? handleRowClick(event, id) : null
   }
 
   const isSelected = (id: string) => selected.indexOf(id) !== -1
+  const isUserSelected = (id: string) => hightlightRowId === id
 
   const head = (
     <TableHead>
@@ -106,6 +126,7 @@ export default function SortedTable<
             align={headCell.align}
             padding={'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ fontWeight: 'bold' }}
           >
             {headCell.isSortable && isSortable ? (
               <TableSortLabel
@@ -127,9 +148,7 @@ export default function SortedTable<
             )}
           </StyledTableCell>
         ))}
-        {isCheckable ? (
-          <StyledTableCell padding="checkbox"></StyledTableCell>
-        ) : null}
+        {isCheckable ? <TableCell padding="checkbox"></TableCell> : null}
       </TableRow>
     </TableHead>
   )
@@ -144,6 +163,10 @@ export default function SortedTable<
   const body = entityIds?.map((entityId, index) => {
     const id: string = entityId as string
     const isItemSelected = isSelected(id)
+    const isUserIdSelected = isUserSelected(id)
+    // console.log(hightlightRowId)
+    // console.log(id)
+    // console.log('isUserIdSelected: ', isItemSelected)
     const labelId = `enhanced-table-checkbox-${index}`
 
     const row = entities[id]
@@ -151,7 +174,7 @@ export default function SortedTable<
       return null
     }
     return (
-      <StyledTableRow
+      <TableRow
         hover
         onClick={(event) => handleClick(event, id)}
         role="checkbox"
@@ -169,9 +192,13 @@ export default function SortedTable<
                 id={labelId}
                 scope="row"
                 align={cell.align}
-                sx={disable ? { backgroundColor: 'gray' } : {}}
+                sx={cellStyle(
+                  theme,
+                  disable ? disable : false,
+                  isUserIdSelected
+                )}
               >
-                {row[cell.id]}
+                {cell.transformFn ? cell.transformFn(row) : row[cell.id]}
               </StyledTableCell>
             )
           } else {
@@ -179,10 +206,16 @@ export default function SortedTable<
               <StyledTableCell
                 key={uuid()}
                 align={cell.align}
-                sx={disable ? { backgroundColor: 'gray' } : {}}
+                sx={cellStyle(
+                  theme,
+                  disable ? disable : false,
+                  isUserIdSelected
+                )}
               >
                 {cell.isButton && cell.button
                   ? cell.button({ handleButtonClick, id })
+                  : cell.transformFn
+                  ? cell.transformFn(row)
                   : row[cell.id]}
               </StyledTableCell>
             )
@@ -190,7 +223,7 @@ export default function SortedTable<
         })}
 
         {isCheckable ? (
-          <StyledTableCell padding="checkbox">
+          <TableCell padding="checkbox">
             <Checkbox
               color="primary"
               checked={isItemSelected}
@@ -198,16 +231,16 @@ export default function SortedTable<
                 'aria-labelledby': labelId,
               }}
             />
-          </StyledTableCell>
+          </TableCell>
         ) : null}
-      </StyledTableRow>
+      </TableRow>
     )
   })
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ maxWidth: `calc(100vw - ${drawerWidth}px)` }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer sx={{ maxHeight: 640 }}>
           <Table
             stickyHeader
             sx={{ minWidth: 750 }}

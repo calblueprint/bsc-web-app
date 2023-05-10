@@ -1,4 +1,10 @@
+import { MembersTableContent } from '@/sprintFiles/MembersTableContent'
+
 const ManagerInformationTabContent = () => {
-  return <div>ManagerInformationTabContent</div>
+  return (
+    <div>
+      <MembersTableContent />
+    </div>
+  )
 }
 export default ManagerInformationTabContent

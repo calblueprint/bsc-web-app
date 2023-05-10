@@ -1,7 +1,13 @@
-import { EntityId, Dictionary } from '@reduxjs/toolkit'
+import { EntityId, Dictionary, EntityState } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import { House, Shift, User } from '../types/schema'
+import { House, ScheduledShift, Shift, User } from '../types/schema'
 import { DAYS } from './constants'
+import duration from 'dayjs/plugin/duration'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { AssignedUserShiftsType } from '@/features/tentativeSchedule/scheduleSlice'
+
+dayjs.extend(duration)
+dayjs.extend(customParseFormat)
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -92,7 +98,12 @@ export const streamToObject = async (body: ReadableStream) => {
 
 export function capitalizeFirstLetter(word: string) {
   if (!word || word.length < 2) return word
-  return word.charAt(0).toUpperCase() + word.slice(1)
+  const splittedWord = word.split(' ')
+  const capWord = splittedWord.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1)
+  )
+
+  return capWord.join(' ')
 }
 
 /**
@@ -242,4 +253,473 @@ export const createHouseCategories = (
   })
 
   return categories
+}
+
+export const getNumberOfBlocks = (startTime: string, endTime: string) => {
+  const start = dayjs(startTime, 'HHmm')
+    .startOf('minute')
+    .add(Math.round(dayjs(startTime, 'HHmm').minute() / 30) * 30, 'minute')
+
+  // Change the endTime from '2359' to '2350'
+  const newEndTime = endTime === '2359' ? '2400' : endTime
+
+  const end = dayjs(newEndTime, 'HHmm')
+    .startOf('minute')
+    .add(Math.round(dayjs(newEndTime, 'HHmm').minute() / 30) * 30, 'minute')
+
+  const diff = end.diff(start)
+  const blocks = diff / (1000 * 60 * 30)
+  console.log(Math.round(blocks))
+  return Math.round(blocks)
+}
+
+// export const generateMilitaryTimeForWeek = () => {
+//   const militaryTimes = []
+//   const minutesInterval = 30 // Set the interval between each time
+//   const weekInMinutes = 7 * 24 * 60 // Calculate the total minutes in a week
+
+//   let currentTime = dayjs().startOf('week') // Start at the beginning of the week
+
+//   for (let i = 0; i < weekInMinutes; i += minutesInterval) {
+//     // Format the current time as military time
+//     const militaryTime = currentTime.format('HHmm')
+//     militaryTimes.push(militaryTime)
+
+//     // Increment the current time by the interval
+//     currentTime = currentTime.add(minutesInterval, 'minute')
+//   }
+
+//   return militaryTimes
+// }
+
+export const generateContinuousMilitaryTimeForWeek = () => {
+  const militaryTimes = []
+  const minutesInterval = 30 // Set the interval between each time
+  const weekInMinutes = 8 * 24 * 60 // Calculate the total minutes in a week
+
+  let currentTime = dayjs().startOf('week') // Start at the beginning of the week
+
+  for (let i = 0; i < weekInMinutes; i += minutesInterval) {
+    // Calculate the total minutes from the start of the week
+    const totalMinutes = currentTime.diff(dayjs().startOf('week'), 'minute')
+
+    // Convert total minutes to military time
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
+    const militaryTime =
+      String(hours).padStart(2, '0') + String(minutes).padStart(2, '0')
+
+    militaryTimes.push(militaryTime)
+
+    // Increment the current time by the interval
+    currentTime = currentTime.add(minutesInterval, 'minute')
+  }
+
+  return militaryTimes
+}
+
+type TimeInterval = {
+  startTime: string
+  endTime: string
+}
+
+export function findAvailableShiftsForUsers(
+  userState: EntityState<User>,
+  shiftState: EntityState<Shift>
+): Record<string, Record<string, string[]>> {
+  const users = userState.ids.map((id) => userState.entities[id]) as User[]
+  const shifts = shiftState.ids.map((id) => shiftState.entities[id]) as Shift[]
+
+  const availableShifts: Record<string, Record<string, string[]>> = {}
+
+  // Helper function to check if there is enough overlap between two time intervals
+  function hasEnoughOverlap(
+    interval1: TimeInterval,
+    interval2: TimeInterval,
+    requiredDuration: number
+  ): boolean {
+    const startTime = Math.max(
+      dayjs(interval1.startTime, 'HHmm').unix(),
+      dayjs(interval2.startTime, 'HHmm').unix()
+    )
+    const endTime = Math.min(
+      dayjs(interval1.endTime, 'HHmm').unix(),
+      dayjs(interval2.endTime, 'HHmm').unix()
+    )
+
+    return endTime - startTime >= requiredDuration * 60 * 60
+  }
+
+  for (const user of users) {
+    if (!user.id || !user.availabilities) {
+      console.log({ user: user })
+      throw new Error('Invalid user object')
+    }
+
+    availableShifts[user.id] = {}
+
+    for (const shift of shifts) {
+      if (
+        !shift.id ||
+        !shift.possibleDays ||
+        !shift.timeWindow ||
+        !shift.hours ||
+        shift.hours < 0
+      ) {
+        console.log({ shift: shift })
+        throw new Error('Invalid shift object')
+      }
+
+      for (const day of shift.possibleDays) {
+        const lowerCaseDay = day.toLowerCase()
+        const userAvailability = user.availabilities[lowerCaseDay]
+
+        if (userAvailability) {
+          for (const userTime of userAvailability) {
+            // console.log({ userTime: userTime }, { shiftTime: shift.timeWindow })
+            if (
+              hasEnoughOverlap(
+                userTime,
+                {
+                  startTime: shift.timeWindow.startTime,
+                  endTime: shift.timeWindow.endTime,
+                },
+                shift.hours
+              )
+            ) {
+              if (!availableShifts[user.id][lowerCaseDay]) {
+                availableShifts[user.id][lowerCaseDay] = []
+              }
+              availableShifts[user.id][lowerCaseDay].push(shift.id)
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return availableShifts
+}
+
+export function findAvailableUsersForShifts(
+  userState: EntityState<User>,
+  shiftState: EntityState<Shift>
+): Record<string, Record<string, string[]>> {
+  const users = userState.ids.map((id) => userState.entities[id]) as User[]
+  const shifts = shiftState.ids.map((id) => shiftState.entities[id]) as Shift[]
+
+  const availableUsers: Record<string, Record<string, string[]>> = {}
+
+  // Helper function to check if there is enough overlap between two time intervals
+  function hasEnoughOverlap(
+    interval1: TimeInterval,
+    interval2: TimeInterval,
+    requiredDuration: number
+  ): boolean {
+    const startTime = Math.max(
+      dayjs(interval1.startTime, 'HHmm').unix(),
+      dayjs(interval2.startTime, 'HHmm').unix()
+    )
+    const endTime = Math.min(
+      dayjs(interval1.endTime, 'HHmm').unix(),
+      dayjs(interval2.endTime, 'HHmm').unix()
+    )
+
+    return endTime - startTime >= requiredDuration * 60 * 60
+  }
+
+  for (const shift of shifts) {
+    if (
+      !shift.id ||
+      !shift.possibleDays ||
+      !shift.timeWindow ||
+      !shift.hours ||
+      shift.hours < 0
+    ) {
+      throw new Error('Invalid shift object')
+    }
+
+    availableUsers[shift.id] = {}
+
+    for (const day of shift.possibleDays) {
+      const lowerCaseDay = day.toLowerCase()
+
+      for (const user of users) {
+        if (!user.id || !user.availabilities) {
+          throw new Error('Invalid user object')
+        }
+
+        const userAvailability = user.availabilities[lowerCaseDay]
+
+        if (userAvailability) {
+          for (const userTime of userAvailability) {
+            if (
+              hasEnoughOverlap(
+                userTime,
+                {
+                  startTime: shift.timeWindow.startTime,
+                  endTime: shift.timeWindow.endTime,
+                },
+                shift.hours
+              )
+            ) {
+              if (!availableUsers[shift.id][lowerCaseDay]) {
+                availableUsers[shift.id][lowerCaseDay] = []
+              }
+              availableUsers[shift.id][lowerCaseDay].push(user.id)
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return availableUsers
+}
+
+export function findAssignedShiftsForUsers(
+  userState: EntityState<User>,
+  shiftState: EntityState<Shift>
+): Record<string, Record<string, string[]>> {
+  const assignedShifts: Record<string, Record<string, string[]>> = {}
+
+  userState.ids.forEach((userId) => {
+    const user = userState.entities[userId]
+    if (!user || !user.id || !user.availabilities) {
+      throw new Error(`Invalid user object for user ID ${userId}`)
+    }
+
+    assignedShifts[user.id] = {}
+
+    shiftState.ids.forEach((shiftId) => {
+      const shift = shiftState.entities[shiftId]
+      if (
+        !shift ||
+        !shift.id ||
+        !shift.possibleDays ||
+        !shift.timeWindow ||
+        !shift.hours ||
+        shift.hours < 0
+      ) {
+        throw new Error(`Invalid shift object for shift ID ${shiftId}`)
+      }
+
+      if (!shift.assignedUser || !shift.assignedDay) {
+        return
+      }
+
+      if (shift.assignedUser === userId) {
+        // console.log(`Assigned User: ${shift.assignedUser} --> ${userId}`)
+        const lowerCaseDay = shift.assignedDay.toLowerCase()
+        assignedShifts[userId][lowerCaseDay] ??= []
+        assignedShifts[userId][lowerCaseDay].push(shiftId as string)
+      }
+    })
+  })
+
+  return assignedShifts
+}
+
+export function findEmptyShifts(
+  shiftState: EntityState<Shift>
+): Record<string, string[]> {
+  const emptyShifts: Record<string, string[]> = {}
+
+  let count = 0
+  shiftState.ids.forEach((id) => {
+    const shift = shiftState.entities[id]
+    // console.log(shift)
+    if (!shift) {
+      console.log('Undefinded shift: ', id)
+      return
+    }
+    // console.log(
+    //   '-------------',
+    //   {
+    //     assignedUser: shift.assignedUser,
+    //     assignedDay: shift.assignedDay,
+    //   },
+    //   ' Count: ',
+    //   count
+    // )
+    count += 1
+    if (
+      !shift.id ||
+      !shift.possibleDays ||
+      !shift.timeWindow ||
+      !shift.hours ||
+      shift.hours < 0
+    ) {
+      console.log({ shift: shift })
+      throw new Error('Invalid shift object')
+    }
+
+    if (shift.assignedUser && shift.assignedDay) {
+      // console.log('+++', {
+      //   assignedUser: shift.assignedUser,
+      //   assignedDay: shift.assignedDay,
+      // })
+      return
+    }
+
+    for (const day of shift.possibleDays) {
+      const lowerCaseDay = day.toLowerCase()
+      if (!emptyShifts[lowerCaseDay]) {
+        emptyShifts[lowerCaseDay] = []
+      }
+      emptyShifts[lowerCaseDay].push(shift.id)
+    }
+  })
+
+  // console.log('EMPTYSHIFTS: ', emptyShifts)
+
+  return emptyShifts
+}
+
+type UserProperty = keyof User
+
+export function sortUserIdsByProperty(
+  state: EntityState<User>,
+  property: UserProperty
+): (string | number)[] {
+  const sortedIds = [...state.ids] as (string | number)[]
+
+  sortedIds.sort((idA, idB) => {
+    const userA = state.entities[idA]
+    const userB = state.entities[idB]
+
+    if (userA && userB) {
+      if (property in userA && property in userB) {
+        // Use type assertion to inform TypeScript about the expected types
+        const valueA = userA[property] as unknown as number
+        const valueB = userB[property] as unknown as number
+
+        if (valueA < valueB) {
+          return -1
+        } else if (valueA > valueB) {
+          return 1
+        }
+      }
+    }
+    return 0
+  })
+
+  return sortedIds
+}
+export const pluralizeHours = (hours: number) => {
+  if (hours === 1) {
+    return hours + ' hour'
+  }
+  return hours + ' hours'
+}
+
+type CreateScheduleShiftsProps = {
+  shiftState: EntityState<Shift>
+  assignedShifts: AssignedUserShiftsType
+  startDate: dayjs.Dayjs
+  endDate: dayjs.Dayjs
+}
+
+const dayIdToNumber = (dayId: string): number | undefined => {
+  const days = {
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+    sunday: 7,
+  }
+
+  return days[dayId.toLowerCase() as keyof typeof days]
+}
+
+export const createScheduleShifts = (
+  props: CreateScheduleShiftsProps
+): ScheduledShift[] => {
+  const { shiftState, assignedShifts, startDate, endDate } = props
+  if (!shiftState || !assignedShifts || !startDate || !endDate) {
+    console.log(
+      'Invalid inputs ---> shiftState: ',
+      shiftState,
+      '  assignedShift: ',
+      assignedShifts,
+      ' startDate: ',
+      startDate,
+      ' endDate: ',
+      endDate
+    )
+    return []
+  }
+
+  const entities = shiftState.entities
+  const createdShifts: ScheduledShift[] = []
+
+  for (const userId in assignedShifts) {
+    for (const dayId in assignedShifts[userId]) {
+      const shiftDay = dayIdToNumber(dayId)
+      if (shiftDay === undefined) {
+        continue
+      }
+
+      let firstOccurrence = startDate.clone().day(shiftDay)
+      if (firstOccurrence.isAfter(endDate)) {
+        continue
+      }
+      if (firstOccurrence.isBefore(startDate)) {
+        firstOccurrence = firstOccurrence.add(1, 'week')
+      }
+
+      for (const shiftId of assignedShifts[userId][dayId]) {
+        const shift = entities[shiftId]
+        if (!shift) {
+          continue
+        }
+
+        for (
+          let currentDate = firstOccurrence.clone();
+          currentDate.isBefore(endDate) || currentDate.isSame(endDate);
+          currentDate = currentDate.add(1, 'week')
+        ) {
+          createdShifts.push({
+            id: '',
+            shiftID: shiftId,
+            date: currentDate.format('MM/DD/YYYY'),
+            assignedUser: userId,
+            status: 'Assigned',
+            options: '',
+            verifiedBy: '',
+            verifiedAt: '',
+            unverifiedAt: '',
+            penaltyHours: 0,
+          })
+        }
+      }
+    }
+  }
+
+  return createdShifts
+}
+
+export function sortShiftsByWeekNumber(
+  state: EntityState<ScheduledShift>
+): Record<number, string[]> {
+  const shifts = state.ids.map((id) => state.entities[id]) as ScheduledShift[]
+
+  const sortedShifts: Record<number, string[]> = {}
+
+  for (const shift of shifts) {
+    if (!shift.date) continue
+    const date = dayjs(shift.date, 'MM/DD/YYYY')
+    if (!date) continue
+    const weekNum = date.week()
+    if (!sortedShifts.hasOwnProperty(weekNum)) {
+      sortedShifts[weekNum] = []
+    }
+    sortedShifts[weekNum].push(shift.id)
+  }
+
+  return sortedShifts
 }

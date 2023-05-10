@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ShiftForm from '../forms/ShiftForm'
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from '@mui/material'
 
 function EditShiftCard({
   shiftId,
@@ -11,6 +18,15 @@ function EditShiftCard({
   setOpen: (value: React.SetStateAction<boolean>) => void
   open: boolean
 }) {
+  const [isNewShift, setIsNewShift] = useState(false)
+  const handleDuplication = () => {
+    setIsNewShift(true)
+  }
+
+  const handleOpenClose = (value: React.SetStateAction<boolean>) => {
+    setOpen(value)
+    setIsNewShift(value)
+  }
   React.useEffect(() => {
     // console.log(selectShiftsResult((state) => state))
   }, [])
@@ -20,17 +36,29 @@ function EditShiftCard({
         fullWidth
         maxWidth="md"
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setIsNewShift(false)
+          setOpen(false)
+        }}
         className="dialog"
       >
-        <DialogTitle variant="h4" component="h2">
-          Update Shift
+        <DialogTitle>
+          <Box display={'flex'}>
+            <Typography variant="h4" component="h2">
+              {isNewShift ? 'Create Shift' : 'Update Shift'}
+            </Typography>
+            {isNewShift ? null : (
+              <Button onClick={handleDuplication} variant="contained">
+                Duplicate Shift
+              </Button>
+            )}
+          </Box>
         </DialogTitle>
         <DialogContent>
           <ShiftForm
-            setOpen={setOpen}
+            setOpen={handleOpenClose}
             shiftId={shiftId} //'6401c47de8d154aa9ccf5d93'
-            isNewShift={false}
+            isNewShift={isNewShift}
           />
         </DialogContent>
       </Dialog>

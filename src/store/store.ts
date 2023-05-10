@@ -3,10 +3,14 @@ import counterReducer from './slices/counterSlice'
 import authReducer from '../features/auth/authSlice'
 import usersReducer from '../features/user/usersSlice'
 import userAvailabilityReducer from '../features/userAvailability/userAvailabilitySlice'
+import userAssignmentReducer from '@/features/userAssignment/userAssignmentSlice'
 // import userShiftPreferencesReducer from '../features/userShiftPreferences/userShiftPreferencesSlice'
 import userShiftPreferencesReducer from '../features/userShiftPreferences/userShiftPreferencesSlice'
 import categoriesReducer from '../features/categories/categoriesSlice'
+import scheduleReducer from '../features/tentativeSchedule/scheduleSlice'
+import scheduledShiftReducer from '../features/scheduledShift/scheduledShiftSlice'
 import { apiSlice } from './api/apiSlice'
+
 // import authReducer from './slices/authSlice'
 
 export const store = configureStore({
@@ -16,8 +20,11 @@ export const store = configureStore({
     auth: authReducer,
     users: usersReducer,
     userAvailability: userAvailabilityReducer,
+    userAssignment: userAssignmentReducer,
     userShiftPreferences: userShiftPreferencesReducer,
     categories: categoriesReducer,
+    schedules: scheduleReducer,
+    scheduledShifts: scheduledShiftReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),

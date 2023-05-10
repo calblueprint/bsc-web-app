@@ -7,40 +7,26 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
-import Paper from '@mui/material/Paper'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
-import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
-import { Dictionary, EntityId } from '@reduxjs/toolkit'
-import {
-  House,
-  Shift,
-  ShiftPreferences,
-  User,
-  userPreferences,
-} from '@/types/schema'
+import { Dictionary } from '@reduxjs/toolkit'
+import { House, Shift, User } from '@/types/schema'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  selectCurrentHouse,
-  selectCurrentUser,
-} from '@/features/auth/authSlice'
+import { selectCurrentUser } from '@/features/auth/authSlice'
 import { useEffect, useState } from 'react'
-import { useUpdateShiftMutation } from '@/features/shift/shiftApiSlice'
-import { Snackbar, Alert } from '@mui/material'
-import { validatePreferences } from '@/utils/utils'
+import { Snackbar, Alert, Stack } from '@mui/material'
 import {
   selectCatogoryCollapseByCategory,
   selectIsEditingPreferences,
   selectShiftsByCategoryPreferences,
-  selectUserShiftPreferences,
   setCategoryCollapse,
   setShiftPreferences,
 } from '../userShiftPreferencesSlice'
 import { RootState } from '@/store/store'
+import { activePreference, inactivePreference } from '@/assets/StyleGuide'
 
 export default function PrefrencesItem(props: {
   category: string
@@ -310,45 +296,30 @@ export default function PrefrencesItem(props: {
                     )
 
                     const prefereDisplay = (
-                      <Typography
-                        textTransform={'capitalize'}
-                        marginRight={2}
-                        sx={{
-                          backgroundColor: 'green',
-                          color: 'white',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {choice}
-                      </Typography>
+                      <Stack direction={'row'}>
+                        <Typography marginRight={2} sx={activePreference}>
+                          Prefer
+                        </Typography>
+                        <Typography sx={inactivePreference}>Dislike</Typography>
+                      </Stack>
                     )
 
                     const dislikeDisplay = (
-                      <Typography
-                        textTransform={'capitalize'}
-                        marginRight={2}
-                        sx={{
-                          backgroundColor: 'red',
-                          color: 'white',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {choice}
-                      </Typography>
+                      <Stack direction={'row'}>
+                        <Typography marginRight={2} sx={inactivePreference}>
+                          Prefer
+                        </Typography>
+                        <Typography sx={activePreference}>Dislike</Typography>
+                      </Stack>
                     )
 
                     const nullDisplay = (
-                      <Typography
-                        textTransform={'capitalize'}
-                        marginRight={2}
-                        sx={{
-                          backgroundColor: 'gray',
-                          color: 'white',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {'No Preference'}
-                      </Typography>
+                      <Stack direction={'row'}>
+                        <Typography marginRight={2} sx={inactivePreference}>
+                          Prefer
+                        </Typography>
+                        <Typography sx={inactivePreference}>Dislike</Typography>
+                      </Stack>
                     )
                     let displayContent = null
                     if (choice === 'prefer') {
@@ -360,15 +331,11 @@ export default function PrefrencesItem(props: {
                     }
 
                     return (
-                      <TableRow key={id}>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          sx={{ textTransform: 'capitalize' }}
-                        >
+                      <TableRow key={id} sx={{ width: '100' }}>
+                        <TableCell component="th" style={{ width: '50%' }}>
                           {shiftEntities[id]?.name}
                         </TableCell>
-                        <TableCell align="right" sx={{ padding: 0, margin: 0 }}>
+                        <TableCell align="right">
                           {isEditing ? buttonGroup : displayContent}
                         </TableCell>
                       </TableRow>

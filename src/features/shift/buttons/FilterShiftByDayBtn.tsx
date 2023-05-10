@@ -1,10 +1,8 @@
-// FilterSelect.tsx
 import React, { useState } from 'react'
 import {
   MenuItem,
   FormControl,
   Select,
-  InputLabel,
   SelectChangeEvent,
 } from '@mui/material'
 type Days =
@@ -35,16 +33,16 @@ const FilterShiftByDayBtn: React.FC<FilterSelectProps> = ({
   }
 
   return (
-    <FormControl fullWidth variant="outlined">
-      <InputLabel htmlFor="filter-select">Filter</InputLabel>
+    <FormControl fullWidth>
       <Select
-        label="Filter"
         value={selectedFilter}
         onChange={handleChange}
+        size="small"
         inputProps={{
           name: 'filter',
           id: 'filter-select',
         }}
+        sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
       >
         {filterOptions.map((option, index) => (
           <MenuItem key={index} value={option}>

@@ -1,9 +1,10 @@
 import { createSelector, createEntityAdapter, EntityId } from '@reduxjs/toolkit'
-import { AuthorizedUser, User } from '../../types/schema'
+import { AuthorizedUser } from '../../types/schema'
 import { apiSlice } from '../../store/api/apiSlice'
 import { RootState } from '../../store/store'
+import { WhereFilterOp } from 'firebase/firestore'
 
-const authorizedUsersAdapter = createEntityAdapter<User>({})
+const authorizedUsersAdapter = createEntityAdapter<AuthorizedUser>({})
 
 const initialState = authorizedUsersAdapter.getInitialState()
 
@@ -13,9 +14,9 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: `authorizedUsers`,
         method: 'GET',
-        params: { queryType: 'authorized users' },
+        // params: { queryType: 'authorized users' },
       }),
-      transformResponse: (responseData: User[]) => {
+      transformResponse: (responseData: AuthorizedUser[]) => {
         const loadedAuthorizedUsers = responseData.map((entity) => {
           entity.id = entity.id
           return entity
@@ -42,9 +43,11 @@ export const authorizedUsersApiSlice = apiSlice.injectEndpoints({
       query: (value: string) => ({
         url: `authorizedUsers`,
         method: 'GET',
-        params: { filter: { fieldPath: 'houseID', opStr: '==', value } },
+        params: {
+          filter: { fieldPath: 'houseID', optStr: '==', value },
+        },
       }),
-      transformResponse: (responseData: User[]) => {
+      transformResponse: (responseData: AuthorizedUser[]) => {
         const loadedAuthorizedUsers = responseData.map((entity) => {
           entity.id = entity.id
           return entity

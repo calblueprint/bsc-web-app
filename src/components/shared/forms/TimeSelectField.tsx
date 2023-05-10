@@ -31,6 +31,7 @@ const TimeSelectField = (props: TimeSelectFieldProps) => {
   const { handleOnChange, fieldId, labelId, value, label } = props
   const timeOptions: TimeOptions = generateTimeOptions()
   const timeOptionsIndex: string[] = generateTimeOptionsIndex()
+  // console.log(`TimeSelectField: `, String(value).padStart(4, '0'))
 
   return (
     <React.Fragment>

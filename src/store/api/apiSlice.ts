@@ -14,11 +14,14 @@ import {
   WhereFilterOp,
   Query,
   DocumentData,
+  writeBatch,
 } from 'firebase/firestore'
 import type { BaseQueryFn } from '@reduxjs/toolkit/query'
+import { ScheduledShift } from '@/types/schema'
 
 type ParamsProps = {
   filter: { fieldPath: string; optStr: WhereFilterOp; value: string }
+  batch: ScheduledShift[]
 }
 
 const customBaseQuery: BaseQueryFn<
@@ -50,6 +53,7 @@ const customBaseQuery: BaseQueryFn<
     const resObj: unknown[] = []
     let isCollection = false
     let hasFilter = params?.filter ? true : false
+    let isBatch = params?.batch ? true : false
     // console.log(pathArray)
     if (pathArray.length === 0) {
       return {
@@ -77,16 +81,15 @@ const customBaseQuery: BaseQueryFn<
           //** Check weather the request is a collection or a document */
           if (isCollection) {
             //** Get the collection to be query */
-            // console.log('filter: ', params)
+            // console.log({ filter: { params, url } })
             let queryColl = collection(firestore, path)
             let queryRef: Query<DocumentData> | undefined = undefined
+            // console.log('hasFilter: ', hasFilter)
             if (hasFilter) {
               //** If the query is a collection and has a filter use where function */
               const { fieldPath, optStr, value } = params.filter
-              queryRef = query(
-                queryColl,
-                where(fieldPath, optStr, value.toLowerCase())
-              )
+              // console.log({ values: { fieldPath, optStr, value } })
+              queryRef = query(queryColl, where(fieldPath, optStr, value))
             }
             //** If the query is a collection, get the full collection from the firebase */
             // console.log(path)
@@ -108,7 +111,7 @@ const customBaseQuery: BaseQueryFn<
               const data = doc.data()
               // console.log('firebase data: ', data)
               if (data) {
-                resObj.push({ id: doc.id.toString(), ...data })
+                resObj.push({ ...data, id: doc.id.toString() })
               }
               // console.log(doc.id, ' => ', doc.data())
             })
@@ -135,7 +138,7 @@ const customBaseQuery: BaseQueryFn<
               id: snapshot.id,
             })
 
-            console.log(resObj)
+            // console.log(resObj)
             //** Return the resObj wrapped in a Response object */
             return { data: resObj }
           }
@@ -146,6 +149,41 @@ const customBaseQuery: BaseQueryFn<
             return {
               error: { message: 'Path must be a collection', isError: true },
             }
+          }
+          console.log(`isBatch  ${isBatch}.`)
+          if (isBatch) {
+            const batchSize = 500
+            const dataList = params.batch
+            const collectionRef = collection(firestore, path)
+
+            console.log(`dataList length:   ${dataList.length}.`)
+            for (let i = 0; i < dataList.length; i += batchSize) {
+              // Create a batch instance
+              const batch = writeBatch(firestore)
+
+              // Prepare the documents for the current batch
+              const batchDataList = dataList.slice(i, i + batchSize)
+
+              // Set the data for each document in the batch
+              batchDataList.forEach((data) => {
+                const docRef = doc(collectionRef)
+                batch.set(docRef, data)
+              })
+
+              // Commit the batch
+              try {
+                await batch.commit()
+                console.log(
+                  `Batch write successful for batch starting at index ${i}.`
+                )
+              } catch (error) {
+                console.error(
+                  `Error performing batch write for batch starting at index ${i}:`,
+                  error
+                )
+              }
+            }
+            return { data: 'Batch written succesfully' }
           }
 
           //** Verify that the body is not empty */

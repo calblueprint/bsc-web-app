@@ -1,3 +1,5 @@
+import { AssignedUserShiftsType } from '@/features/tentativeSchedule/scheduleSlice'
+
 export type User = {
   // this id is to help the standard table generalize the id attribute
   id: string
@@ -51,6 +53,7 @@ export type User = {
 }
 
 export type AuthorizedUser = {
+  id: string
   applicationID: string
   email: string
   firstName: string
@@ -71,7 +74,7 @@ export type Shift = {
   // Possible days that the shift can be done on
   possibleDays: string[]
   // Time window that this shift must be done in [startTime, endTime]
-  timeWindow: { startTime: number; endTime: number }
+  timeWindow: { startTime: string; endTime: string }
   // property to display timeWindow
   timeWindowDisplay: string //Todo: Maybe delete this property
   // Day that the shift is assigned
@@ -104,6 +107,11 @@ export type ScheduledShift = {
   penaltyHours: number
 }
 
+export type PublishedSchedulesType = Record<
+  string,
+  { startDate: string; endDate: string; assignedShifts: AssignedUserShiftsType }
+>
+
 export type House = {
   id: string
   name: string
@@ -120,6 +128,7 @@ export type House = {
       isActive: boolean
     }
   }
+  publishedSchedules: PublishedSchedulesType
 }
 
 // export enum Days {

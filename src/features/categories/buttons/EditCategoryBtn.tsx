@@ -52,7 +52,7 @@ const EditCategoryBtn = (props: EditCategoryBtnProps) => {
   ) => {
     const { category } = values
     if (!houseCategories || houseCategories.length === 0) {
-      console.log('HouseCategories is undefined of empty: ', houseCategories)
+      console.log('HouseCategories is undefined or empty: ', houseCategories)
       return
     }
 
@@ -62,14 +62,14 @@ const EditCategoryBtn = (props: EditCategoryBtnProps) => {
         houseId: houseId,
         shiftId: shiftId as string,
       }
-      console.log('category', category)
+      // console.log('category', category)
       await updateShift(data)
     } catch (error) {
       console.log(error)
     }
 
     setOpen(false)
-    console.log('save')
+    // console.log('save')
   }
 
   //** Get the house categories */

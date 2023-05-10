@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux'
 import { selectHouseId } from '../categoriesSlice'
 import EditShiftCard from '@/features/shift/cards/EditShiftCard'
 import DisplayShiftCard from '@/features/shift/cards/DisplayShiftCard'
+import { EntityId } from '@reduxjs/toolkit'
+import { Shift } from '@/types/schema'
 
 type CategoryShiftItemProps = {
   shiftId: string
@@ -15,8 +17,12 @@ type CategoryShiftItemProps = {
 const CategoryShiftItem = (props: CategoryShiftItemProps) => {
   const { shiftId } = props
   const houseId = useSelector(selectHouseId)
-  const shift = useSelector((state: RootState) =>
-    selectShiftById(houseId)(state, shiftId)
+  // const shift = useSelector((state: RootState) =>
+  //   selectShiftById(houseId)(state, shiftId)
+  // )
+  const shift: Shift = useSelector(
+    (state: RootState) =>
+      selectShiftById()(state, shiftId as EntityId, houseId) as Shift
   )
   const [open, setOpen] = useState(false)
 
