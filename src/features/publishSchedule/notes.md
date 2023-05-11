@@ -12,3 +12,5 @@
 only allow date ranges that start the next day or later
 the endDate must be greater then the startDate
 published scheduleNames must be unique and are case insensitive
+
+\* Question to BSC: Do we want to automatically overwrite the existing schedule? or Should we not allow the manager the ability to overwrite the existing schedule?

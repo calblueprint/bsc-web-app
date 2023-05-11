@@ -11,6 +11,7 @@ import { Typography } from '@mui/material'
 import { useGetHouseAuthorizedUsersQuery } from '@/features/authorizedUser/authorizedUserApiSlice'
 import ShiftInfoHeader from '@/components/shared/shiftCardHeader/ShiftInfoHeader'
 import { useGetShiftsQuery } from '@/features/shift/shiftApiSlice'
+import ScheduleShiftForm from '@/features/scheduledShift/testing/scheduleShiftForm'
 import { useGetHouseUsersQuery } from '@/features/user/userApiSlice'
 
 const TestingPage = () => {
@@ -53,6 +54,7 @@ const TestingPage = () => {
           handleClose={() => console.log('CLOOOOOSE')}
         />
       ) : null}
+      <ScheduleShiftForm />
     </React.Fragment>
   )
 }
