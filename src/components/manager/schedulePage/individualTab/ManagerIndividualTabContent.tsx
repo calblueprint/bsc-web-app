@@ -1,7 +1,6 @@
 import FilterAutoCompleteBar from '@/components/shared/searchBar/FilterAutoCompleteBar'
 import { selectCurrentHouse } from '@/features/auth/authSlice'
 import { useGetScheduledShiftsQuery } from '@/features/scheduledShift/scheduledShiftApiSlice'
-import { selectWeeklyScheduleShiftsByWeekNumber } from '@/features/scheduledShift/scheduledShiftSlice'
 import AllScheduledShiftsTable from '@/features/scheduledShift/tables/AllScheduledShiftsTable'
 import { useGetHouseUsersQuery } from '@/features/user/userApiSlice'
 import { House } from '@/types/schema'
@@ -11,6 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import { Typography } from '@mui/material'
+import { selectWeeklyScheduleShiftsByWeekNumber } from '@/features/scheduledShift/scheduledShiftSlice'
 
 const ManagerIndividualTabContent = () => {
   const authHouse = useSelector(selectCurrentHouse) as House
