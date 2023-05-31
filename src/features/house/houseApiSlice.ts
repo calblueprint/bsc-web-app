@@ -51,8 +51,11 @@ export const housesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'House', id: 'LIST' }],
     }),
-    updateHouses: builder.mutation({
-      query: (data: { houseId: string; data: Partial<House> }) => ({
+    updateHouse: builder.mutation({
+      query: (data: {
+        houseId: string, 
+        data: Partial<House>
+      }) => ({
         url: `houses/${data.houseId}`,
         method: 'PATCH',
         body: {
@@ -69,7 +72,7 @@ export const housesApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetHouseQuery,
   useAddNewHouseMutation,
-  useUpdateHousesMutation,
+  useUpdateHouseMutation,
   //   useDeleteShiftMutation,
 } = housesApiSlice
 

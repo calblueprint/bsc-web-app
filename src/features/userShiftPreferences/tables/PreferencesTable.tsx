@@ -24,7 +24,7 @@ import {
 import { validatePreferences } from '@/utils/utils'
 import PreferencesButtons from '../buttons/PreferencesButtons'
 import Loading from '@/components/shared/Loading'
-import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
+import { useUpdateHouseMutation } from '@/features/house/houseApiSlice'
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 
@@ -42,7 +42,7 @@ export default function PreferencesTable() {
     isSuccess,
   } = useGetShiftsQuery(authHouse.id)
   //** Mutate current house */
-  const [updateHouses, {}] = useUpdateHousesMutation()
+  const [updateHouse, {}] = useUpdateHouseMutation()
   const [establishContext, {}] = useEstablishContextMutation()
 
   //** Boolean that is set to true when authHouse needs to be updated in the backEnd */
@@ -99,7 +99,7 @@ export default function PreferencesTable() {
     }
     const data = { data: { preferences }, houseId: authHouse.id }
     try {
-      await updateHouses(data).unwrap()
+      await updateHouse(data).unwrap()
       await establishContext(authUser.id)
     } catch (error) {
       console.log('[updateHousePreference]: error: ' + error)

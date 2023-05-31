@@ -21,7 +21,7 @@ import {
 import { House, Shift } from '@/types/schema'
 import { validatePreferences } from '@/utils/utils'
 import { Snackbar, Alert } from '@mui/material'
-import { useUpdateHousesMutation } from '@/features/house/houseApiSlice'
+import { useUpdateHouseMutation } from '@/features/house/houseApiSlice'
 import { useEstablishContextMutation } from '@/features/auth/authApiSlice'
 
 interface EditButtonsProps {
@@ -93,8 +93,8 @@ export default function PreferencesButtons() {
   const [openErrorMsg, setOpenErrorMsg] = useState(false)
 
   //** Update house mutation api to update house */
-  const [updateHouses, { isLoading, isSuccess, isError }] =
-    useUpdateHousesMutation()
+  const [updateHouse, { isLoading, isSuccess, isError }] =
+    useUpdateHouseMutation()
 
   //** User context function to update current user house and user information */
   const [establishContext, {}] = useEstablishContextMutation()
@@ -147,7 +147,7 @@ export default function PreferencesButtons() {
         data: { preferences: shiftPreferences },
         houseId: authHouse.id,
       }
-      await updateHouses(data).unwrap()
+      await updateHouse(data).unwrap()
       await establishContext(authUser.id).unwrap()
       setOpenSuccessMsg(true)
     } catch (error) {
